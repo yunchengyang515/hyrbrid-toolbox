@@ -15,10 +15,10 @@ export default function Calendar() {
           right: 'dayGridMonth,timeGridWeek',
         }}
         initialView='dayGridMonth'
-        nowIndicator={true}
-        editable={true}
-        selectable={true}
-        selectMirror={true}
+        nowIndicator
+        editable
+        selectable
+        selectMirror
         resources={[
           { id: 'a', title: 'Auditorium A' },
           { id: 'b', title: 'Auditorium B', eventColor: 'green' },
