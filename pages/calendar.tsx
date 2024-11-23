@@ -4,7 +4,7 @@ import interactionPlugin from '@fullcalendar/interaction'
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
 import timeGridPlugin from '@fullcalendar/timegrid'
 
-export default function CalendarPage() {
+export default function Calendar() {
   return (
       <div className='calendar-container'>
         <FullCalendar
@@ -12,14 +12,14 @@ export default function CalendarPage() {
             resourceTimelinePlugin,
             dayGridPlugin,
             interactionPlugin,
-            timeGridPlugin
+            timeGridPlugin,
           ]}
           headerToolbar={{
             left: 'prev,next today',
             center: 'title',
-            right: 'resourceTimelineWeek,dayGridMonth,timeGridWeek'
+            right: 'dayGridMonth,timeGridWeek'
           }}
-          initialView='resourceTimelineWeek'
+          initialView='dayGridMonth'
           nowIndicator={true}
           editable={true}
           selectable={true}

@@ -1,11 +1,13 @@
-import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
-import { Welcome } from '../components/Welcome/Welcome';
+import type { ReactElement } from 'react';
+import Layout from '@/components/layout'; // Ensure the path is correct
+import type { NextPageWithLayout } from './_app';
 
-export default function HomePage() {
-  return (
-    <>
-      <Welcome />
-      <ColorSchemeToggle />
-    </>
-  );
-}
+const HomePage: NextPageWithLayout = () => {
+  return <p>Welcome to the Home Page!</p>;
+};
+
+HomePage.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>;
+};
+
+export default HomePage;
