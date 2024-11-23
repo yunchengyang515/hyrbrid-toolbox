@@ -1,4 +1,4 @@
-import type { StorybookConfig } from '@storybook/nextjs';
+import type { StorybookConfig } from '@storybook/nextjs'
 
 const config: StorybookConfig = {
   core: {
@@ -12,5 +12,5 @@ const config: StorybookConfig = {
     name: '@storybook/nextjs',
     options: {},
   },
-};
-export default config;
+}
+export default config
