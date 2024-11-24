@@ -2967,6 +2967,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fullcalendar/list@npm:^6.1.15":
+  version: 6.1.15
+  resolution: "@fullcalendar/list@npm:6.1.15"
+  peerDependencies:
+    "@fullcalendar/core": ~6.1.15
+  checksum: 10c0/33c0ba3ee9c2545cd68b5395a4ccf59986fbbcae07a458837a6ac52b0a0e6fe59fbc78d10286115ea5145b70c6aaa03b50cbe95285645c7f91f50dacc6ee1a35
+  languageName: node
+  linkType: hard
+
 "@fullcalendar/premium-common@npm:~6.1.15":
   version: 6.1.15
   resolution: "@fullcalendar/premium-common@npm:6.1.15"
@@ -12358,6 +12367,7 @@ __metadata:
     "@fullcalendar/core": "npm:^6.1.10"
     "@fullcalendar/daygrid": "npm:^6.1.10"
     "@fullcalendar/interaction": "npm:^6.1.10"
+    "@fullcalendar/list": "npm:^6.1.15"
     "@fullcalendar/react": "npm:^6.1.10"
     "@fullcalendar/resource": "npm:^6.1.10"
     "@fullcalendar/resource-timeline": "npm:^6.1.10"

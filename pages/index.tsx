@@ -24,10 +24,10 @@ const HomePage: NextPageWithLayout = () => {
       <Container fluid px={0}>
         {' '}
         {/* Tabs container */}
-        <Tabs variant='outline' defaultValue='schedules'>
+        <Tabs variant='outline' defaultValue='calendar'>
           <Tabs.List>
-            <Tabs.Tab value='schedules' leftSection={<IconCalendar style={iconStyle} />}>
-              Schedules
+            <Tabs.Tab value='calendar' leftSection={<IconCalendar style={iconStyle} />}>
+              Calendar
             </Tabs.Tab>
             <Tabs.Tab value='programs' leftSection={<IconListDetails style={iconStyle} />}>
               Programs
@@ -42,7 +42,7 @@ const HomePage: NextPageWithLayout = () => {
             <Text ta='center'>Programs tab content goes here...</Text>
           </Tabs.Panel>
 
-          <Tabs.Panel value='schedules'>
+          <Tabs.Panel value='calendar'>
             <Container fluid pt={20} px={0}>
               <Calendar />
             </Container>
