@@ -2,7 +2,7 @@ import Image from 'next/image'
 import { AppShell, Group, Skeleton } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({ children }: { children: React.ReactNode }) {
   const [opened] = useDisclosure()
 
   return (
