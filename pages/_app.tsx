@@ -1,12 +1,12 @@
 import '@mantine/core/styles.css'
 
+import { ReactElement, ReactNode } from 'react'
+import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { MantineProvider } from '@mantine/core'
-import { theme } from '../theme'
 import Layout from '@/components/layout'
-import { NextPage } from 'next'
-import { ReactElement, ReactNode } from 'react'
+import { theme } from '../theme'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
