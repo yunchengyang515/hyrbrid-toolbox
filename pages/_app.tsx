@@ -5,7 +5,7 @@ import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { MantineProvider } from '@mantine/core'
-import Layout from '@/components/layout'
+import { Layout } from '@/components/Layout'
 import { theme } from '../theme'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
