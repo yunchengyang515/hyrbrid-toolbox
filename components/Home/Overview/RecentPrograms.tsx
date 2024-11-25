@@ -34,11 +34,11 @@ const getStatusBadgeColor = (status: string) => {
   }
 }
 
-export default function MyPrograms() {
+export default function RecentPrograms() {
   return (
-    <ScrollArea h={250} type='auto' offsetScrollbars>
+    <ScrollArea h={270} type='auto' offsetScrollbars>
       {programs.map((program, index) => (
-        <Paper key={index} shadow='sm' p={10} radius='md' withBorder mb='md'>
+        <Paper key={index} shadow='sm' p={10} radius='md' withBorder mb='md' h={120}>
           {/* Header: Program Name and Status */}
           <Group justify='space-between' mb='xs'>
             <Text fw={500}>{program.name}</Text>

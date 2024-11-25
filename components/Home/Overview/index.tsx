@@ -5,17 +5,17 @@
  * 3. Notes section, focus on periodization, including the Macrocycle, Mesocycle, and Microcycle
  */
 import { Container, Text } from '@mantine/core'
-import MyPrograms from '@/components/Home/Overview/MyPrograms'
+import RecentPrograms from '@/components/Home/Overview/RecentPrograms'
 
 export default function Overview() {
   return (
     <Container fluid>
       {/* Section Header */}
       <Text size='md' fw={700} mb='md'>
-        My Programs
+        Recent Programs
       </Text>
 
-      <MyPrograms />
+      <RecentPrograms />
     </Container>
   )
 }
