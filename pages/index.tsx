@@ -18,7 +18,7 @@ const HomePage: NextPageWithLayout = () => {
         {' '}
         {/* Centered container for the header */}
         <Text size='xl' fw={700} ta='left'>
-          Welcome to Your Training Dashboard
+          Welcome to Your Hybrid Training Dashboard 🚀
         </Text>
       </Container>
       {/* Tabs */}
