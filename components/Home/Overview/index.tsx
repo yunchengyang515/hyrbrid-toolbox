@@ -4,18 +4,24 @@
  * 2. Goals and dates
  * 3. Notes section, focus on periodization, including the Macrocycle, Mesocycle, and Microcycle
  */
-import { Container, Text } from '@mantine/core'
+import { Container, SimpleGrid, Text } from '@mantine/core'
 import RecentPrograms from '@/components/Home/Overview/RecentPrograms'
+import Periodization from './Periodization'
+import WeeklyReport from './WeeklyReport'
 
 export default function Overview() {
   return (
     <Container fluid>
-      {/* Section Header */}
-      <Text size='md' fw={700} mb='md'>
-        Recent Programs
-      </Text>
-
-      <RecentPrograms />
+      <SimpleGrid cols={1}>
+        <Text size='md' fw={700} mb='md'>
+          Recent Programs
+        </Text>
+        <RecentPrograms />
+      </SimpleGrid>
+      <SimpleGrid cols={2} spacing='md'>
+        <WeeklyReport />
+        <Periodization />
+      </SimpleGrid>
     </Container>
   )
 }
