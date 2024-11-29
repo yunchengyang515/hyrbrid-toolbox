@@ -1,7 +1,6 @@
 import type { ReactElement } from 'react'
 import { IconChartBar, IconListDetails } from '@tabler/icons-react'
 import { Container, rem, Tabs, Text } from '@mantine/core'
-import Calendar from '@/components/Calendar'
 import Overview from '@/components/Home/Overview'
 import { Layout } from '@/components/Layout'
 import type { NextPageWithLayout } from './_app'
