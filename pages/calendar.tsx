@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react'
-import { Container, Divider, Notification, Stack, Title } from '@mantine/core'
+import { Container, Notification, Stack } from '@mantine/core'
 import Calendar from '@/components/Calendar'
 import { Layout } from '@/components/Layout'
 import type { NextPageWithLayout } from './_app'
