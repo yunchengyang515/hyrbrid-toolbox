@@ -1,7 +1,6 @@
 import type { ReactElement } from 'react'
-import { IconCalendar, IconChartBar, IconListDetails } from '@tabler/icons-react'
+import { IconChartBar, IconListDetails } from '@tabler/icons-react'
 import { Container, rem, Tabs, Text } from '@mantine/core'
-import Calendar from '@/components/Home/Calendar'
 import Overview from '@/components/Home/Overview'
 import { Layout } from '@/components/Layout'
 import type { NextPageWithLayout } from './_app'
@@ -25,11 +24,8 @@ const HomePage: NextPageWithLayout = () => {
       <Container fluid px={0}>
         {' '}
         {/* Tabs container */}
-        <Tabs variant='outline' defaultValue='calendar'>
+        <Tabs variant='outline' defaultValue='overview'>
           <Tabs.List>
-            <Tabs.Tab value='calendar' leftSection={<IconCalendar style={iconStyle} />}>
-              Calendar
-            </Tabs.Tab>
             <Tabs.Tab value='overview' leftSection={<IconListDetails style={iconStyle} />}>
               Overview
             </Tabs.Tab>
@@ -41,12 +37,6 @@ const HomePage: NextPageWithLayout = () => {
           {/* Content for each tab */}
           <Tabs.Panel value='overview' pt='lg'>
             <Overview />
-          </Tabs.Panel>
-
-          <Tabs.Panel value='calendar'>
-            <Container fluid pt={20} px={0}>
-              <Calendar />
-            </Container>
           </Tabs.Panel>
 
           <Tabs.Panel value='analytics' pt='lg'>
