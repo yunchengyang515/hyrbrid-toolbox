@@ -1,7 +1,8 @@
 import type { ReactElement } from 'react'
 import { IconBarbell, IconBook, IconLayoutDashboard, IconTemplate } from '@tabler/icons-react'
-import { Container, rem, Tabs } from '@mantine/core'
+import { Container, rem, Tabs, Text } from '@mantine/core'
 import { Layout } from '@/components/Layout'
+import ExercisesTab from '@/components/Library/tabs/Exercise'
 import type { NextPageWithLayout } from './_app'
 
 const LibraryPage: NextPageWithLayout = () => {
@@ -9,11 +10,15 @@ const LibraryPage: NextPageWithLayout = () => {
 
   return (
     <Container fluid>
-      {/* Page Title */}
-      <Container fluid mb='xl'>
-        <h2>Training Library</h2>
+      {/* Welcoming Header */}
+      <Container fluid mb='xl' pl={0}>
+        <Text size='xl' fw={700} ta='left'>
+          Welcome to Your Training Library 📚
+        </Text>
+        <Text size='sm' ta='left'>
+          Customize your workouts, exercises, and programs to suit your training goals.
+        </Text>
       </Container>
-
       {/* Tabs */}
       <Tabs variant='outline' defaultValue='workouts'>
         <Tabs.List>
@@ -37,7 +42,7 @@ const LibraryPage: NextPageWithLayout = () => {
         </Tabs.Panel>
 
         <Tabs.Panel value='exercises' pt='md'>
-          <p>Exercises tab content goes here...</p>
+          <ExercisesTab />
         </Tabs.Panel>
 
         <Tabs.Panel value='templates' pt='md'>
