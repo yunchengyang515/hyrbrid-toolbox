@@ -1,11 +1,6 @@
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import {
-  IconCalendar,
-  IconChecklist,
-  IconCircuitChangeover,
-  IconDashboard,
-} from '@tabler/icons-react'
+import { IconBook, IconCalendar, IconDashboard } from '@tabler/icons-react'
 import { AppShell, Group, NavLink, Tooltip } from '@mantine/core'
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -26,16 +21,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
       description: 'View and manage your training schedule',
     },
     {
-      label: 'Programming',
-      icon: <IconCircuitChangeover size='1rem' stroke={1.5} />,
-      path: '/programming',
-      description: 'Customize your training program, workout and create new sessions',
-    },
-    {
-      label: 'Sessions',
-      icon: <IconChecklist size='1rem' stroke={1.5} />,
-      path: '/sessions',
-      description: 'View and manage your training sessions',
+      label: 'Library',
+      icon: <IconBook size='1rem' stroke={1.5} />,
+      path: '/library',
+      description: 'Explore and create workouts, exercises, and training programs',
     },
   ]
 
@@ -55,7 +44,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       {/* Sidebar Section */}
       <AppShell.Navbar p='md'>
         {links.map((link) => (
-          <Tooltip label={link.description}>
+          <Tooltip label={link.description} key={link.path}>
             <NavLink
               key={link.path}
               label={link.label}
