@@ -1,16 +1,11 @@
 import { useState } from 'react'
 import { Button, Group, Modal, MultiSelect, Select, Textarea, TextInput } from '@mantine/core'
+import { Exercise } from '@/types/Exercises'
 
 type ExerciseModalProps = {
   opened: boolean
   onClose: () => void
-  onSubmit: (exerciseData: {
-    name: string
-    description?: string
-    type: string
-    equipment: string[]
-    video_link?: string
-  }) => void
+  onSubmit: (exerciseData: Exercise) => void
   exerciseData?: {
     name: string
     description?: string
