@@ -3,6 +3,7 @@ import { IconBarbell, IconBook, IconLayoutDashboard, IconTemplate } from '@table
 import { Container, rem, Tabs, Text } from '@mantine/core'
 import { Layout } from '@/components/Layout'
 import ExercisesTab from '@/components/Library/tabs/Exercise'
+import WorkoutsTab from '@/components/Library/tabs/Workout'
 import type { NextPageWithLayout } from './_app'
 
 const LibraryPage: NextPageWithLayout = () => {
@@ -38,7 +39,7 @@ const LibraryPage: NextPageWithLayout = () => {
 
         {/* Tab Content Placeholders */}
         <Tabs.Panel value='workouts' pt='md'>
-          <p>Workouts tab content goes here...</p>
+          <WorkoutsTab />
         </Tabs.Panel>
 
         <Tabs.Panel value='exercises' pt='md'>

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Button, Group, Modal, MultiSelect, Select, Textarea, TextInput } from '@mantine/core'
-import { Exercise } from '@/types/Exercises'
+import { Exercise } from '@/types/Exercise'
 
 type ExerciseModalProps = {
   opened: boolean

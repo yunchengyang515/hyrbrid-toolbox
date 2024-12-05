@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { IconSearch } from '@tabler/icons-react'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
 import { mockExercises } from '@/testing/data/MockExercises'
-import { Exercise } from '@/types/Exercises'
+import { Exercise } from '@/types/Exercise'
 import ExerciseModal from '../modals/Exercise'
 
 export default function ExercisesTab() {
@@ -13,7 +13,7 @@ export default function ExercisesTab() {
   }
 
   return (
-    <Container fluid>
+    <Container fluid px={2}>
       {/* Add Exercise Button and Search Bar */}
       <Group justify='flex-start' align='center' mb='xl' wrap='wrap' gap='sm'>
         <Button
