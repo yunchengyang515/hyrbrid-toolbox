@@ -41,12 +41,45 @@ export default function ExerciseAccordion({
 }: ExerciseAccordionProps) {
   const exerciseData = mockExercises.find((e) => e.id === exercise.name)
 
+  // Generate a summary string for sets
+  const generateSetSummary = () => {
+    if (!exercise.sets.length) {
+      return 'No sets defined'
+    }
+
+    return exercise.sets
+      .map((set) => {
+        if (exercise.type === 'Running') {
+          if (set.duration && set.pace) {
+            return `${set.duration}@${set.pace}`
+          }
+        } else {
+          const base = `${set.reps}x${set.weight}kg`
+          return set.rest ? `${base} (Rest: ${set.rest}s)` : base
+        }
+        return null // Skip incomplete sets
+      })
+      .filter(Boolean) // Remove null entries
+      .join(', ')
+  }
+
   return (
     <Accordion.Item value={exercise.id}>
       <Accordion.Control>
         <Group justify='space-between' align='center'>
-          <Text>{exerciseData?.name || 'New Exercise'}</Text>
-          <Button variant='subtle' color='red' onClick={() => onRemove(exercise.id)}>
+          <div>
+            <Text>{exerciseData?.name || 'New Exercise'}</Text>
+            <Text size='sm' color='dimmed'>
+              {generateSetSummary()}
+            </Text>
+          </div>
+          <Button
+            variant='subtle'
+            color='red'
+            size='xs'
+            onClick={() => onRemove(exercise.id)}
+            style={{ alignSelf: 'center' }} // Ensures vertical alignment
+          >
             Remove
           </Button>
         </Group>
