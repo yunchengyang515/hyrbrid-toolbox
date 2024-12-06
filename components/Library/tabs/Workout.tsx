@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { IconSearch } from '@tabler/icons-react'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
-import WorkoutModal from '../modals/Workout'
+import WorkoutModal from '../modals/Workout/Workout'
 
 // Mock Workout Data
 const mockWorkouts = [
