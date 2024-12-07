@@ -22,13 +22,8 @@ interface ExerciseAccordionProps {
   mockExercises: Exercise[]
   onRemove: (id: string) => void
   onGenerateRows: (exerciseId: string, numberOfSets: number, exerciseType: string) => void
-  onInputChange: (
-    exerciseId: string,
-    index: number,
-    field: keyof SetDetail,
-    value: SetDetail[keyof SetDetail],
-  ) => void
   onExerciseChange: (exerciseId: string, name: string, type: string) => void
+  onSetDetailChange: (exerciseId: string, index: number, updatedFields: Partial<SetDetail>) => void
 }
 
 export default function ExerciseAccordion({
@@ -36,12 +31,11 @@ export default function ExerciseAccordion({
   mockExercises,
   onRemove,
   onGenerateRows,
-  onInputChange,
   onExerciseChange,
+  onSetDetailChange,
 }: ExerciseAccordionProps) {
   const exerciseData = mockExercises.find((e) => e.id === exercise.name)
 
-  // Generate a summary string for sets
   const generateSetSummary = () => {
     if (!exercise.sets.length) {
       return 'No sets defined'
@@ -54,12 +48,12 @@ export default function ExerciseAccordion({
             return `${set.duration}@${set.pace}`
           }
         } else {
-          const base = `${set.reps}x${set.weight}kg`
+          const base = `${set.reps || '?'}x${set.weight || '?'}kg`
           return set.rest ? `${base} (Rest: ${set.rest}s)` : base
         }
-        return null // Skip incomplete sets
+        return null
       })
-      .filter(Boolean) // Remove null entries
+      .filter(Boolean)
       .join(', ')
   }
 
@@ -77,15 +71,17 @@ export default function ExerciseAccordion({
             variant='subtle'
             color='red'
             size='xs'
-            onClick={() => onRemove(exercise.id)}
-            style={{ alignSelf: 'center' }} // Ensures vertical alignment
+            onClick={(e) => {
+              e.stopPropagation()
+              onRemove(exercise.id)
+            }}
+            style={{ alignSelf: 'center' }}
           >
             Remove
           </Button>
         </Group>
       </Accordion.Control>
       <Accordion.Panel>
-        {/* Select Exercise */}
         <Select
           label='Exercise'
           placeholder='Choose exercise'
@@ -95,11 +91,10 @@ export default function ExerciseAccordion({
           }))}
           value={exercise.name}
           onChange={(value) =>
-            onExerciseChange(exercise.id, value as string, exerciseData?.type || '')
+            onExerciseChange(exercise.id, value as string, exerciseData?.type || exercise.type)
           }
         />
 
-        {/* Number of Sets */}
         <NumberInput
           label='Number of Sets'
           placeholder='Enter sets'
@@ -113,7 +108,6 @@ export default function ExerciseAccordion({
           max={10}
         />
 
-        {/* Set Details */}
         {exercise.sets.length > 0 && (
           <>
             <Divider my='sm' label='Set Details' labelPosition='center' />
@@ -135,35 +129,41 @@ export default function ExerciseAccordion({
                     <>
                       <TextInput
                         label='Duration'
-                        value={set.duration}
+                        value={set.duration || ''}
                         onChange={(e) =>
-                          onInputChange(exercise.id, index, 'duration', e.target.value)
+                          onSetDetailChange(exercise.id, index, { duration: e.target.value })
                         }
                       />
                       <TextInput
                         label='Pace'
-                        value={set.pace}
-                        onChange={(e) => onInputChange(exercise.id, index, 'pace', e.target.value)}
+                        value={set.pace || ''}
+                        onChange={(e) =>
+                          onSetDetailChange(exercise.id, index, { pace: e.target.value })
+                        }
                       />
                     </>
                   ) : (
                     <>
                       <TextInput
                         label='Reps'
-                        value={set.reps}
-                        onChange={(e) => onInputChange(exercise.id, index, 'reps', e.target.value)}
+                        value={set.reps || ''}
+                        onChange={(e) =>
+                          onSetDetailChange(exercise.id, index, { reps: e.target.value })
+                        }
                       />
                       <TextInput
                         label='Weight'
-                        value={set.weight}
+                        value={set.weight || ''}
                         onChange={(e) =>
-                          onInputChange(exercise.id, index, 'weight', e.target.value)
+                          onSetDetailChange(exercise.id, index, { weight: e.target.value })
                         }
                       />
                       <TextInput
                         label='Rest'
-                        value={set.rest}
-                        onChange={(e) => onInputChange(exercise.id, index, 'rest', e.target.value)}
+                        value={set.rest || ''}
+                        onChange={(e) =>
+                          onSetDetailChange(exercise.id, index, { rest: e.target.value })
+                        }
                       />
                     </>
                   )}
