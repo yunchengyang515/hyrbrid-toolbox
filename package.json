@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "vercel dev",
+    "dev:next": "next dev",
     "build": "next build",
     "analyze": "ANALYZE=true next build",
     "start": "next start",
