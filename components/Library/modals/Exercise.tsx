@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import { Button, Group, Modal, MultiSelect, Select, Textarea, TextInput } from '@mantine/core'
+import { useForm } from '@mantine/form'
 import { Exercise } from '@/types/Exercise'
 
 type ExerciseModalProps = {
@@ -21,74 +21,80 @@ export default function ExerciseModal({
   onSubmit,
   exerciseData,
 }: ExerciseModalProps) {
-  const [name, setName] = useState(exerciseData?.name || '')
-  const [description, setDescription] = useState(exerciseData?.description || '')
-  const [type, setType] = useState(exerciseData?.type || '')
-  const [equipment, setEquipment] = useState<string[]>(exerciseData?.equipment || [])
-  const [videoLink, setVideoLink] = useState(exerciseData?.video_link || '')
+  const form = useForm({
+    initialValues: {
+      name: exerciseData?.name || '',
+      description: exerciseData?.description || '',
+      type: exerciseData?.type || '',
+      equipment: exerciseData?.equipment || [],
+      video_link: exerciseData?.video_link || '',
+    },
+    validate: {
+      name: (value) => (value.trim() !== '' ? null : 'Name is required'),
+      type: (value) => (value.trim() !== '' ? null : 'Type is required'),
+    },
+  })
 
-  const handleSubmit = () => {
-    if (!name || !type) {
-      console.log('Please fill out all required fields.')
-      return
-    }
+  const handleFormSubmit = (values: typeof form.values) => {
+    // Mock API call
+    console.log('Mock API call with:', values)
 
-    onSubmit({ name, description, type, equipment, video_link: videoLink })
+    // Call parent onSubmit to update state
+    onSubmit(values)
     onClose()
   }
 
   return (
     <Modal opened={opened} onClose={onClose} title='Create/Edit Exercise'>
-      {/* Form Fields */}
-      <TextInput
-        label='Exercise Name'
-        placeholder='Enter exercise name'
-        value={name}
-        onChange={(event) => setName(event.target.value)}
-        required
-        mb='sm'
-      />
-      <Textarea
-        label='Description'
-        placeholder='Enter a brief description (optional)'
-        value={description}
-        onChange={(event) => setDescription(event.target.value)}
-        mb='sm'
-      />
-      <Select
-        label='Type'
-        placeholder='Select exercise type'
-        data={['Strength', 'Cardio', 'Flexibility', 'Balance', 'Core']}
-        value={type}
-        onChange={(value) => setType(value || '')}
-        required
-        mb='sm'
-      />
-      <MultiSelect
-        label='Equipment'
-        placeholder='Select equipment used'
-        data={['Dumbbell', 'Barbell', 'Kettlebell', 'Resistance Band', 'Bodyweight']}
-        value={equipment}
-        onChange={setEquipment}
-        mb='sm'
-      />
-      <TextInput
-        label='Video Link'
-        placeholder='Paste video URL (optional)'
-        value={videoLink}
-        onChange={(event) => setVideoLink(event.target.value)}
-        mb='sm'
-      />
+      <form onSubmit={form.onSubmit(handleFormSubmit)}>
+        <TextInput
+          withAsterisk
+          label='Exercise Name'
+          placeholder='Enter exercise name'
+          {...form.getInputProps('name')}
+          mb='sm'
+        />
 
-      {/* Submit Button */}
-      <Group justify='flex-end' mt='lg'>
-        <Button variant='outline' onClick={onClose}>
-          Cancel
-        </Button>
-        <Button variant='filled' onClick={handleSubmit}>
-          Save
-        </Button>
-      </Group>
+        <Textarea
+          label='Description'
+          placeholder='Enter a brief description (optional)'
+          {...form.getInputProps('description')}
+          mb='sm'
+        />
+
+        <Select
+          withAsterisk
+          label='Type'
+          placeholder='Select exercise type'
+          data={['Strength', 'Cardio', 'Flexibility', 'Balance', 'Core']}
+          {...form.getInputProps('type')}
+          mb='sm'
+        />
+
+        <MultiSelect
+          label='Equipment'
+          placeholder='Select equipment used'
+          data={['Dumbbell', 'Barbell', 'Kettlebell', 'Resistance Band', 'Bodyweight']}
+          {...form.getInputProps('equipment')}
+          mb='sm'
+        />
+
+        <TextInput
+          label='Video Link'
+          placeholder='Paste video URL (optional)'
+          {...form.getInputProps('video_link')}
+          mb='sm'
+        />
+
+        <Group justify='flex-end' mt='lg'>
+          <Button variant='outline' onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant='filled' type='submit'>
+            Save
+          </Button>
+        </Group>
+      </form>
     </Modal>
   )
 }
