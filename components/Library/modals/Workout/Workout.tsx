@@ -10,10 +10,20 @@ import {
   Stack,
   TextInput,
 } from '@mantine/core'
+import { useForm } from '@mantine/form'
 import { mockExercises } from '@/testing/data/MockExercises'
 import { WorkoutFormData } from '@/types/Workout'
 import { SetDetail } from '@/types/WorkoutExercise'
-import ExerciseAccordion from './ExerciseAccordion' // Import the modularized component
+import ExerciseAccordion from './ExerciseAccordion'
+
+interface ExtendedWorkoutFormData extends WorkoutFormData {
+  exercises: {
+    id: string
+    name: string
+    sets: SetDetail[]
+    type: string
+  }[]
+}
 
 export default function WorkoutModal({
   opened,
@@ -22,37 +32,53 @@ export default function WorkoutModal({
   opened: boolean
   onClose: () => void
 }) {
-  const initialFormData: WorkoutFormData = {
-    name: '',
-    description: '',
-    duration_minute: undefined,
-    intensity: 5,
-    type: '',
-  }
-
   const [activeStep, setActiveStep] = useState(0)
-  const [workoutData, setWorkoutData] = useState<WorkoutFormData>(initialFormData)
-  const [exercises, setExercises] = useState<
-    { id: string; name: string; sets: SetDetail[]; type: string }[]
-  >([])
+
+  const form = useForm<ExtendedWorkoutFormData>({
+    initialValues: {
+      name: '',
+      description: '',
+      duration_minute: undefined,
+      intensity: 5,
+      type: '',
+      exercises: [],
+    },
+    validate: {
+      name: (value) => (value.trim() === '' ? 'Name is required' : null),
+      type: (value) => (value?.trim() === '' ? 'Type is required' : null),
+    },
+  })
 
   const handleAddExercise = () => {
-    setExercises([...exercises, { id: String(Date.now()), name: '', sets: [], type: '' }])
+    const newExercise = {
+      id: String(Date.now()),
+      name: '',
+      sets: [] as SetDetail[],
+      type: '',
+    }
+    form.setFieldValue('exercises', [...form.values.exercises, newExercise])
   }
 
   const handleRemoveExercise = (id: string) => {
-    setExercises((prev) => prev.filter((exercise) => exercise.id !== id))
+    form.setFieldValue(
+      'exercises',
+      form.values.exercises.filter((exercise) => exercise.id !== id),
+    )
   }
 
   const handleExerciseChange = (exerciseId: string, name: string, type: string) => {
-    setExercises((prev) =>
-      prev.map((exercise) => (exercise.id === exerciseId ? { ...exercise, name, type } : exercise)),
+    form.setFieldValue(
+      'exercises',
+      form.values.exercises.map((exercise) =>
+        exercise.id === exerciseId ? { ...exercise, name, type } : exercise,
+      ),
     )
   }
 
   const handleGenerateRows = (exerciseId: string, numberOfSets: number, exerciseType: string) => {
-    setExercises((prev) =>
-      prev.map((exercise) =>
+    form.setFieldValue(
+      'exercises',
+      form.values.exercises.map((exercise) =>
         exercise.id === exerciseId
           ? {
               ...exercise,
@@ -68,102 +94,108 @@ export default function WorkoutModal({
     )
   }
 
-  const handleInputChange = (
+  const handleSetDetailChange = (
     exerciseId: string,
-    index: number,
-    field: keyof SetDetail,
-    value: SetDetail[keyof SetDetail],
+    setIndex: number,
+    updatedFields: Partial<SetDetail>,
   ) => {
-    setExercises((prev) =>
-      prev.map((exercise) =>
+    form.setFieldValue(
+      'exercises',
+      form.values.exercises.map((exercise) =>
         exercise.id === exerciseId
           ? {
               ...exercise,
-              sets: exercise.sets.map((set, i) => (i === index ? { ...set, [field]: value } : set)),
+              sets: exercise.sets.map((set, i) =>
+                i === setIndex ? { ...set, ...updatedFields } : set,
+              ),
             }
           : exercise,
       ),
     )
   }
 
-  const handleSubmit = () => {
-    const workoutPayload = { ...workoutData, exercises }
-    console.log('Submit Workout:', workoutPayload)
+  const handleSubmit = form.onSubmit((values) => {
+    console.log('Submit Workout:', values)
     onClose()
-  }
+  })
 
   return (
-    <Modal opened={opened} onClose={onClose} title='Create/Edit Workout' size='xl' centered>
-      {/* Step 1: Workout Details */}
-      {activeStep === 0 && (
-        <Stack gap='md'>
-          <TextInput
-            label='Workout Name'
-            placeholder='Enter workout name'
-            required
-            value={workoutData.name}
-            onChange={(e) => setWorkoutData({ ...workoutData, name: e.currentTarget.value })}
-          />
-          <TextInput
-            label='Description'
-            placeholder='Enter workout description (optional)'
-            value={workoutData.description}
-            onChange={(e) => setWorkoutData({ ...workoutData, description: e.currentTarget.value })}
-          />
-          <NumberInput
-            label='Duration (minutes)'
-            placeholder='Enter duration in minutes'
-            value={workoutData.duration_minute}
-            onChange={(value) =>
-              setWorkoutData({
-                ...workoutData,
-                duration_minute: Number(value) || undefined,
-              })
-            }
-          />
-          <Select
-            label='Workout Type'
-            placeholder='Select workout type'
-            data={['Strength', 'Cardio', 'Core']}
-            value={workoutData.type}
-            onChange={(value) => setWorkoutData({ ...workoutData, type: value || '' })}
-          />
-        </Stack>
-      )}
-
-      {/* Step 2: Add Exercises */}
-      {activeStep === 1 && (
-        <Flex direction='column' gap='md'>
-          <Accordion>
-            {exercises.map((exercise) => (
-              <ExerciseAccordion
-                key={exercise.id}
-                exercise={exercise}
-                mockExercises={mockExercises}
-                onRemove={handleRemoveExercise}
-                onGenerateRows={handleGenerateRows}
-                onInputChange={handleInputChange}
-                onExerciseChange={handleExerciseChange}
-              />
-            ))}
-          </Accordion>
-          <Button variant='outline' onClick={handleAddExercise}>
-            + Add Exercise
-          </Button>
-        </Flex>
-      )}
-
-      {/* Navigation Buttons */}
-      <Group mt='md' grow>
-        {activeStep > 0 && <Button onClick={() => setActiveStep((prev) => prev - 1)}>Back</Button>}
-        {activeStep === 0 ? (
-          <Button onClick={() => setActiveStep((prev) => prev + 1)}>Next</Button>
-        ) : (
-          <Button color='blue' onClick={handleSubmit}>
-            Submit
-          </Button>
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title='Create/Edit Workout'
+      size='xl'
+      centered
+      closeOnClickOutside={false} // Temporarily disable outside click to ensure no accidental closes
+    >
+      <form onSubmit={handleSubmit}>
+        {activeStep === 0 && (
+          <Stack gap='md'>
+            <TextInput
+              label='Workout Name'
+              placeholder='Enter workout name'
+              required
+              {...form.getInputProps('name')}
+            />
+            <TextInput
+              label='Description'
+              placeholder='Enter workout description (optional)'
+              {...form.getInputProps('description')}
+            />
+            <NumberInput
+              label='Duration (minutes)'
+              placeholder='Enter duration in minutes'
+              {...form.getInputProps('duration_minute')}
+            />
+            <Select
+              label='Workout Type'
+              placeholder='Select workout type'
+              data={['Strength', 'Cardio', 'Core']}
+              {...form.getInputProps('type')}
+              required
+            />
+          </Stack>
         )}
-      </Group>
+
+        {activeStep === 1 && (
+          <Flex direction='column' gap='md'>
+            <Accordion>
+              {form.values.exercises.map((exercise) => (
+                <ExerciseAccordion
+                  key={exercise.id}
+                  exercise={exercise}
+                  mockExercises={mockExercises}
+                  onRemove={handleRemoveExercise}
+                  onGenerateRows={handleGenerateRows}
+                  onExerciseChange={handleExerciseChange}
+                  onSetDetailChange={handleSetDetailChange}
+                />
+              ))}
+            </Accordion>
+            <Button variant='outline' type='button' onClick={handleAddExercise}>
+              + Add Exercise
+            </Button>
+          </Flex>
+        )}
+
+        <Group mt='md' grow>
+          {activeStep === 0 && (
+            <Button variant='filled' type='button' onClick={() => setActiveStep(1)}>
+              Next
+            </Button>
+          )}
+          {activeStep > 0 && (
+            <>
+              <Button type='button' variant='outline' onClick={() => setActiveStep(0)}>
+                Back
+              </Button>
+              <Button variant='filled' type='submit'>
+                Submit
+              </Button>
+            </>
+          )}
+        </Group>
+      </form>
     </Modal>
   )
 }
