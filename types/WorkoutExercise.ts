@@ -6,3 +6,10 @@ export type SetDetail = {
   weight?: string
   rest?: string
 }
+
+export type WorkoutExercise = {
+  id: string
+  set_rep_detail: SetDetail[]
+  workout_id: number
+  exercise_id: number
+}
