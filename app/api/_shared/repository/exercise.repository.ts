@@ -1,6 +1,24 @@
 import { Exercise } from '@/types/Exercise'
 import { getDbClient } from '../db'
 
+export class ExerciseRepository {
+  async getAllExercises() {
+    return getAllExercises()
+  }
+  async getExerciseById(id: string) {
+    return getExerciseById(id)
+  }
+  async createExercise(exercise: Exercise) {
+    return createExercise(exercise)
+  }
+  async updateExercise(id: string, exercise: Exercise) {
+    return updateExercise(id, exercise)
+  }
+  async deleteExercise(id: string) {
+    return deleteExercise(id)
+  }
+}
+
 export const getAllExercises = async () => {
   const client = getDbClient()
   const { data: exercise, error } = await client.from('exercise').select('*')

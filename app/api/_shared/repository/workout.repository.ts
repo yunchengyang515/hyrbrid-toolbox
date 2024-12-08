@@ -1,6 +1,24 @@
 import { Workout } from '@/types/Workout'
 import { getDbClient } from '../db'
 
+export class WorkoutRepository {
+  async getAllWorkouts() {
+    return getAllWorkouts()
+  }
+  async getWorkoutById(id: string) {
+    return getWorkoutById(id)
+  }
+  async createWorkout(workout: Workout) {
+    return createWorkout(workout)
+  }
+  async updateWorkout(id: string, workout: Workout) {
+    return updateWorkout(id, workout)
+  }
+  async deleteWorkout(id: string) {
+    return deleteWorkout(id)
+  }
+}
+
 export const getAllWorkouts = async () => {
   const client = getDbClient()
   const { data: workout, error } = await client.from('workout').select('*')

@@ -1,4 +1,4 @@
-import { getAllExercises } from '../_shared/exercise/repository'
+import { getAllExercises } from '../_shared/repository/exercise.repository'
 
 export const dynamic = 'force-dynamic' // static by default, unless reading the request
 
