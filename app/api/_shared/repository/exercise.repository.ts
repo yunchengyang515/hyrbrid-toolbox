@@ -19,7 +19,7 @@ export class ExerciseRepository {
   }
 }
 
-export const getAllExercises = async () => {
+const getAllExercises = async () => {
   const client = getDbClient()
   const { data: exercise, error } = await client.from('exercise').select('*')
   if (error) {
@@ -28,7 +28,7 @@ export const getAllExercises = async () => {
   return exercise
 }
 
-export const getExerciseById = async (id: string) => {
+const getExerciseById = async (id: string) => {
   const client = getDbClient()
   const { data: exercise, error } = await client.from('exercise').select('*').eq('id', id).single()
   if (error) {
@@ -37,7 +37,7 @@ export const getExerciseById = async (id: string) => {
   return exercise
 }
 
-export const createExercise = async (exercise: Exercise) => {
+const createExercise = async (exercise: Exercise) => {
   const client = getDbClient()
   const { data, error } = await client.from('exercise').insert(exercise).single()
   if (error) {
@@ -46,7 +46,7 @@ export const createExercise = async (exercise: Exercise) => {
   return data
 }
 
-export const updateExercise = async (id: string, exercise: Exercise) => {
+const updateExercise = async (id: string, exercise: Exercise) => {
   const client = getDbClient()
   const { data, error } = await client
     .from('exercise')
@@ -59,7 +59,7 @@ export const updateExercise = async (id: string, exercise: Exercise) => {
   return data
 }
 
-export const deleteExercise = async (id: string) => {
+const deleteExercise = async (id: string) => {
   const client = getDbClient()
   const { data, error } = await client.from('exercise').delete().eq('id', id).single()
   if (error) {
