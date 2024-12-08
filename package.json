@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "dev:vercel": "vercel dev",
     "dev": "next dev",
     "build": "next build",
     "analyze": "ANALYZE=true next build",
@@ -35,6 +36,7 @@
     "@mantine/form": "^7.14.3",
     "@mantine/hooks": "7.14.1",
     "@next/bundle-analyzer": "^14.2.4",
+    "@supabase/supabase-js": "^2.47.2",
     "@tabler/icons-react": "^3.6.0",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
