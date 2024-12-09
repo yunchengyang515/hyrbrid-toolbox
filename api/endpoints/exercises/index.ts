@@ -1,9 +1,8 @@
-import { HTTP_METHODS } from 'next/dist/server/web/http'
-import type { Context } from '@netlify/functions'
 import { ExerciseController } from '@/api/controller/exercise.controller'
 import { ExerciseRepository } from '@/api/repository/exercise.repository'
+import { initializeHandler } from '@/api/services/handler-initialize.service'
+import { Endpoint } from '@/api/types'
 
-export const dynamic = 'force-dynamic' // static by default, unless reading the request
 const exerciseRepository = new ExerciseRepository()
 const exerciseController = new ExerciseController(exerciseRepository)
 
@@ -18,10 +17,9 @@ export async function POST(request: Request) {
   return new Response(JSON.stringify(exercise))
 }
 
-export default async (req: Request, _context: Context) => {
-  if (req.method === HTTP_METHODS[0]) {
-    return GET(req)
-  } else if (req.method === HTTP_METHODS[3]) {
-    return POST(req)
-  }
+const handler: Endpoint = {
+  GET,
+  POST,
 }
+
+export default initializeHandler(handler)
