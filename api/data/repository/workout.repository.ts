@@ -1,5 +1,5 @@
 import { Workout } from '@/types/Workout'
-import { getDbClient } from '../services/db.service'
+import { getDbClient } from '../db.service'
 
 export class WorkoutRepository {
   async getAllWorkouts() {

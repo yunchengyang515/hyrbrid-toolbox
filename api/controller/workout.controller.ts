@@ -1,5 +1,5 @@
 import { Workout } from '@/types/Workout'
-import { WorkoutRepository } from '../repository/workout.repository'
+import { WorkoutRepository } from '../data/repository/workout.repository'
 
 export class WorkoutController {
   repository: WorkoutRepository

@@ -1,5 +1,5 @@
 import { Exercise } from '@/types/Exercise'
-import { ExerciseRepository } from '../repository/exercise.repository'
+import { ExerciseRepository } from '../data/repository/exercise.repository'
 
 export class ExerciseController {
   repository: ExerciseRepository
