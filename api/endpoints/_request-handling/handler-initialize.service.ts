@@ -1,5 +1,5 @@
 import { Context } from '@netlify/functions'
-import { Endpoint } from '../types'
+import { Endpoint } from '../../types'
 
 export const initializeHandler = (endpoint: Endpoint) => {
   return async function handlerWrapper(request: Request, context: Context) {

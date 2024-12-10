@@ -1,6 +1,6 @@
 import { ExerciseController } from '@/api/controller/exercise.controller'
 import { ExerciseRepository } from '@/api/data/repository/exercise.repository'
-import { initializeHandler } from '@/api/request-handling/handler-initialize.service'
+import { initializeHandler } from '@/api/endpoints/_request-handling/handler-initialize.service'
 import { Endpoint } from '@/api/types'
 
 const exerciseRepository = new ExerciseRepository()
