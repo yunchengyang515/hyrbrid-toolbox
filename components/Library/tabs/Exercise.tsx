@@ -1,16 +1,27 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IconSearch } from '@tabler/icons-react'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
+import { ExerciseApiService } from '@/services/api/exercise.api.service'
 import { mockExercises } from '@/testing/data/MockExercises'
 import { Exercise } from '@/types/Exercise'
 import ExerciseModal from '../modals/Exercise'
 
 export default function ExercisesTab() {
+  const exerciseApiService = new ExerciseApiService()
   const [modalOpened, setModalOpened] = useState(false) // Modal state
-  const [exercises, setExercises] = useState(mockExercises)
+  const [exercises, setExercises] = useState<Exercise[]>([])
   const handleAddExercise = (newExercise: Exercise) => {
     setExercises([...exercises, newExercise])
   }
+
+  useEffect(() => {
+    const fetchExercises = async () => {
+      const response = await exerciseApiService.getAllExercises()
+      const data = await response.json()
+      setExercises(data)
+    }
+    fetchExercises()
+  }, [])
 
   return (
     <Container fluid px={2}>
