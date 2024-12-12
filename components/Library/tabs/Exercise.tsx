@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { IconSearch } from '@tabler/icons-react'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
 import { ExerciseApiService } from '@/services/api/exercise.api.service'
-import { mockExercises } from '@/testing/data/MockExercises'
 import { Exercise } from '@/types/Exercise'
 import ExerciseModal from '../modals/Exercise'
 
@@ -51,7 +50,7 @@ export default function ExercisesTab() {
 
       {/* Exercise Cards */}
       <Grid gutter='xl'>
-        {mockExercises.map((exercise: Exercise) => (
+        {exercises.map((exercise: Exercise) => (
           <Grid.Col key={exercise.id} span={4}>
             <Card shadow='sm' padding='lg' radius='md' withBorder h='160px'>
               {/* Header Section: Title + Badge */}
