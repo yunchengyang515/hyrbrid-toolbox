@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { IconSearch } from '@tabler/icons-react'
+import { from } from 'rxjs'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
 import { ExerciseApiService } from '@/services/api/exercise.api.service'
 import { Exercise } from '@/types/Exercise'
@@ -9,18 +10,18 @@ export default function ExercisesTab() {
   const exerciseApiService = new ExerciseApiService()
   const [modalOpened, setModalOpened] = useState(false) // Modal state
   const [exercises, setExercises] = useState<Exercise[]>([])
-  const handleAddExercise = (newExercise: Exercise) => {
+  const handleAddExercise = async (newExercise: Exercise) => {
     setExercises([...exercises, newExercise])
+    await exerciseApiService.createExercise(newExercise)
   }
 
   useEffect(() => {
-    const fetchExercises = async () => {
-      const response = await exerciseApiService.getAllExercises()
-      const data = await response.json()
-      setExercises(data)
-    }
-    fetchExercises()
-  }, [])
+    const sub = from(exerciseApiService.getAllExercises()).subscribe({
+      next: (data) => setExercises(data),
+      error: (err) => console.error('Failed to load exercises', err),
+    })
+    return () => sub.unsubscribe()
+  }, [exerciseApiService])
 
   return (
     <Container fluid px={2}>

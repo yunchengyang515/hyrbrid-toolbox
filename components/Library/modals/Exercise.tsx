@@ -37,7 +37,6 @@ export default function ExerciseModal({
 
   const handleFormSubmit = (values: typeof form.values) => {
     // Mock API call
-    console.log('Mock API call with:', values)
 
     // Call parent onSubmit to update state
     onSubmit(values)

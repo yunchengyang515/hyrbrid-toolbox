@@ -7,4 +7,10 @@ export abstract class ApiService {
   protected buildUrl(path: string[] = []) {
     return [this.baseUrl, this.resource, ...path].join('/')
   }
+  protected transformResponse<T>(response: Response) {
+    if (!response.ok) {
+      throw new Error(response.statusText)
+    }
+    return response.json() as Promise<T>
+  }
 }
