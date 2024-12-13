@@ -10,9 +10,18 @@ export default function ExercisesTab() {
   const exerciseApiService = new ExerciseApiService()
   const [modalOpened, setModalOpened] = useState(false) // Modal state
   const [exercises, setExercises] = useState<Exercise[]>([])
-  const handleAddExercise = async (newExercise: Exercise) => {
-    setExercises([...exercises, newExercise])
-    await exerciseApiService.createExercise(newExercise)
+  const handleAddExercise = (newExercise: Exercise) => {
+    const rollbackState = exercises
+
+    from(exerciseApiService.createExercise(newExercise)).subscribe({
+      next: () => {
+        setExercises([...exercises, newExercise])
+      },
+      error: (err) => {
+        console.error('Failed to create exercise', err)
+        setExercises(rollbackState)
+      },
+    })
   }
 
   useEffect(() => {
@@ -21,7 +30,7 @@ export default function ExercisesTab() {
       error: (err) => console.error('Failed to load exercises', err),
     })
     return () => sub.unsubscribe()
-  }, [exerciseApiService])
+  }, [])
 
   return (
     <Container fluid px={2}>
