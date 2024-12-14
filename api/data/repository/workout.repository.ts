@@ -1,43 +1,49 @@
 import { Workout } from '@/types/Workout'
 import { getDbClient } from '../db.service'
+import { AbstractRepository } from './abstract.repository'
 
-export class WorkoutRepository {
+export class WorkoutRepository extends AbstractRepository {
   async getAllWorkouts() {
-    return getAllWorkouts()
+    return getAllWorkouts(this.currentUserId)
   }
   async getWorkoutById(id: string) {
-    return getWorkoutById(id)
+    return getWorkoutById(id, this.currentUserId)
   }
   async createWorkout(workout: Workout) {
     return createWorkout(workout)
   }
   async updateWorkout(id: string, workout: Workout) {
-    return updateWorkout(id, workout)
+    return updateWorkout(id, workout, this.currentUserId)
   }
   async deleteWorkout(id: string) {
-    return deleteWorkout(id)
+    return deleteWorkout(id, this.currentUserId)
   }
 }
 
-export const getAllWorkouts = async () => {
+const getAllWorkouts = async (userId: string) => {
   const client = getDbClient()
-  const { data: workout, error } = await client.from('workout').select('*')
+  const { data: workout, error } = await client.from('workout').select('*').eq('user_id', userId)
   if (error) {
     throw new Error(error.message)
   }
   return workout
 }
 
-export const getWorkoutById = async (id: string) => {
+const getWorkoutById = async (id: string, userId: string) => {
   const client = getDbClient()
-  const { data: workout, error } = await client.from('workout').select('*').eq('id', id).single()
+  const { data: workout, error } = await client
+    .from('workout')
+    .select('*')
+    .eq('id', id)
+    .eq('user_id', userId)
+    .single()
   if (error) {
     throw new Error(error.message)
   }
   return workout
 }
 
-export const createWorkout = async (workout: Workout) => {
+const createWorkout = async (workout: Workout) => {
   const client = getDbClient()
   const { data, error } = await client.from('workout').insert(workout).single()
   if (error) {
@@ -46,12 +52,13 @@ export const createWorkout = async (workout: Workout) => {
   return data
 }
 
-export const updateWorkout = async (id: string, workout: Workout) => {
+const updateWorkout = async (id: string, workout: Workout, userId: string) => {
   const client = getDbClient()
   const { data, error } = await client
     .from('workout')
     .update({ ...workout, id })
     .eq('id', id)
+    .eq('user_id', userId)
     .single()
   if (error) {
     throw new Error(error.message)
@@ -59,9 +66,14 @@ export const updateWorkout = async (id: string, workout: Workout) => {
   return data
 }
 
-export const deleteWorkout = async (id: string) => {
+const deleteWorkout = async (id: string, userId: string) => {
   const client = getDbClient()
-  const { data, error } = await client.from('workout').delete().eq('id', id).single()
+  const { data, error } = await client
+    .from('workout')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', userId)
+    .single()
   if (error) {
     throw new Error(error.message)
   }
