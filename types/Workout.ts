@@ -7,6 +7,7 @@ export type Workout = {
   duration_minute?: number
   intensity?: number
   type?: string
+  user_id: string
 }
 
 // Represents the editable Workout data used in forms (no ID or timestamps needed)

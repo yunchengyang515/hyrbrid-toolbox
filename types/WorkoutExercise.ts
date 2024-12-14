@@ -12,4 +12,5 @@ export type WorkoutExercise = {
   set_rep_detail: SetDetail[]
   workout_id: number
   exercise_id: number
+  user_id: string
 }

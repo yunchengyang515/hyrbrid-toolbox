@@ -5,4 +5,5 @@ export type Exercise = {
   type: string
   video_link?: string
   equipment?: string[]
+  user_id: string
 }
