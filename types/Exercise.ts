@@ -7,3 +7,5 @@ export type Exercise = {
   equipment?: string[]
   user_id: string
 }
+
+export type ExerciseFormData = Omit<Exercise, 'id' | 'user_id'>
