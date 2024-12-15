@@ -8,12 +8,14 @@ export const mockExercises: Exercise[] = [
     type: 'Strength',
     video_link: 'https://example.com/squat-video',
     equipment: ['Barbell', 'Squat Rack'],
+    user_id: '1',
   },
   {
     id: '2',
     name: 'Push-Up',
     type: 'Bodyweight',
     description: 'A bodyweight exercise targeting the chest, shoulders, and triceps.',
+    user_id: '1',
   },
   {
     id: '3',
@@ -21,6 +23,7 @@ export const mockExercises: Exercise[] = [
     type: 'Core',
     description: 'An isometric core exercise.',
     equipment: [],
+    user_id: '1',
   },
   {
     id: '4',
@@ -28,5 +31,6 @@ export const mockExercises: Exercise[] = [
     type: 'Cardio',
     video_link: 'https://example.com/kb-swing-video',
     equipment: ['Kettlebell'],
+    user_id: '1',
   },
 ]

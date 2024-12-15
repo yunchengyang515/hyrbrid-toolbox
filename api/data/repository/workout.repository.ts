@@ -49,7 +49,7 @@ const createWorkout = async (workout: Partial<Workout>, userId: string) => {
     ...workout,
     user_id: userId,
   }
-  const { data, error } = await client
+  const { error } = await client
     .from('workout')
     .insert({
       ...workout,
