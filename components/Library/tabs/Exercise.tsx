@@ -1,16 +1,37 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IconSearch } from '@tabler/icons-react'
+import { from } from 'rxjs'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
-import { mockExercises } from '@/testing/data/MockExercises'
-import { Exercise } from '@/types/Exercise'
+import { ExerciseApiService } from '@/services/api/exercise.api.service'
+import { Exercise, ExerciseFormData } from '@/types/Exercise'
 import ExerciseModal from '../modals/Exercise'
 
 export default function ExercisesTab() {
+  const exerciseApiService = new ExerciseApiService()
   const [modalOpened, setModalOpened] = useState(false) // Modal state
-  const [exercises, setExercises] = useState(mockExercises)
-  const handleAddExercise = (newExercise: Exercise) => {
-    setExercises([...exercises, newExercise])
+  const [exercises, setExercises] = useState<Exercise[]>([])
+  const handleAddExercise = (newExercise: ExerciseFormData) => {
+    const rollbackState = exercises
+
+    from(exerciseApiService.createExercise(newExercise)).subscribe({
+      next: (newExercise: Exercise) => {
+        console.log('Exercise created', newExercise)
+        setExercises([...exercises, newExercise])
+      },
+      error: (err) => {
+        console.error('Failed to create exercise', err)
+        setExercises(rollbackState)
+      },
+    })
   }
+
+  useEffect(() => {
+    const sub = from(exerciseApiService.getAllExercises()).subscribe({
+      next: (data) => setExercises(data),
+      error: (err) => console.error('Failed to load exercises', err),
+    })
+    return () => sub.unsubscribe()
+  }, [])
 
   return (
     <Container fluid px={2}>
@@ -40,7 +61,7 @@ export default function ExercisesTab() {
 
       {/* Exercise Cards */}
       <Grid gutter='xl'>
-        {mockExercises.map((exercise: Exercise) => (
+        {exercises.map((exercise: Exercise) => (
           <Grid.Col key={exercise.id} span={4}>
             <Card shadow='sm' padding='lg' radius='md' withBorder h='160px'>
               {/* Header Section: Title + Badge */}

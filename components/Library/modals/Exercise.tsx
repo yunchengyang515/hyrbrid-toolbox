@@ -1,11 +1,11 @@
 import { Button, Group, Modal, MultiSelect, Select, Textarea, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { Exercise } from '@/types/Exercise'
+import { ExerciseFormData } from '@/types/Exercise'
 
 type ExerciseModalProps = {
   opened: boolean
   onClose: () => void
-  onSubmit: (exerciseData: Exercise) => void
+  onSubmit: (exerciseData: ExerciseFormData) => void
   exerciseData?: {
     name: string
     description?: string
@@ -37,7 +37,6 @@ export default function ExerciseModal({
 
   const handleFormSubmit = (values: typeof form.values) => {
     // Mock API call
-    console.log('Mock API call with:', values)
 
     // Call parent onSubmit to update state
     onSubmit(values)
