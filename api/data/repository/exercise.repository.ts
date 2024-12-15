@@ -45,7 +45,11 @@ const getExerciseById = async (id: string, userId: string) => {
 
 const createExercise = async (exercise: Partial<Exercise>, userId: string) => {
   const client = getDbClient()
-  const { data, error } = await client
+  const newExercise = {
+    ...exercise,
+    user_id: userId,
+  }
+  const { error } = await client
     .from('exercise')
     .insert({
       ...exercise,
@@ -55,7 +59,7 @@ const createExercise = async (exercise: Partial<Exercise>, userId: string) => {
   if (error) {
     throw new Error(error.message)
   }
-  return data
+  return newExercise
 }
 
 const updateExercise = async (id: string, exercise: Exercise, userId: string) => {

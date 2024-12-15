@@ -3,18 +3,19 @@ import { IconSearch } from '@tabler/icons-react'
 import { from } from 'rxjs'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
 import { ExerciseApiService } from '@/services/api/exercise.api.service'
-import { Exercise } from '@/types/Exercise'
+import { Exercise, ExerciseFormData } from '@/types/Exercise'
 import ExerciseModal from '../modals/Exercise'
 
 export default function ExercisesTab() {
   const exerciseApiService = new ExerciseApiService()
   const [modalOpened, setModalOpened] = useState(false) // Modal state
   const [exercises, setExercises] = useState<Exercise[]>([])
-  const handleAddExercise = (newExercise: Exercise) => {
+  const handleAddExercise = (newExercise: ExerciseFormData) => {
     const rollbackState = exercises
 
     from(exerciseApiService.createExercise(newExercise)).subscribe({
-      next: () => {
+      next: (newExercise: Exercise) => {
+        console.log('Exercise created', newExercise)
         setExercises([...exercises, newExercise])
       },
       error: (err) => {

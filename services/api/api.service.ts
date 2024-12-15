@@ -1,4 +1,4 @@
-export abstract class ApiService {
+export abstract class AbstractApiService {
   baseUrl: string
   resource: string = ''
   constructor() {
