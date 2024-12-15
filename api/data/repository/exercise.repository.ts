@@ -9,8 +9,8 @@ export class ExerciseRepository extends AbstractRepository {
   async getExerciseById(id: string) {
     return getExerciseById(id, this.currentUserId)
   }
-  async createExercise(exercise: Exercise) {
-    return createExercise(exercise)
+  async createExercise(exercise: Partial<Exercise>) {
+    return createExercise(exercise, this.currentUserId)
   }
   async updateExercise(id: string, exercise: Exercise) {
     return updateExercise(id, exercise, this.currentUserId)
@@ -43,9 +43,15 @@ const getExerciseById = async (id: string, userId: string) => {
   return exercise
 }
 
-const createExercise = async (exercise: Exercise) => {
+const createExercise = async (exercise: Partial<Exercise>, userId: string) => {
   const client = getDbClient()
-  const { data, error } = await client.from('exercise').insert(exercise).single()
+  const { data, error } = await client
+    .from('exercise')
+    .insert({
+      ...exercise,
+      user_id: userId,
+    })
+    .single()
   if (error) {
     throw new Error(error.message)
   }

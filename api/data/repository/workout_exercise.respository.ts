@@ -10,7 +10,7 @@ export class WorkoutExerciseRepository extends AbstractRepository {
     return getWorkoutExerciseById(id, this.currentUserId)
   }
   async createWorkoutExercise(workoutExercise: WorkoutExercise) {
-    return createWorkoutExercise(workoutExercise)
+    return createWorkoutExercise(workoutExercise, this.currentUserId)
   }
   async updateWorkoutExercise(id: string, workoutExercise: WorkoutExercise) {
     return updateWorkoutExercise(id, workoutExercise, this.currentUserId)
@@ -46,9 +46,18 @@ export const getWorkoutExerciseById = async (id: string, userId: string) => {
   return workoutExercise
 }
 
-export const createWorkoutExercise = async (workoutExercise: WorkoutExercise) => {
+export const createWorkoutExercise = async (
+  workoutExercise: Partial<WorkoutExercise>,
+  userId: string,
+) => {
   const client = getDbClient()
-  const { data, error } = await client.from('workout_exercise').insert(workoutExercise).single()
+  const { data, error } = await client
+    .from('workout_exercise')
+    .insert({
+      ...workoutExercise,
+      user_id: userId,
+    })
+    .single()
   if (error) {
     throw new Error(error.message)
   }
