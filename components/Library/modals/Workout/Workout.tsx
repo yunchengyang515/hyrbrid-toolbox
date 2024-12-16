@@ -19,9 +19,11 @@ import ExerciseAccordion from './ExerciseAccordion'
 export default function WorkoutModal({
   opened,
   onClose,
+  onSubmit,
 }: {
   opened: boolean
   onClose: () => void
+  onSubmit: (exerciseData: WorkoutFormData) => void
 }) {
   const [activeStep, setActiveStep] = useState(0)
 
@@ -106,10 +108,9 @@ export default function WorkoutModal({
   }
 
   const handleSubmit = form.onSubmit((values) => {
-    console.log('Submit Workout:', values)
+    onSubmit(values)
     onClose()
   })
-
   return (
     <Modal
       opened={opened}

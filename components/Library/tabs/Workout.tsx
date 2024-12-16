@@ -3,7 +3,7 @@ import { IconSearch } from '@tabler/icons-react'
 import { from } from 'rxjs'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
 import { WorkoutApiService } from '@/services/api/workout.api.service'
-import { Workout } from '@/types/Workout'
+import { Workout, WorkoutFormData } from '@/types/Workout'
 import WorkoutModal from '../modals/Workout/Workout'
 
 // Mock Workout Data
@@ -27,6 +27,21 @@ export default function WorkoutsTab() {
     // Cleanup subscription on unmount
     return () => sub.unsubscribe()
   }, [])
+
+  const handleAddWorkout = (newWorkout: WorkoutFormData) => {
+    const rollbackState = workouts
+
+    from(workoutApiService.createWorkout(newWorkout)).subscribe({
+      next: (newWorkout: Workout) => {
+        console.log('Workout created:', newWorkout)
+        setWorkouts([...workouts, newWorkout])
+      },
+      error: (err) => {
+        console.error('Failed to create workout:', err)
+        setWorkouts(rollbackState)
+      },
+    })
+  }
   return (
     <Container fluid px={2}>
       {/* Add Workout Button and Search Bar */}
@@ -44,7 +59,11 @@ export default function WorkoutsTab() {
         />
       </Group>
 
-      <WorkoutModal opened={modalOpened} onClose={() => setModalOpened(false)} />
+      <WorkoutModal
+        opened={modalOpened}
+        onClose={() => setModalOpened(false)}
+        onSubmit={handleAddWorkout}
+      />
       {/* Workout Cards */}
       <Grid gutter='xl'>
         {workouts.map((workout) => (
