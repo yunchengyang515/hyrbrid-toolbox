@@ -4,7 +4,7 @@ import { AbstractApiService } from './api.service'
 export class WorkoutApiService extends AbstractApiService {
   constructor() {
     super()
-    this.resource = 'exercises'
+    this.resource = 'workout'
   }
   async getAllWorkouts() {
     return this.transformResponse<Workout[]>(await fetch(this.buildUrl()))
