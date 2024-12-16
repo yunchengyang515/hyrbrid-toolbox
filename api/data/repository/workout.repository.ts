@@ -52,7 +52,11 @@ const createWorkout = async (workout: Partial<Workout>, userId: string) => {
   const { error } = await client
     .from('workout')
     .insert({
-      ...workout,
+      name: workout.name,
+      description: workout.description,
+      duration_minute: workout.duration_minute,
+      intensity: workout.intensity,
+      type: workout.type,
       user_id: userId,
     })
     .single()
