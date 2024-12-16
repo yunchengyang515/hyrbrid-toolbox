@@ -1,44 +1,47 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IconSearch } from '@tabler/icons-react'
+import { from } from 'rxjs'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
+import { WorkoutApiService } from '@/services/api/workout.api.service'
+import { Workout, WorkoutFormData } from '@/types/Workout'
 import WorkoutModal from '../modals/Workout/Workout'
 
 // Mock Workout Data
-const mockWorkouts = [
-  {
-    id: '1',
-    name: 'Full Body Strength',
-    description: 'A high-intensity strength training session.',
-    duration_minute: 60,
-    intensity: 8,
-    type: 'Strength',
-  },
-  {
-    id: '2',
-    name: 'Cardio Blast',
-    description: 'A quick and intense cardio workout.',
-    duration_minute: 30,
-    intensity: 7,
-    type: 'Cardio',
-  },
-  {
-    id: '3',
-    name: 'Core Stability',
-    description: 'Focus on core strength and stability.',
-    duration_minute: 45,
-    intensity: 6,
-    type: 'Core',
-  },
-]
+
+const workoutApiService = new WorkoutApiService()
 
 export default function WorkoutsTab() {
   const [search, setSearch] = useState('')
   const [modalOpened, setModalOpened] = useState(false)
   // Filter workouts based on search input
-  const filteredWorkouts = mockWorkouts.filter((workout) =>
-    workout.name.toLowerCase().includes(search.toLowerCase()),
-  )
 
+  const [workouts, setWorkouts] = useState<Workout[]>([])
+
+  useEffect(() => {
+    // Convert the Promise returned by getAllWorkouts() to an Observable using from()
+    const sub = from(workoutApiService.getAllWorkouts()).subscribe({
+      next: (data: Workout[]) => setWorkouts(data),
+      error: (err) => console.error('Failed to load workouts:', err),
+    })
+
+    // Cleanup subscription on unmount
+    return () => sub.unsubscribe()
+  }, [])
+
+  const handleAddWorkout = (newWorkout: WorkoutFormData) => {
+    const rollbackState = workouts
+
+    from(workoutApiService.createWorkout(newWorkout)).subscribe({
+      next: (newWorkout: Workout) => {
+        console.log('Workout created:', newWorkout)
+        setWorkouts([...workouts, newWorkout])
+      },
+      error: (err) => {
+        console.error('Failed to create workout:', err)
+        setWorkouts(rollbackState)
+      },
+    })
+  }
   return (
     <Container fluid px={2}>
       {/* Add Workout Button and Search Bar */}
@@ -56,10 +59,14 @@ export default function WorkoutsTab() {
         />
       </Group>
 
-      <WorkoutModal opened={modalOpened} onClose={() => setModalOpened(false)} />
+      <WorkoutModal
+        opened={modalOpened}
+        onClose={() => setModalOpened(false)}
+        onSubmit={handleAddWorkout}
+      />
       {/* Workout Cards */}
       <Grid gutter='xl'>
-        {filteredWorkouts.map((workout) => (
+        {workouts.map((workout) => (
           <Grid.Col key={workout.id} span={4}>
             <Card shadow='sm' padding='lg' radius='md' withBorder h='200px'>
               {/* Header Section: Title + Badge */}

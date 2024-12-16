@@ -16,25 +16,18 @@ import { WorkoutFormData } from '@/types/Workout'
 import { SetDetail } from '@/types/WorkoutExercise'
 import ExerciseAccordion from './ExerciseAccordion'
 
-interface ExtendedWorkoutFormData extends WorkoutFormData {
-  exercises: {
-    id: string
-    name: string
-    sets: SetDetail[]
-    type: string
-  }[]
-}
-
 export default function WorkoutModal({
   opened,
   onClose,
+  onSubmit,
 }: {
   opened: boolean
   onClose: () => void
+  onSubmit: (exerciseData: WorkoutFormData) => void
 }) {
   const [activeStep, setActiveStep] = useState(0)
 
-  const form = useForm<ExtendedWorkoutFormData>({
+  const form = useForm<WorkoutFormData>({
     initialValues: {
       name: '',
       description: '',
@@ -115,10 +108,9 @@ export default function WorkoutModal({
   }
 
   const handleSubmit = form.onSubmit((values) => {
-    console.log('Submit Workout:', values)
+    onSubmit(values)
     onClose()
   })
-
   return (
     <Modal
       opened={opened}
