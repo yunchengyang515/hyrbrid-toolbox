@@ -1,24 +1,36 @@
 import { Workout } from '@/types/Workout'
+import { WorkoutExerciseRepository } from '../data/repository/workout_exercise.respository'
 import { WorkoutRepository } from '../data/repository/workout.repository'
 
 export class WorkoutController {
-  repository: WorkoutRepository
-  constructor(repository: WorkoutRepository) {
-    this.repository = repository
+  workoutRepository: WorkoutRepository
+  workoutExerciseRepository: WorkoutExerciseRepository
+  constructor(
+    workoutRepository: WorkoutRepository,
+    workoutExerciseRepository: WorkoutExerciseRepository,
+  ) {
+    this.workoutRepository = workoutRepository
+    this.workoutExerciseRepository = workoutExerciseRepository
   }
   async getAllWorkouts() {
-    return this.repository.getAllWorkouts()
+    const workouts = await this.workoutRepository.getAllWorkouts()
+    return Promise.all(workouts.map(this.mergeWorkoutWithExercises.bind(this)))
   }
   async getWorkoutById(id: string) {
-    return this.repository.getWorkoutById(id)
+    return this.mergeWorkoutWithExercises(await this.workoutRepository.getWorkoutById(id))
   }
   async createWorkout(workout: Workout) {
-    return this.repository.createWorkout(workout)
+    return this.workoutRepository.createWorkout(workout)
   }
   async updateWorkout(id: string, workout: Workout) {
-    return this.repository.updateWorkout(id, workout)
+    return this.workoutRepository.updateWorkout(id, workout)
   }
   async deleteWorkout(id: string) {
-    return this.repository.deleteWorkout(id)
+    return this.workoutRepository.deleteWorkout(id)
+  }
+
+  async mergeWorkoutWithExercises(workout: Workout) {
+    const exercises = await this.workoutExerciseRepository.getWorkoutExerciseByWorkoutId(workout.id)
+    return { ...workout, exercises }
   }
 }

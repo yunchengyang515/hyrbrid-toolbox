@@ -30,10 +30,9 @@ export default function WorkoutsTab() {
 
   const handleAddWorkout = (newWorkout: WorkoutFormData) => {
     const rollbackState = workouts
-
+    console.log('Creating workout:', newWorkout)
     from(workoutApiService.createWorkout(newWorkout)).subscribe({
       next: (newWorkout: Workout) => {
-        console.log('Workout created:', newWorkout)
         setWorkouts([...workouts, newWorkout])
       },
       error: (err) => {

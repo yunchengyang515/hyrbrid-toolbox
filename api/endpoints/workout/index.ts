@@ -1,10 +1,12 @@
 import { WorkoutController } from '@/api/controller/workout.controller'
+import { WorkoutExerciseRepository } from '@/api/data/repository/workout_exercise.respository'
 import { WorkoutRepository } from '@/api/data/repository/workout.repository'
 import { initializeHandler } from '@/api/endpoints/_request-handling/handler-initialize.service'
 import { Endpoint } from '@/api/types'
 
 const workoutRepository = new WorkoutRepository()
-const workoutController = new WorkoutController(workoutRepository)
+const workoutExerciseRepository = new WorkoutExerciseRepository()
+const workoutController = new WorkoutController(workoutRepository, workoutExerciseRepository)
 
 export async function GET(_request: Request) {
   const exercises = await workoutController.getAllWorkouts()
