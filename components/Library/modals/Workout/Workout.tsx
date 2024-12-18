@@ -81,18 +81,21 @@ export default function WorkoutModal({
             required
             {...form.getInputProps('name')}
             disabled={disableFields}
+            value={initialValues.name}
           />
           <TextInput
             label='Description'
             placeholder='Enter workout description (optional)'
             {...form.getInputProps('description')}
             disabled={disableFields}
+            value={initialValues.description}
           />
           <NumberInput
             label='Duration (minutes)'
             placeholder='Enter duration in minutes'
             {...form.getInputProps('duration_minute')}
             disabled={disableFields}
+            value={initialValues.duration_minute}
           />
           <Select
             label='Workout Type'
@@ -101,6 +104,7 @@ export default function WorkoutModal({
             {...form.getInputProps('type')}
             required
             disabled={disableFields}
+            value={initialValues.type}
           />
         </Stack>
 
