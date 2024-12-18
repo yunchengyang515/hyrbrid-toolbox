@@ -56,9 +56,6 @@ export default function WorkoutsTab() {
     setModalOpened(false)
   }
 
-  // If selectedWorkout is defined, we are viewing an existing workout (view mode)
-  const viewMode = selectedWorkout !== undefined
-
   const filteredWorkouts = workouts.filter((w) =>
     w.name.toLowerCase().includes(search.toLowerCase()),
   )
@@ -86,7 +83,6 @@ export default function WorkoutsTab() {
         onClose={closeModal}
         onSubmit={handleAddWorkout} // Only used when creating a new workout (not view mode)
         workoutData={selectedWorkout} // if defined, view mode; if undefined, create mode
-        viewMode={viewMode}
       />
 
       {/* Workout Cards */}

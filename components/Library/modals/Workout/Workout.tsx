@@ -1,17 +1,12 @@
 import { useState } from 'react'
-import { from } from 'rxjs'
 import { Button, Group, Modal, NumberInput, Select, Stack, Text, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { WorkoutApiService } from '@/services/api/workout.api.service'
 import { WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
-
-const workoutApiService = new WorkoutApiService()
 
 interface WorkoutModalProps {
   opened: boolean
   onClose: () => void
   onSubmit: (exerciseData: WorkoutFormData) => void // for create mode
-  onUpdate: (updatedWorkout: WorkoutWithExercises) => void // for edit mode
   workoutData?: WorkoutWithExercises // undefined means create mode, defined means view mode
 }
 
@@ -19,7 +14,6 @@ export default function WorkoutModal({
   opened,
   onClose,
   onSubmit,
-  onUpdate,
   workoutData,
 }: WorkoutModalProps) {
   const isCreateMode = workoutData === undefined
@@ -57,16 +51,6 @@ export default function WorkoutModal({
   const handleCreateSubmit = form.onSubmit((values) => {
     onSubmit(values)
     onClose()
-  })
-
-  const handleEditSubmit = form.onSubmit((values) => {
-    from(workoutApiService.updateWorkout(workoutData!.id!, values)).subscribe({
-      next: (updated: WorkoutWithExercises) => {
-        onUpdate(updated)
-        setEditMode(false)
-      },
-      error: (err) => console.error('Failed to update workout:', err),
-    })
   })
 
   const requiredIfNotView = !isViewMode // Only show required if not in view mode
@@ -190,7 +174,7 @@ export default function WorkoutModal({
 
   return (
     <Modal opened={opened} onClose={onClose} title='Workout Details' size='xl' centered>
-      <form onSubmit={isCreateMode ? handleCreateSubmit : handleEditSubmit}>
+      <form onSubmit={handleCreateSubmit}>
         {activeStep === 0 && (
           <Stack gap='md'>
             <TextInput
