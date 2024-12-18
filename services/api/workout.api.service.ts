@@ -20,4 +20,9 @@ export class WorkoutApiService extends AbstractApiService {
     })
     return this.transformResponse<Workout>(await response)
   }
+
+  async updateWorkout(id: string, workout: WorkoutFormData): Promise<Workout> {
+    //update workout pseudo code
+    return {} as Workout
+  }
 }
