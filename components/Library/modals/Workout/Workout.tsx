@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { from } from 'rxjs'
-import { Button, Group, Modal, NumberInput, Select, Stack, TextInput } from '@mantine/core'
+import { Button, Group, Modal, NumberInput, Select, Stack, Text, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { WorkoutApiService } from '@/services/api/workout.api.service'
-import { Workout, WorkoutFormData } from '@/types/Workout'
+import { WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
 
 const workoutApiService = new WorkoutApiService()
 
@@ -11,8 +11,8 @@ interface WorkoutModalProps {
   opened: boolean
   onClose: () => void
   onSubmit: (exerciseData: WorkoutFormData) => void // for create mode
-  onUpdate: (updatedWorkout: Workout) => void // for edit mode
-  workoutData?: Workout // null means create mode, workout means view mode
+  onUpdate: (updatedWorkout: WorkoutWithExercises) => void // for edit mode
+  workoutData?: WorkoutWithExercises // undefined means create mode, defined means view mode
 }
 
 export default function WorkoutModal({
@@ -22,9 +22,10 @@ export default function WorkoutModal({
   onUpdate,
   workoutData,
 }: WorkoutModalProps) {
-  const isCreateMode = !workoutData
-  const isViewMode = workoutData && !isCreateMode // If workoutData is defined, start in view mode
+  const isCreateMode = workoutData === undefined
+  const isViewMode = workoutData !== undefined && !isCreateMode
   const [editMode, setEditMode] = useState(false)
+  const [activeStep, setActiveStep] = useState(0)
 
   // Determine initial form values:
   const initialValues: WorkoutFormData = isCreateMode
@@ -34,7 +35,7 @@ export default function WorkoutModal({
         duration_minute: undefined,
         intensity: 5,
         type: '',
-        exercises: [], // ignored for now
+        exercises: [],
       }
     : {
         name: workoutData!.name,
@@ -42,7 +43,7 @@ export default function WorkoutModal({
         duration_minute: workoutData!.duration_minute,
         intensity: workoutData!.intensity || 5,
         type: workoutData!.type || '',
-        exercises: [], // ignored for now
+        exercises: [],
       }
 
   const form = useForm<WorkoutFormData>({
@@ -54,97 +55,222 @@ export default function WorkoutModal({
   })
 
   const handleCreateSubmit = form.onSubmit((values) => {
-    onSubmit(values) // create the workout
+    onSubmit(values)
     onClose()
   })
 
   const handleEditSubmit = form.onSubmit((values) => {
-    // call API to update
     from(workoutApiService.updateWorkout(workoutData!.id!, values)).subscribe({
-      next: (updated: Workout) => {
+      next: (updated: WorkoutWithExercises) => {
         onUpdate(updated)
-        setEditMode(false) // revert to view mode
+        setEditMode(false)
       },
       error: (err) => console.error('Failed to update workout:', err),
     })
   })
 
-  const disableFields = isViewMode && !editMode // In view mode and not editing -> fields disabled
+  const requiredIfNotView = !isViewMode // Only show required if not in view mode
+
+  // Helper to get field value depending on mode
+  function getFieldValue(field: keyof WorkoutFormData) {
+    if (isViewMode && !editMode) {
+      // View mode (read-only), use workoutData directly
+      if (!workoutData) {
+        return ''
+      } // should not happen if view mode
+      return (workoutData as any)[field] ?? (typeof initialValues[field] === 'number' ? 0 : '')
+    }
+    return form.values[field]
+  }
+
+  // Helper to handle changes in edit/create mode
+  function handleChange(field: keyof WorkoutFormData, val: string | number | undefined) {
+    if (isViewMode && !editMode) {
+      return
+    }
+    form.setFieldValue(field, val)
+  }
+
+  // Determine if we show errors or not
+  function getError(field: keyof WorkoutFormData) {
+    if (isViewMode && !editMode) {
+      return null
+    }
+
+    return form.errors[field] || null
+  }
+
+  // Step one buttons
+  function renderWorkoutBasicDataStepButtons() {
+    if (isViewMode && !editMode) {
+      return (
+        <>
+          <Button variant='outline' onClick={onClose}>
+            Close
+          </Button>
+          <Button variant='filled' onClick={() => setActiveStep(1)}>
+            View Exercises
+          </Button>
+        </>
+      )
+    }
+
+    if (isViewMode && editMode) {
+      return (
+        <>
+          <Button variant='outline' onClick={() => setEditMode(false)}>
+            Cancel
+          </Button>
+          <Button variant='filled' type='submit'>
+            Save
+          </Button>
+        </>
+      )
+    }
+
+    if (isCreateMode) {
+      return (
+        <>
+          <Button variant='outline' onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant='filled' type='submit'>
+            Create
+          </Button>
+        </>
+      )
+    }
+
+    return null
+  }
+
+  // Step two buttons
+  function renderExerciseDetailStepButtons() {
+    if (isViewMode && !editMode) {
+      return (
+        <>
+          <Button variant='outline' onClick={() => setActiveStep(0)}>
+            Back to Details
+          </Button>
+          <Button variant='outline' onClick={onClose}>
+            Close
+          </Button>
+        </>
+      )
+    }
+
+    if (isViewMode && editMode) {
+      return (
+        <>
+          <Button variant='outline' onClick={() => setActiveStep(0)}>
+            Back to Details
+          </Button>
+          <Button variant='outline' onClick={onClose}>
+            Close
+          </Button>
+        </>
+      )
+    }
+
+    if (isCreateMode) {
+      return (
+        <>
+          <Button variant='outline' onClick={() => setActiveStep(0)}>
+            Back
+          </Button>
+          <Button variant='outline' onClick={onClose}>
+            Cancel
+          </Button>
+        </>
+      )
+    }
+
+    return null
+  }
 
   return (
     <Modal opened={opened} onClose={onClose} title='Workout Details' size='xl' centered>
       <form onSubmit={isCreateMode ? handleCreateSubmit : handleEditSubmit}>
-        <Stack gap='md'>
-          <TextInput
-            label='Workout Name'
-            placeholder='Enter workout name'
-            required
-            {...form.getInputProps('name')}
-            disabled={disableFields}
-            value={initialValues.name}
-          />
-          <TextInput
-            label='Description'
-            placeholder='Enter workout description (optional)'
-            {...form.getInputProps('description')}
-            disabled={disableFields}
-            value={initialValues.description}
-          />
-          <NumberInput
-            label='Duration (minutes)'
-            placeholder='Enter duration in minutes'
-            {...form.getInputProps('duration_minute')}
-            disabled={disableFields}
-            value={initialValues.duration_minute}
-          />
-          <Select
-            label='Workout Type'
-            placeholder='Select workout type'
-            data={['Strength', 'Cardio', 'Core']}
-            {...form.getInputProps('type')}
-            required
-            disabled={disableFields}
-            value={initialValues.type}
-          />
-        </Stack>
+        {activeStep === 0 && (
+          <Stack gap='md'>
+            <TextInput
+              label='Workout Name'
+              placeholder='Enter workout name'
+              withAsterisk={requiredIfNotView}
+              readOnly={isViewMode}
+              value={getFieldValue('name') as string}
+              onChange={(e) => handleChange('name', e.currentTarget.value)}
+              error={getError('name')}
+            />
+            <TextInput
+              label='Description'
+              placeholder='Enter workout description (optional)'
+              readOnly={isViewMode}
+              value={getFieldValue('description') as string}
+              onChange={(e) => handleChange('description', e.currentTarget.value)}
+              error={getError('description')}
+            />
+            <NumberInput
+              label='Duration (minutes)'
+              placeholder='Enter duration in minutes'
+              readOnly={isViewMode}
+              value={getFieldValue('duration_minute') as number | undefined}
+              onChange={(val) => handleChange('duration_minute', val)}
+              error={getError('duration_minute')}
+            />
+            <NumberInput
+              label='Intensity'
+              placeholder='Enter intensity (1-10)'
+              readOnly={isViewMode}
+              value={getFieldValue('intensity') as number | undefined}
+              onChange={(val) => handleChange('intensity', val)}
+              error={getError('intensity')}
+            />
+            <Select
+              label='Workout Type'
+              placeholder='Select workout type'
+              data={['Strength', 'Cardio', 'Core']}
+              withAsterisk={requiredIfNotView}
+              readOnly={isViewMode}
+              value={getFieldValue('type') as string}
+              onChange={(val) => handleChange('type', val as string)}
+              error={getError('type')}
+            />
 
-        <Group mt='md' justify='flex-end'>
-          {/* If in view mode and not editing, show Edit button */}
-          {isViewMode && !editMode && (
-            <>
-              <Button variant='outline' onClick={onClose}>
-                Close
-              </Button>
-              <Button variant='filled' onClick={() => setEditMode(true)}>
-                Edit
-              </Button>
-            </>
-          )}
+            <Group mt='md' justify='flex-end'>
+              {renderWorkoutBasicDataStepButtons()}
+            </Group>
+          </Stack>
+        )}
 
-          {/* If editing, show Save/Cancel */}
-          {isViewMode && editMode && (
-            <>
-              <Button variant='outline' onClick={() => setEditMode(false)}>
-                Cancel
-              </Button>
-              <Button variant='filled' type='submit'>
-                Save
-              </Button>
-            </>
-          )}
+        {activeStep === 1 && (
+          <Stack gap='md'>
+            <Text fw={700} size='lg'>
+              Exercises
+            </Text>
+            {workoutData && workoutData.exercises && workoutData.exercises.length > 0 ? (
+              workoutData.exercises.map((ex, index) => (
+                <Stack
+                  key={index}
+                  gap='xs'
+                  p='xs'
+                  style={{ border: '1px solid #ccc', borderRadius: '8px' }}
+                >
+                  <TextInput label='Exercise Name' value={ex.name} disabled />
+                  <TextInput label='Exercise Type' value={ex.type} disabled />
+                </Stack>
+              ))
+            ) : (
+              <Text size='sm' color='dimmed'>
+                No exercises available
+              </Text>
+            )}
 
-          {/* If create mode, just show save */}
-          {isCreateMode && (
-            <>
-              <Button variant='outline' onClick={onClose}>
-                Cancel
-              </Button>
-              <Button variant='filled' type='submit'>
-                Create
-              </Button>
-            </>
-          )}
-        </Group>
+            <Group mt='md' justify='flex-end'>
+              {renderExerciseDetailStepButtons()}
+            </Group>
+          </Stack>
+        )}
       </form>
     </Modal>
   )

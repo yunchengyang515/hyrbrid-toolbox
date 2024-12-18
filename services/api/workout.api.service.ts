@@ -1,4 +1,4 @@
-import { Workout, WorkoutFormData } from '@/types/Workout'
+import { Workout, WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
 import { AbstractApiService } from './api.service'
 
 export class WorkoutApiService extends AbstractApiService {
@@ -7,7 +7,7 @@ export class WorkoutApiService extends AbstractApiService {
     this.resource = 'workout'
   }
   async getAllWorkouts() {
-    return this.transformResponse<Workout[]>(await fetch(this.buildUrl()))
+    return this.transformResponse<WorkoutWithExercises[]>(await fetch(this.buildUrl()))
   }
 
   async createWorkout(workout: WorkoutFormData): Promise<Workout> {
@@ -21,8 +21,8 @@ export class WorkoutApiService extends AbstractApiService {
     return this.transformResponse<Workout>(await response)
   }
 
-  async updateWorkout(id: string, workout: WorkoutFormData): Promise<Workout> {
+  async updateWorkout(id: string, workout: WorkoutFormData): Promise<WorkoutWithExercises> {
     //update workout pseudo code
-    return {} as Workout
+    return {} as WorkoutWithExercises
   }
 }
