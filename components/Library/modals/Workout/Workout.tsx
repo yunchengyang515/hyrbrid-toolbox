@@ -1,4 +1,5 @@
-import { useState } from 'react'
+// WorkoutModal.tsx
+import { useEffect, useState } from 'react'
 import { Button, Group, Modal, NumberInput, Select, Stack, Text, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
@@ -6,39 +7,53 @@ import { WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
 interface WorkoutModalProps {
   opened: boolean
   onClose: () => void
+  mode: 'create' | 'view' | 'edit'
   onSubmit: (exerciseData: WorkoutFormData) => void // for create mode
-  workoutData?: WorkoutWithExercises // undefined means create mode, defined means view mode
+  onUpdate: (updatedWorkout: WorkoutWithExercises) => void // for edit mode
+  workoutData?: WorkoutWithExercises // required for view and edit modes
+  onEditMode: () => void // Handler to switch to 'edit' mode
 }
 
 export default function WorkoutModal({
   opened,
   onClose,
+  mode,
   onSubmit,
+  onUpdate,
+  onEditMode,
   workoutData,
 }: WorkoutModalProps) {
-  const isCreateMode = workoutData === undefined
-  const isViewMode = workoutData !== undefined && !isCreateMode
-  const [editMode, setEditMode] = useState(false)
-  const [activeStep, setActiveStep] = useState(0)
+  // Validate props based on mode
+  if ((mode === 'view' || mode === 'edit') && !workoutData) {
+    throw new Error(`workoutData is required for mode "${mode}"`)
+  }
 
   // Determine initial form values:
-  const initialValues: WorkoutFormData = isCreateMode
-    ? {
-        name: '',
-        description: '',
-        duration_minute: undefined,
-        intensity: 5,
-        type: '',
-        exercises: [],
-      }
-    : {
-        name: workoutData!.name,
-        description: workoutData!.description || '',
-        duration_minute: workoutData!.duration_minute,
-        intensity: workoutData!.intensity || 5,
-        type: workoutData!.type || '',
-        exercises: [],
-      }
+  const initialValues: WorkoutFormData =
+    mode === 'create'
+      ? {
+          name: '',
+          description: '',
+          duration_minute: undefined,
+          intensity: 5,
+          type: '',
+          exercises: [],
+        }
+      : {
+          name: workoutData!.name,
+          description: workoutData!.description || '',
+          duration_minute: workoutData!.duration_minute,
+          intensity: workoutData!.intensity || 5,
+          type: workoutData!.type || '',
+          exercises: workoutData!.exercises
+            ? workoutData!.exercises.map((ex) => ({
+                id: ex.id,
+                name: ex.name,
+                type: ex.type,
+                sets: ex.sets || [],
+              }))
+            : [],
+        }
 
   const form = useForm<WorkoutFormData>({
     initialValues,
@@ -48,20 +63,31 @@ export default function WorkoutModal({
     },
   })
 
+  // Reset form when mode or workoutData changes
+  useEffect(() => {
+    form.reset()
+    // If switching to view mode, reset any active steps or edit modes
+    if (mode === 'view') {
+      setActiveStep(0)
+    }
+  }, [mode, workoutData])
+
   const handleCreateSubmit = form.onSubmit((values) => {
     onSubmit(values)
     onClose()
   })
 
-  const requiredIfNotView = !isViewMode // Only show required if not in view mode
+  const handleEditSubmit = form.onSubmit((values) => {
+    onUpdate({ ...workoutData!, ...values })
+    onClose()
+  })
+
+  const isReadOnly = mode === 'view'
 
   // Helper to get field value depending on mode
   function getFieldValue(field: keyof WorkoutFormData) {
-    if (isViewMode && !editMode) {
+    if (isReadOnly) {
       // View mode (read-only), use workoutData directly
-      if (!workoutData) {
-        return ''
-      } // should not happen if view mode
       return (workoutData as any)[field] ?? (typeof initialValues[field] === 'number' ? 0 : '')
     }
     return form.values[field]
@@ -69,7 +95,7 @@ export default function WorkoutModal({
 
   // Helper to handle changes in edit/create mode
   function handleChange(field: keyof WorkoutFormData, val: string | number | undefined) {
-    if (isViewMode && !editMode) {
+    if (isReadOnly) {
       return
     }
     form.setFieldValue(field, val)
@@ -77,44 +103,70 @@ export default function WorkoutModal({
 
   // Determine if we show errors or not
   function getError(field: keyof WorkoutFormData) {
-    if (isViewMode && !editMode) {
+    if (isReadOnly) {
       return null
     }
-
     return form.errors[field] || null
   }
 
   // Step one buttons
   function renderWorkoutBasicDataStepButtons() {
-    if (isViewMode && !editMode) {
+    if (mode === 'view') {
       return (
         <>
           <Button variant='outline' onClick={onClose}>
             Close
           </Button>
-          <Button variant='filled' onClick={() => setActiveStep(1)}>
+          <Button variant='outline' onClick={() => setActiveStep(1)}>
             View Exercises
           </Button>
+          <Button variant='filled' onClick={onEditMode}>
+            Edit
+          </Button>
         </>
       )
     }
 
-    if (isViewMode && editMode) {
+    if (mode === 'create' || mode === 'edit') {
       return (
         <>
-          <Button variant='outline' onClick={() => setEditMode(false)}>
+          <Button variant='outline' onClick={onClose}>
             Cancel
           </Button>
-          <Button variant='filled' type='submit'>
-            Save
+          <Button variant='filled' onClick={() => setActiveStep(1)}>
+            Next
           </Button>
         </>
       )
     }
 
-    if (isCreateMode) {
+    return null
+  }
+
+  // Step two buttons
+  function renderExerciseDetailStepButtons() {
+    if (mode === 'view' || mode === 'edit') {
       return (
         <>
+          <Button variant='outline' onClick={() => setActiveStep(0)}>
+            Back to Details
+          </Button>
+          <Button variant='outline' onClick={onClose}>
+            Close
+          </Button>
+          <Button variant='filled' onClick={onEditMode}>
+            Edit
+          </Button>
+        </>
+      )
+    }
+
+    if (mode === 'create') {
+      return (
+        <>
+          <Button variant='outline' onClick={() => setActiveStep(0)}>
+            Back
+          </Button>
           <Button variant='outline' onClick={onClose}>
             Cancel
           </Button>
@@ -128,60 +180,19 @@ export default function WorkoutModal({
     return null
   }
 
-  // Step two buttons
-  function renderExerciseDetailStepButtons() {
-    if (isViewMode && !editMode) {
-      return (
-        <>
-          <Button variant='outline' onClick={() => setActiveStep(0)}>
-            Back to Details
-          </Button>
-          <Button variant='outline' onClick={onClose}>
-            Close
-          </Button>
-        </>
-      )
-    }
-
-    if (isViewMode && editMode) {
-      return (
-        <>
-          <Button variant='outline' onClick={() => setActiveStep(0)}>
-            Back to Details
-          </Button>
-          <Button variant='outline' onClick={onClose}>
-            Close
-          </Button>
-        </>
-      )
-    }
-
-    if (isCreateMode) {
-      return (
-        <>
-          <Button variant='outline' onClick={() => setActiveStep(0)}>
-            Back
-          </Button>
-          <Button variant='outline' onClick={onClose}>
-            Cancel
-          </Button>
-        </>
-      )
-    }
-
-    return null
-  }
+  // Active step state (0: Details, 1: Exercises)
+  const [activeStep, setActiveStep] = useState(0)
 
   return (
     <Modal opened={opened} onClose={onClose} title='Workout Details' size='xl' centered>
-      <form onSubmit={handleCreateSubmit}>
+      <form onSubmit={mode === 'create' ? handleCreateSubmit : handleEditSubmit}>
         {activeStep === 0 && (
           <Stack gap='md'>
             <TextInput
               label='Workout Name'
               placeholder='Enter workout name'
-              withAsterisk={requiredIfNotView}
-              readOnly={isViewMode}
+              withAsterisk={!isReadOnly}
+              readOnly={isReadOnly}
               value={getFieldValue('name') as string}
               onChange={(e) => handleChange('name', e.currentTarget.value)}
               error={getError('name')}
@@ -189,7 +200,7 @@ export default function WorkoutModal({
             <TextInput
               label='Description'
               placeholder='Enter workout description (optional)'
-              readOnly={isViewMode}
+              readOnly={isReadOnly}
               value={getFieldValue('description') as string}
               onChange={(e) => handleChange('description', e.currentTarget.value)}
               error={getError('description')}
@@ -197,7 +208,7 @@ export default function WorkoutModal({
             <NumberInput
               label='Duration (minutes)'
               placeholder='Enter duration in minutes'
-              readOnly={isViewMode}
+              readOnly={isReadOnly}
               value={getFieldValue('duration_minute') as number | undefined}
               onChange={(val) => handleChange('duration_minute', val)}
               error={getError('duration_minute')}
@@ -205,7 +216,7 @@ export default function WorkoutModal({
             <NumberInput
               label='Intensity'
               placeholder='Enter intensity (1-10)'
-              readOnly={isViewMode}
+              readOnly={isReadOnly}
               value={getFieldValue('intensity') as number | undefined}
               onChange={(val) => handleChange('intensity', val)}
               error={getError('intensity')}
@@ -214,8 +225,8 @@ export default function WorkoutModal({
               label='Workout Type'
               placeholder='Select workout type'
               data={['Strength', 'Cardio', 'Core']}
-              withAsterisk={requiredIfNotView}
-              readOnly={isViewMode}
+              withAsterisk={!isReadOnly}
+              readOnly={isReadOnly}
               value={getFieldValue('type') as string}
               onChange={(val) => handleChange('type', val as string)}
               error={getError('type')}

@@ -1,3 +1,4 @@
+// WorkoutsTab.tsx
 import { useEffect, useState } from 'react'
 import { IconSearch } from '@tabler/icons-react'
 import { from } from 'rxjs'
@@ -11,6 +12,7 @@ const workoutApiService = new WorkoutApiService()
 export default function WorkoutsTab() {
   const [search, setSearch] = useState('')
   const [modalOpened, setModalOpened] = useState(false)
+  const [modalMode, setModalMode] = useState<'create' | 'view' | 'edit'>('create')
   const [workouts, setWorkouts] = useState<WorkoutWithExercises[]>([])
   const [selectedWorkout, setSelectedWorkout] = useState<WorkoutWithExercises | undefined>(
     undefined,
@@ -39,20 +41,34 @@ export default function WorkoutsTab() {
     })
   }
 
+  // Handler for updating an existing workout
+  const handleUpdateWorkout = (updatedWorkout: WorkoutWithExercises) => {
+    setWorkouts((prevWorkouts) =>
+      prevWorkouts.map((w) => (w.id === updatedWorkout.id ? updatedWorkout : w)),
+    )
+  }
+
   // Open the modal in create mode
   function openCreateModal() {
-    setSelectedWorkout(undefined) // undefined indicates no existing workout selected -> create mode
+    setSelectedWorkout(undefined) // No workout selected
+    setModalMode('create')
     setModalOpened(true)
   }
 
   // Open the modal in view mode for a specific workout
   function openViewModal(workout: WorkoutWithExercises) {
-    setSelectedWorkout(workout) // defined means we have a workout -> view mode
+    setSelectedWorkout(workout)
+    setModalMode('view')
     setModalOpened(true)
   }
 
+  function openEditModal() {
+    if (selectedWorkout) {
+      setModalMode('edit')
+    }
+  }
+
   function closeModal() {
-    setSelectedWorkout(undefined)
     setModalOpened(false)
   }
 
@@ -64,7 +80,7 @@ export default function WorkoutsTab() {
     <Container fluid px={2}>
       {/* Add Workout Button and Search Bar */}
       <Group justify='flex-start' align='center' mb='xl' wrap='wrap' gap='sm'>
-        {/* Clicking this button calls openCreateModal, which sets create mode */}
+        {/* Clicking this button opens the modal in create mode */}
         <Button variant='filled' color='blue' size='md' onClick={openCreateModal}>
           + Add Workout
         </Button>
@@ -81,8 +97,11 @@ export default function WorkoutsTab() {
       <WorkoutModal
         opened={modalOpened}
         onClose={closeModal}
-        onSubmit={handleAddWorkout} // Only used when creating a new workout (not view mode)
-        workoutData={selectedWorkout} // if defined, view mode; if undefined, create mode
+        mode={modalMode}
+        onSubmit={handleAddWorkout}
+        onUpdate={handleUpdateWorkout}
+        workoutData={modalMode === 'edit' || modalMode === 'view' ? selectedWorkout : undefined}
+        onEditMode={openEditModal}
       />
 
       {/* Workout Cards */}
