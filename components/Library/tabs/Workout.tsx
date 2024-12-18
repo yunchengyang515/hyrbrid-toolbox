@@ -62,8 +62,9 @@ export default function WorkoutsTab() {
     setModalOpened(true)
   }
 
-  function openEditModal() {
+  function openEditModal(workout: WorkoutWithExercises) {
     if (selectedWorkout) {
+      setSelectedWorkout(workout)
       setModalMode('edit')
     }
   }
@@ -101,7 +102,7 @@ export default function WorkoutsTab() {
         onSubmit={handleAddWorkout}
         onUpdate={handleUpdateWorkout}
         workoutData={modalMode === 'edit' || modalMode === 'view' ? selectedWorkout : undefined}
-        onEditMode={openEditModal}
+        onEditMode={(workout: WorkoutWithExercises) => openEditModal(workout)}
       />
 
       {/* Workout Cards */}

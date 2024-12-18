@@ -11,7 +11,7 @@ interface WorkoutModalProps {
   onSubmit: (exerciseData: WorkoutFormData) => void // for create mode
   onUpdate: (updatedWorkout: WorkoutWithExercises) => void // for edit mode
   workoutData?: WorkoutWithExercises // required for view and edit modes
-  onEditMode: () => void // Handler to switch to 'edit' mode
+  onEditMode: (workout: WorkoutWithExercises) => void // Handler to switch to 'edit' mode
 }
 
 export default function WorkoutModal({
@@ -83,10 +83,11 @@ export default function WorkoutModal({
   })
 
   const isReadOnly = mode === 'view'
+  const isEditMode = mode === 'edit'
 
   // Helper to get field value depending on mode
   function getFieldValue(field: keyof WorkoutFormData) {
-    if (isReadOnly) {
+    if (isReadOnly || isEditMode) {
       // View mode (read-only), use workoutData directly
       return (workoutData as any)[field] ?? (typeof initialValues[field] === 'number' ? 0 : '')
     }
@@ -120,7 +121,7 @@ export default function WorkoutModal({
           <Button variant='outline' onClick={() => setActiveStep(1)}>
             View Exercises
           </Button>
-          <Button variant='filled' onClick={onEditMode}>
+          <Button variant='filled' onClick={() => onEditMode(workoutData as WorkoutWithExercises)}>
             Edit
           </Button>
         </>
@@ -154,7 +155,7 @@ export default function WorkoutModal({
           <Button variant='outline' onClick={onClose}>
             Close
           </Button>
-          <Button variant='filled' onClick={onEditMode}>
+          <Button variant='filled' onClick={() => onEditMode(workoutData as WorkoutWithExercises)}>
             Edit
           </Button>
         </>
