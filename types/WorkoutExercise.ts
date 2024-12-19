@@ -1,5 +1,3 @@
-import { Exercise } from './Exercise'
-
 export type SetDetail = {
   id: number
   duration?: string
@@ -12,9 +10,9 @@ export type SetDetail = {
 export type WorkoutExercise = {
   id: string
   set_rep_detail: SetDetail[]
-  workout_id: number
-  exercise_id: number
+  workout_id: string
+  exercise_id: string
   user_id: string
-  name: Pick<Exercise, 'name'>
-  type: Pick<Exercise, 'type'>
+  exercise_name: string
+  exercise_type: string
 }

@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react'
 import { Button, Group, Modal, NumberInput, Select, Stack, Text, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { mockExercises } from '@/testing/data/MockExercises'
 import { WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
 import ExerciseAccordion from './ExerciseAccordion'
 
@@ -241,12 +240,7 @@ export default function WorkoutModal({
             </Text>
             {workoutData && workoutData.exercises && workoutData.exercises.length > 0 ? (
               workoutData.exercises.map((exercise) => (
-                <ExerciseAccordion
-                  key={exercise.id}
-                  exercise={exercise}
-                  mockExercises={mockExercises}
-                  readOnly={isReadOnly} // Pass the readOnly prop
-                />
+                <ExerciseAccordion key={exercise.id} exercise={exercise} readOnly={isReadOnly} />
               ))
             ) : (
               <Text size='sm' c='dimmed'>
