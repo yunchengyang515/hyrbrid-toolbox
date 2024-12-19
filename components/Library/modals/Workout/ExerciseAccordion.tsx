@@ -1,3 +1,5 @@
+// components/ExerciseAccordion.tsx
+
 import {
   Accordion,
   Button,
@@ -10,48 +12,38 @@ import {
   TextInput,
 } from '@mantine/core'
 import { Exercise } from '@/types/Exercise'
-import { SetDetail } from '@/types/WorkoutExercise'
+import { WorkoutExercise } from '@/types/WorkoutExercise'
 
 interface ExerciseAccordionProps {
-  exercise: {
-    id: string
-    name: string
-    sets: SetDetail[]
-    type: string
-  }
+  exercise: WorkoutExercise
   mockExercises: Exercise[]
-  onRemove: (id: string) => void
-  onGenerateRows: (exerciseId: string, numberOfSets: number, exerciseType: string) => void
-  onExerciseChange: (exerciseId: string, name: string, type: string) => void
-  onSetDetailChange: (exerciseId: string, index: number, updatedFields: Partial<SetDetail>) => void
+  readOnly?: boolean // Added readOnly prop
 }
 
 export default function ExerciseAccordion({
   exercise,
   mockExercises,
-  onRemove,
-  onGenerateRows,
-  onExerciseChange,
-  onSetDetailChange,
+  readOnly = false, // Default to false
 }: ExerciseAccordionProps) {
+  console.log('ExerciseAccordion', { exercise, mockExercises, readOnly })
   const exerciseData = mockExercises.find((e) => e.id === exercise.name)
 
   const generateSetSummary = () => {
-    if (!exercise.sets.length) {
+    if (!exercise.set_rep_detail.length) {
       return 'No sets defined'
     }
 
-    return exercise.sets
+    return exercise.set_rep_detail
       .map((set) => {
         if (exercise.type === 'Running') {
           if (set.duration && set.pace) {
             return `${set.duration}@${set.pace}`
           }
-        } else {
-          const base = `${set.reps || '?'}x${set.weight || '?'}kg`
-          return set.rest ? `${base} (Rest: ${set.rest}s)` : base
         }
-        return null
+        const reps = set.reps !== undefined ? set.reps : '?'
+        const weight = set.weight !== undefined ? set.weight : '?'
+        const rest = set.rest !== undefined ? ` (Rest: ${set.rest}s)` : ''
+        return `${reps}x${weight}kg${rest}`
       })
       .filter(Boolean)
       .join(', ')
@@ -63,22 +55,23 @@ export default function ExerciseAccordion({
         <Group justify='space-between' align='center'>
           <div>
             <Text>{exerciseData?.name || 'New Exercise'}</Text>
-            <Text size='sm' color='dimmed'>
+            <Text size='sm' c='dimmed'>
               {generateSetSummary()}
             </Text>
           </div>
-          <Button
-            variant='subtle'
-            color='red'
-            size='xs'
-            onClick={(e) => {
-              e.stopPropagation()
-              onRemove(exercise.id)
-            }}
-            style={{ alignSelf: 'center' }}
-          >
-            Remove
-          </Button>
+          {!readOnly && (
+            <Button
+              variant='subtle'
+              color='red'
+              size='xs'
+              onClick={(e) => {
+                e.stopPropagation()
+              }}
+              style={{ alignSelf: 'center' }}
+            >
+              Remove
+            </Button>
+          )}
         </Group>
       </Accordion.Control>
       <Accordion.Panel>
@@ -90,22 +83,16 @@ export default function ExerciseAccordion({
             label: e.name,
           }))}
           value={exercise.name}
-          onChange={(value) =>
-            onExerciseChange(exercise.id, value as string, exerciseData?.type || exercise.type)
-          }
+          disabled={readOnly} // Set to disabled if readOnly
         />
 
         <NumberInput
           label='Number of Sets'
           placeholder='Enter sets'
           value={exercise.sets.length}
-          onChange={(value) => {
-            if (value) {
-              onGenerateRows(exercise.id, Number(value), exercise.type)
-            }
-          }}
           min={1}
           max={10}
+          disabled={readOnly} // Set to disabled if readOnly
         />
 
         {exercise.sets.length > 0 && (
@@ -130,16 +117,12 @@ export default function ExerciseAccordion({
                       <TextInput
                         label='Duration'
                         value={set.duration || ''}
-                        onChange={(e) =>
-                          onSetDetailChange(exercise.id, index, { duration: e.target.value })
-                        }
+                        readOnly={readOnly} // Set to readOnly if readOnly
                       />
                       <TextInput
                         label='Pace'
                         value={set.pace || ''}
-                        onChange={(e) =>
-                          onSetDetailChange(exercise.id, index, { pace: e.target.value })
-                        }
+                        readOnly={readOnly} // Set to readOnly if readOnly
                       />
                     </>
                   ) : (
@@ -147,23 +130,17 @@ export default function ExerciseAccordion({
                       <TextInput
                         label='Reps'
                         value={set.reps || ''}
-                        onChange={(e) =>
-                          onSetDetailChange(exercise.id, index, { reps: e.target.value })
-                        }
+                        readOnly={readOnly} // Set to readOnly if readOnly
                       />
                       <TextInput
                         label='Weight'
                         value={set.weight || ''}
-                        onChange={(e) =>
-                          onSetDetailChange(exercise.id, index, { weight: e.target.value })
-                        }
+                        readOnly={readOnly} // Set to readOnly if readOnly
                       />
                       <TextInput
                         label='Rest'
                         value={set.rest || ''}
-                        onChange={(e) =>
-                          onSetDetailChange(exercise.id, index, { rest: e.target.value })
-                        }
+                        readOnly={readOnly} // Set to readOnly if readOnly
                       />
                     </>
                   )}

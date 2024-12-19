@@ -2,7 +2,9 @@
 import { useEffect, useState } from 'react'
 import { Button, Group, Modal, NumberInput, Select, Stack, Text, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
+import { mockExercises } from '@/testing/data/MockExercises'
 import { WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
+import ExerciseAccordion from './ExerciseAccordion'
 
 interface WorkoutModalProps {
   opened: boolean
@@ -45,14 +47,7 @@ export default function WorkoutModal({
           duration_minute: workoutData!.duration_minute,
           intensity: workoutData!.intensity || 5,
           type: workoutData!.type || '',
-          exercises: workoutData!.exercises
-            ? workoutData!.exercises.map((ex) => ({
-                id: ex.id,
-                name: ex.name,
-                type: ex.type,
-                sets: ex.sets || [],
-              }))
-            : [],
+          exercises: workoutData!.exercises || [],
         }
 
   const form = useForm<WorkoutFormData>({
@@ -245,19 +240,16 @@ export default function WorkoutModal({
               Exercises
             </Text>
             {workoutData && workoutData.exercises && workoutData.exercises.length > 0 ? (
-              workoutData.exercises.map((ex, index) => (
-                <Stack
-                  key={index}
-                  gap='xs'
-                  p='xs'
-                  style={{ border: '1px solid #ccc', borderRadius: '8px' }}
-                >
-                  <TextInput label='Exercise Name' value={ex.name} disabled />
-                  <TextInput label='Exercise Type' value={ex.type} disabled />
-                </Stack>
+              workoutData.exercises.map((exercise) => (
+                <ExerciseAccordion
+                  key={exercise.id}
+                  exercise={exercise}
+                  mockExercises={mockExercises}
+                  readOnly={isReadOnly} // Pass the readOnly prop
+                />
               ))
             ) : (
-              <Text size='sm' color='dimmed'>
+              <Text size='sm' c='dimmed'>
                 No exercises available
               </Text>
             )}
