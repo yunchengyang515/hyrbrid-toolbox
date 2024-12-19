@@ -1,4 +1,4 @@
-import { Workout } from '@/types/Workout'
+import { Workout, WorkoutWithExercises } from '@/types/Workout'
 import { ExerciseRepository } from '../data/repository/exercise.repository'
 import { WorkoutExerciseRepository } from '../data/repository/workout_exercise.respository'
 import { WorkoutRepository } from '../data/repository/workout.repository'
@@ -33,7 +33,7 @@ export class WorkoutController {
     return this.workoutRepository.deleteWorkout(id)
   }
 
-  async mergeWorkoutWithExercises(workout: Workout) {
+  async mergeWorkoutWithExercises(workout: Workout): Promise<WorkoutWithExercises> {
     const workoutExercise = await this.workoutExerciseRepository.getWorkoutExerciseByWorkoutId(
       workout.id,
     )
