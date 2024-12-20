@@ -250,29 +250,6 @@ export default function WorkoutModal({
               onUpdateExercises={handleUpdateExercises}
             />
 
-            {!isReadOnly && (
-              <Button
-                variant='outline'
-                type='button'
-                onClick={() =>
-                  handleUpdateExercises([
-                    ...form.values.exercises,
-                    {
-                      id: String(Date.now()),
-                      exercise_name: '',
-                      set_rep_detail: [],
-                      exercise_type: '',
-                      workout_id: workoutData?.id || '',
-                      exercise_id: '',
-                      user_id: '',
-                    } as WorkoutExercise,
-                  ])
-                }
-              >
-                + Add Exercise
-              </Button>
-            )}
-
             <Group mt='md' justify='flex-end'>
               {renderExerciseDetailStepButtons()}
             </Group>

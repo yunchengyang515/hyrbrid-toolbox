@@ -64,6 +64,22 @@ export default function ExerciseAccordion({
     onUpdateExercises(updatedExercises)
   }
 
+  // Handler for adding a new exercise
+  const handleAddExercise = () => {
+    const newExercise: WorkoutExercise = {
+      id: String(Date.now()),
+      exercise_name: '',
+      set_rep_detail: [],
+      exercise_type: '',
+      workout_id: '',
+      exercise_id: '',
+      user_id: '',
+    }
+    const updatedExercises = [...localExercises, newExercise]
+    setLocalExercises(updatedExercises)
+    onUpdateExercises(updatedExercises)
+  }
+
   return (
     <>
       {localExercises.length > 0 ? (
@@ -261,6 +277,12 @@ export default function ExerciseAccordion({
         <Text size='sm' c='dimmed'>
           No exercises available
         </Text>
+      )}
+
+      {!readOnly && (
+        <Button variant='outline' type='button' onClick={handleAddExercise}>
+          + Add Exercise
+        </Button>
       )}
     </>
   )
