@@ -1,4 +1,4 @@
-import { Workout } from '@/types/Workout'
+import { Workout, WorkoutFormData } from '@/types/Workout'
 import { getDbClient } from '../db.service'
 import { AbstractRepository } from './abstract.repository'
 
@@ -9,7 +9,7 @@ export class WorkoutRepository extends AbstractRepository {
   async getWorkoutById(id: string) {
     return getWorkoutById(id, this.currentUserId)
   }
-  async createWorkout(workout: Workout) {
+  async createWorkout(workout: WorkoutFormData) {
     return createWorkout(workout, this.currentUserId)
   }
   async updateWorkout(id: string, workout: Workout) {
@@ -45,25 +45,18 @@ const getWorkoutById = async (id: string, userId: string) => {
 
 const createWorkout = async (workout: Partial<Workout>, userId: string) => {
   const client = getDbClient()
-  const newWorkout = {
-    ...workout,
-    user_id: userId,
-  }
-  const { error } = await client
+  const { data, error } = await client
     .from('workout')
     .insert({
-      name: workout.name,
-      description: workout.description,
-      duration_minute: workout.duration_minute,
-      intensity: workout.intensity,
-      type: workout.type,
+      ...workout,
       user_id: userId,
     })
+    .select()
     .single()
   if (error) {
     throw new Error(error.message)
   }
-  return newWorkout
+  return data
 }
 
 const updateWorkout = async (id: string, workout: Workout, userId: string) => {

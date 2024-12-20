@@ -21,13 +21,21 @@ export async function GET(_request: Request) {
 
 export async function POST(request: Request) {
   const body = await request.json()
-  const exercise = await workoutController.createWorkout(body)
-  return new Response(JSON.stringify(exercise))
+  const workout = await workoutController.createWorkout(body)
+  return new Response(JSON.stringify(workout))
+}
+
+export async function PUT(request: Request) {
+  const body = await request.json()
+  const { id, ...workoutData } = body
+  const updatedWorkout = await workoutController.updateWorkout(id, workoutData)
+  return new Response(JSON.stringify(updatedWorkout))
 }
 
 const handler: Endpoint = {
   GET,
   POST,
+  PUT,
 }
 
 export default initializeHandler(handler)

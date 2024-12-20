@@ -2,7 +2,7 @@ import { WorkoutExercise } from './WorkoutExercise'
 
 // Represents the Workout structure as it is stored in the database
 export type Workout = {
-  id: string // UUID
+  id: string
   created_at: string // ISO timestamp
   name: string
   description?: string

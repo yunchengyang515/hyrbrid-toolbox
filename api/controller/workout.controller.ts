@@ -1,4 +1,5 @@
-import { Workout, WorkoutWithExercises } from '@/types/Workout'
+import { Workout, WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
+import { WorkoutExercise } from '@/types/WorkoutExercise'
 import { ExerciseRepository } from '../data/repository/exercise.repository'
 import { WorkoutExerciseRepository } from '../data/repository/workout_exercise.respository'
 import { WorkoutRepository } from '../data/repository/workout.repository'
@@ -23,14 +24,31 @@ export class WorkoutController {
   async getWorkoutById(id: string) {
     return this.mergeWorkoutWithExercises(await this.workoutRepository.getWorkoutById(id))
   }
-  async createWorkout(workout: Workout) {
-    return this.workoutRepository.createWorkout(workout)
+  async createWorkout(workout: WorkoutFormData) {
+    const createdWorkout = await this.workoutRepository.createWorkout(workout)
+    await this.updateWorkoutExercises(createdWorkout.id, workout.exercises)
+    return this.mergeWorkoutWithExercises(createdWorkout)
   }
-  async updateWorkout(id: string, workout: Workout) {
-    return this.workoutRepository.updateWorkout(id, workout)
+  async updateWorkout(id: string, workout: WorkoutWithExercises) {
+    const updatedWorkout = await this.workoutRepository.updateWorkout(id, workout)
+    await this.updateWorkoutExercises(id, workout.exercises)
+    return this.mergeWorkoutWithExercises(updatedWorkout)
   }
   async deleteWorkout(id: string) {
     return this.workoutRepository.deleteWorkout(id)
+  }
+
+  private async updateWorkoutExercises(workoutId: string, exercises: WorkoutExercise[]) {
+    // Delete existing workout exercises
+    await this.workoutExerciseRepository.deleteWorkoutExercisesByWorkoutId(workoutId)
+
+    // Add updated workout exercises
+    for (const exercise of exercises) {
+      await this.workoutExerciseRepository.createWorkoutExercise({
+        ...exercise,
+        workout_id: workoutId,
+      })
+    }
   }
 
   async mergeWorkoutWithExercises(workout: Workout): Promise<WorkoutWithExercises> {

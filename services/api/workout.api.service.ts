@@ -6,6 +6,7 @@ export class WorkoutApiService extends AbstractApiService {
     super()
     this.resource = 'workout'
   }
+
   async getAllWorkouts() {
     return this.transformResponse<WorkoutWithExercises[]>(await fetch(this.buildUrl()))
   }
@@ -14,6 +15,17 @@ export class WorkoutApiService extends AbstractApiService {
     const response = fetch(this.buildUrl(), {
       method: 'POST',
       body: JSON.stringify(workout),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    return this.transformResponse<WorkoutWithExercises>(await response)
+  }
+
+  async updateWorkout(workout: WorkoutWithExercises): Promise<WorkoutWithExercises> {
+    const response = fetch(this.buildUrl(), {
+      method: 'PUT',
+      body: JSON.stringify({ ...workout }),
       headers: {
         'Content-Type': 'application/json',
       },
