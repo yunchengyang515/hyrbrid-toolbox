@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Button, Group, Modal, NumberInput, Select, Stack, Text, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
+import { WorkoutExercise } from '@/types/WorkoutExercise'
 import ExerciseAccordion from './ExerciseAccordion'
 
 interface WorkoutModalProps {
@@ -178,6 +179,11 @@ export default function WorkoutModal({
   // Active step state (0: Details, 1: Exercises)
   const [activeStep, setActiveStep] = useState(0)
 
+  // Handler for updating exercises
+  function handleUpdateExercises(updatedExercises: WorkoutExercise[]) {
+    form.setFieldValue('exercises', updatedExercises)
+  }
+
   return (
     <Modal opened={opened} onClose={onClose} title='Workout Details' size='xl' centered>
       <form onSubmit={mode === 'create' ? handleCreateSubmit : handleEditSubmit}>
@@ -238,14 +244,33 @@ export default function WorkoutModal({
             <Text fw={700} size='lg'>
               Exercises
             </Text>
-            {workoutData && workoutData.exercises && workoutData.exercises.length > 0 ? (
-              workoutData.exercises.map((exercise) => (
-                <ExerciseAccordion key={exercise.id} exercise={exercise} readOnly={isReadOnly} />
-              ))
-            ) : (
-              <Text size='sm' c='dimmed'>
-                No exercises available
-              </Text>
+            <ExerciseAccordion
+              exercises={isReadOnly ? workoutData?.exercises || [] : form.values.exercises}
+              readOnly={isReadOnly}
+              onUpdateExercises={handleUpdateExercises}
+            />
+
+            {!isReadOnly && (
+              <Button
+                variant='outline'
+                type='button'
+                onClick={() =>
+                  handleUpdateExercises([
+                    ...form.values.exercises,
+                    {
+                      id: String(Date.now()),
+                      exercise_name: '',
+                      set_rep_detail: [],
+                      exercise_type: '',
+                      workout_id: workoutData?.id || '',
+                      exercise_id: '',
+                      user_id: '',
+                    } as WorkoutExercise,
+                  ])
+                }
+              >
+                + Add Exercise
+              </Button>
             )}
 
             <Group mt='md' justify='flex-end'>
