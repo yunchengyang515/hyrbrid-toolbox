@@ -251,7 +251,7 @@ export default function WorkoutModal({
               Exercises
             </Text>
             <ExerciseAccordion
-              exercises={isReadOnly ? workoutData?.exercises || [] : form.values.exercises}
+              workoutExercises={isReadOnly ? workoutData?.exercises || [] : form.values.exercises}
               readOnly={isReadOnly}
               onUpdateExercises={handleUpdateExercises}
             />
