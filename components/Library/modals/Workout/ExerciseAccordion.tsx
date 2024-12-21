@@ -106,7 +106,6 @@ export function ExerciseAccordion({
   }
 
   const renderSetDetails = (workoutExercise: WorkoutExercise, set: SetDetail, index: number) => {
-    console.log('workoutExercise is ', workoutExercise)
     if (workoutExercise.exercise_type.toLowerCase() === 'cardio') {
       return (
         <Grid>
