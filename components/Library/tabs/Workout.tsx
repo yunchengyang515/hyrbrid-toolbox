@@ -5,7 +5,7 @@ import { from } from 'rxjs'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
 import { WorkoutApiService } from '@/services/api/workout.api.service'
 import { WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
-import WorkoutModal from '../modals/Workout/Workout'
+import WorkoutModal from '../forms/workout/workout.modal'
 
 const workoutApiService = new WorkoutApiService()
 

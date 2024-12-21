@@ -5,7 +5,7 @@ import { useForm } from '@mantine/form'
 import { WorkoutApiService } from '@/services/api/workout.api.service'
 import { WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
 import { WorkoutExercise } from '@/types/WorkoutExercise'
-import { ExerciseAccordion } from './ExerciseAccordion'
+import { ExerciseAccordion } from './exercise.accordion'
 
 const workoutApiService = new WorkoutApiService()
 
