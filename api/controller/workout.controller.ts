@@ -25,8 +25,15 @@ export class WorkoutController {
     return this.mergeWorkoutWithExercises(await this.workoutRepository.getWorkoutById(id))
   }
   async createWorkout(workout: WorkoutFormData) {
-    const createdWorkout = await this.workoutRepository.createWorkout(workout)
-    await this.updateWorkoutExercises(createdWorkout.id, workout.exercises)
+    // Extract exercises from the workout data
+    const { exercises, ...workoutData } = workout
+
+    // Create the workout without exercises
+    const createdWorkout = await this.workoutRepository.createWorkout(workoutData)
+
+    // Add exercises to the workout
+    await this.updateWorkoutExercises(createdWorkout.id, exercises)
+
     return this.mergeWorkoutWithExercises(createdWorkout)
   }
   async updateWorkout(id: string, workout: WorkoutWithExercises) {

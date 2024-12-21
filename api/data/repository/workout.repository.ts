@@ -9,7 +9,7 @@ export class WorkoutRepository extends AbstractRepository {
   async getWorkoutById(id: string) {
     return getWorkoutById(id, this.currentUserId)
   }
-  async createWorkout(workout: WorkoutFormData) {
+  async createWorkout(workout: Omit<WorkoutFormData, 'exercises'>) {
     return createWorkout(workout, this.currentUserId)
   }
   async updateWorkout(id: string, workout: Workout) {
