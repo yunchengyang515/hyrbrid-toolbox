@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IconTrash } from '@tabler/icons-react'
 import {
   Accordion,
   ActionIcon,
+  Autocomplete,
   Button,
   Divider,
   Fieldset,
@@ -11,6 +12,8 @@ import {
   Text,
   TextInput,
 } from '@mantine/core'
+import { ExerciseApiService } from '@/services/api/exercise.api.service'
+import { Exercise } from '@/types/Exercise'
 import { SetDetail, WorkoutExercise } from '@/types/WorkoutExercise'
 
 interface ExerciseAccordionProps {
@@ -25,6 +28,16 @@ export default function ExerciseAccordion({
   onUpdateExercises,
 }: ExerciseAccordionProps) {
   const [localExercises, setLocalExercises] = useState(exercises)
+  const [allExercises, setAllExercises] = useState<Exercise[]>([])
+
+  useEffect(() => {
+    const fetchExercises = async () => {
+      const apiService = new ExerciseApiService()
+      const exercises = await apiService.getAllExercises()
+      setAllExercises(exercises)
+    }
+    fetchExercises()
+  }, [])
 
   // Function to generate a summary of sets
   const generateSetSummary = (exercise: WorkoutExercise) => {
@@ -112,23 +125,13 @@ export default function ExerciseAccordion({
               </Accordion.Control>
               <Accordion.Panel>
                 {/* Exercise Name */}
-                <TextInput
+                <Autocomplete
                   label='Exercise Name'
-                  value={exercise.exercise_name}
+                  placeholder='Pick an exercise'
+                  data={allExercises.map((ex) => ({ value: ex.id, label: ex.name }))}
+                  value={exercise.exercise_id}
                   readOnly={readOnly}
-                  onChange={(e) =>
-                    handleExerciseChange(exercise.id, 'exercise_name', e.currentTarget.value)
-                  }
-                />
-
-                {/* Exercise Type */}
-                <TextInput
-                  label='Exercise Type'
-                  value={exercise.exercise_type}
-                  readOnly={readOnly}
-                  onChange={(e) =>
-                    handleExerciseChange(exercise.id, 'exercise_type', e.currentTarget.value)
-                  }
+                  onChange={(value) => handleExerciseChange(exercise.id, 'exercise_id', value)}
                 />
 
                 {/* Number of Sets */}
