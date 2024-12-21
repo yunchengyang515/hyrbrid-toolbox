@@ -3,14 +3,15 @@ import { IconTrash } from '@tabler/icons-react'
 import {
   Accordion,
   ActionIcon,
-  Autocomplete,
   Box,
   Button,
+  ComboboxItem,
   Divider,
   Fieldset,
   Grid,
   Group,
   NumberInput,
+  Select,
   Text,
   TextInput,
 } from '@mantine/core'
@@ -24,7 +25,7 @@ interface ExerciseAccordionProps {
   onUpdateExercises: (updatedExercises: WorkoutExercise[]) => void
 }
 
-export default function ExerciseAccordion({
+export function ExerciseAccordion({
   workoutExercises,
   readOnly = false,
   onUpdateExercises,
@@ -49,7 +50,7 @@ export default function ExerciseAccordion({
 
     return workoutExercise.set_rep_detail
       .map((set) => {
-        if (workoutExercise.exercise_type === 'Running') {
+        if (workoutExercise.exercise_type === 'Cardio') {
           if (set.duration && set.pace) {
             return `${set.duration}@${set.pace}`
           }
@@ -71,31 +72,41 @@ export default function ExerciseAccordion({
   }
 
   // Handler for changing workout exercise details
-  const handleExerciseChange = (id: string, field: keyof WorkoutExercise, value: any) => {
-    const updatedExercises = localExercises.map((ex) =>
-      ex.id === id ? { ...ex, [field]: value } : ex,
-    )
+  const handleExerciseChange = (id: string, changes: Partial<WorkoutExercise>) => {
+    const updatedExercises = localExercises.map((ex) => (ex.id === id ? { ...ex, ...changes } : ex))
     setLocalExercises(updatedExercises)
     onUpdateExercises(updatedExercises)
   }
 
   // Handler for adding a new workout exercise
   const handleAddExercise = () => {
-    const newExercise: WorkoutExercise = {
+    const newExercise: Partial<WorkoutExercise> = {
       id: String(Date.now()),
-      exercise_name: '',
+      exercise_name: 'New Exercise',
       set_rep_detail: [],
       exercise_type: '',
       workout_id: '',
       exercise_id: '',
       user_id: '',
     }
-    const updatedExercises = [...localExercises, newExercise]
+    const updatedExercises = [...localExercises, newExercise as WorkoutExercise]
     setLocalExercises(updatedExercises)
     onUpdateExercises(updatedExercises)
   }
 
+  const handleExerciseSelect = (workoutExerciseId: string, option: ComboboxItem) => {
+    const selectedExercise = allExercises.find((ex) => ex.id === option.value)
+    if (selectedExercise) {
+      handleExerciseChange(workoutExerciseId, {
+        exercise_id: selectedExercise.id,
+        exercise_name: selectedExercise.name,
+        exercise_type: selectedExercise.type,
+      })
+    }
+  }
+
   const renderSetDetails = (workoutExercise: WorkoutExercise, set: SetDetail, index: number) => {
+    console.log('workoutExercise is ', workoutExercise)
     if (workoutExercise.exercise_type.toLowerCase() === 'cardio') {
       return (
         <Grid>
@@ -105,13 +116,11 @@ export default function ExerciseAccordion({
               value={set.duration || ''}
               readOnly={readOnly}
               onChange={(e) =>
-                handleExerciseChange(
-                  workoutExercise.id,
-                  'set_rep_detail',
-                  workoutExercise.set_rep_detail.map((s, i) =>
+                handleExerciseChange(workoutExercise.id, {
+                  set_rep_detail: workoutExercise.set_rep_detail.map((s, i) =>
                     i === index ? { ...s, duration: e.currentTarget.value } : s,
                   ),
-                )
+                })
               }
             />
           </Grid.Col>
@@ -121,13 +130,11 @@ export default function ExerciseAccordion({
               value={set.pace || ''}
               readOnly={readOnly}
               onChange={(e) =>
-                handleExerciseChange(
-                  workoutExercise.id,
-                  'set_rep_detail',
-                  workoutExercise.set_rep_detail.map((s, i) =>
+                handleExerciseChange(workoutExercise.id, {
+                  set_rep_detail: workoutExercise.set_rep_detail.map((s, i) =>
                     i === index ? { ...s, pace: e.currentTarget.value } : s,
                   ),
-                )
+                })
               }
             />
           </Grid.Col>
@@ -142,13 +149,11 @@ export default function ExerciseAccordion({
             value={set.reps !== undefined ? set.reps : 0}
             readOnly={readOnly}
             onChange={(val) =>
-              handleExerciseChange(
-                workoutExercise.id,
-                'set_rep_detail',
-                workoutExercise.set_rep_detail.map((s, i) =>
-                  i === index ? { ...s, reps: val } : s,
+              handleExerciseChange(workoutExercise.id, {
+                set_rep_detail: workoutExercise.set_rep_detail.map((s, i) =>
+                  i === index ? { ...s, reps: Number(val) } : s,
                 ),
-              )
+              })
             }
           />
         </Grid.Col>
@@ -158,29 +163,25 @@ export default function ExerciseAccordion({
             value={set.weight !== undefined ? set.weight : 0}
             readOnly={readOnly}
             onChange={(val) =>
-              handleExerciseChange(
-                workoutExercise.id,
-                'set_rep_detail',
-                workoutExercise.set_rep_detail.map((s, i) =>
-                  i === index ? { ...s, weight: val } : s,
+              handleExerciseChange(workoutExercise.id, {
+                set_rep_detail: workoutExercise.set_rep_detail.map((s, i) =>
+                  i === index ? { ...s, weight: Number(val) } : s,
                 ),
-              )
+              })
             }
           />
         </Grid.Col>
         <Grid.Col span={4}>
           <NumberInput
-            label='Rest (s)'
+            label='Rest (seconds)'
             value={set.rest !== undefined ? set.rest : 0}
             readOnly={readOnly}
-            onChange={(val) =>
-              handleExerciseChange(
-                workoutExercise.id,
-                'set_rep_detail',
-                workoutExercise.set_rep_detail.map((s, i) =>
-                  i === index ? { ...s, rest: val } : s,
+            onChange={(value) =>
+              handleExerciseChange(workoutExercise.id, {
+                set_rep_detail: workoutExercise.set_rep_detail.map((setDetail, setIndex) =>
+                  setIndex === index ? { ...setDetail, rest: Number(value) } : setDetail,
                 ),
-              )
+              })
             }
           />
         </Grid.Col>
@@ -212,59 +213,57 @@ export default function ExerciseAccordion({
     <>
       {localExercises.length > 0 ? (
         <Accordion>
-          {localExercises.map((workoutExercise) => (
-            <Accordion.Item key={workoutExercise.id} value={workoutExercise.id}>
+          {localExercises.map((localWorkoutExercise, index) => (
+            <Accordion.Item key={localWorkoutExercise.id} value={localWorkoutExercise.id}>
               <Accordion.Control>
                 <Group justify='space-between' align='center'>
                   <div>
-                    <Text>{workoutExercise.exercise_name || 'New Exercise'}</Text>
+                    <Text>{localWorkoutExercise.exercise_name || 'New Exercise'}</Text>
                     <Text size='sm' c='dimmed'>
-                      {generateSetSummary(workoutExercise)}
+                      {generateSetSummary(localWorkoutExercise)}
                     </Text>
                   </div>
-                  {renderRemoveButton(workoutExercise)}
+                  {renderRemoveButton(localWorkoutExercise)}
                 </Group>
               </Accordion.Control>
               <Accordion.Panel>
                 {/* Exercise Name */}
-                <Autocomplete
+                <Select
                   label='Exercise Name'
                   placeholder='Pick an exercise'
                   data={allExercises.map((ex) => ({ value: ex.id, label: ex.name }))}
-                  value={workoutExercise.exercise_id}
+                  value={localWorkoutExercise.exercise_id}
                   readOnly={readOnly}
-                  onChange={(value) =>
-                    handleExerciseChange(workoutExercise.id, 'exercise_id', value)
-                  }
+                  searchable
+                  onChange={(_value, option) => {
+                    handleExerciseSelect(localWorkoutExercise.id, option)
+                  }}
+                  data-testid={`exercise-name-select-${index}`}
                 />
 
                 {/* Number of Sets */}
                 <NumberInput
                   label='Number of Sets'
                   placeholder='Enter sets'
-                  value={workoutExercise.set_rep_detail.length}
+                  value={localWorkoutExercise.set_rep_detail.length}
                   min={1}
                   max={10}
                   readOnly={readOnly}
                   onChange={(val) =>
-                    handleExerciseChange(
-                      workoutExercise.id,
-                      'set_rep_detail',
-                      Array.from({ length: Number(val) }, (_, index) => ({
+                    handleExerciseChange(localWorkoutExercise.id, {
+                      set_rep_detail: Array.from({ length: Number(val) }, (_, index) => ({
                         id: index + 1,
-                        reps: '',
-                        weight: '',
-                        rest: '',
                       })),
-                    )
+                    })
                   }
+                  data-testid={`number-of-sets-input-${localWorkoutExercise.id}`}
                 />
 
                 {/* Set Details */}
-                {workoutExercise.set_rep_detail.length > 0 && (
+                {localWorkoutExercise.set_rep_detail.length > 0 && (
                   <>
                     <Divider my='sm' label='Set Details' labelPosition='center' />
-                    {workoutExercise.set_rep_detail.map((set: SetDetail, index: number) => (
+                    {localWorkoutExercise.set_rep_detail.map((set: SetDetail, index: number) => (
                       <Box key={set.id} mb='1rem'>
                         <Grid align='center'>
                           <Grid.Col span={11}>
@@ -282,7 +281,7 @@ export default function ExerciseAccordion({
                                   </Text>
                                 </Grid.Col>
                                 <Grid.Col span={11}>
-                                  {renderSetDetails(workoutExercise, set, index)}
+                                  {renderSetDetails(localWorkoutExercise, set, index)}
                                 </Grid.Col>
                               </Grid>
                             </Fieldset>
@@ -294,12 +293,13 @@ export default function ExerciseAccordion({
                                 variant='outline'
                                 size='sm'
                                 onClick={() =>
-                                  handleExerciseChange(
-                                    workoutExercise.id,
-                                    'set_rep_detail',
-                                    workoutExercise.set_rep_detail.filter((_, i) => i !== index),
-                                  )
+                                  handleExerciseChange(localWorkoutExercise.id, {
+                                    set_rep_detail: localWorkoutExercise.set_rep_detail.filter(
+                                      (_, i) => i !== index,
+                                    ),
+                                  })
                                 }
+                                data-testid={`remove-set-button-${localWorkoutExercise.id}-${index}`}
                               >
                                 <IconTrash size={16} />
                               </ActionIcon>
@@ -321,7 +321,12 @@ export default function ExerciseAccordion({
       )}
 
       {!readOnly && (
-        <Button variant='outline' type='button' onClick={handleAddExercise}>
+        <Button
+          variant='outline'
+          type='button'
+          onClick={handleAddExercise}
+          data-testid='add-exercise-button'
+        >
           + Add Exercise
         </Button>
       )}
