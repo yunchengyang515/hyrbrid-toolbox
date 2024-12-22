@@ -124,9 +124,6 @@ export default function WorkoutModal({
     if (mode === 'view') {
       return (
         <>
-          <Button variant='outline' onClick={onClose}>
-            Close
-          </Button>
           <Button
             variant='outline'
             onClick={() => setActiveStep(1)}
@@ -164,9 +161,6 @@ export default function WorkoutModal({
         <>
           <Button variant='outline' onClick={() => setActiveStep(0)}>
             Back to Details
-          </Button>
-          <Button variant='outline' onClick={onClose}>
-            Close
           </Button>
           <Button
             variant='filled'
