@@ -2,15 +2,24 @@ export type SetDetail = {
   id: number
   duration?: string
   pace?: string
-  reps?: string
-  weight?: string
-  rest?: string
+  reps?: number
+  weight?: number
+  rest?: number
 }
 
 export type WorkoutExercise = {
   id: string
   set_rep_detail: SetDetail[]
-  workout_id: number
-  exercise_id: number
+  workout_id: string
+  exercise_id: string
+  user_id: string
+  exercise_name: string
+  exercise_type: string
+}
+
+export type WorkoutExerciseSchema = {
+  set_rep_detail: SetDetail[]
+  workout_id: string
+  exercise_id: string
   user_id: string
 }

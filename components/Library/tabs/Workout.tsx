@@ -1,40 +1,38 @@
+// WorkoutsTab.tsx
 import { useEffect, useState } from 'react'
 import { IconSearch } from '@tabler/icons-react'
 import { from } from 'rxjs'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
 import { WorkoutApiService } from '@/services/api/workout.api.service'
-import { Workout, WorkoutFormData } from '@/types/Workout'
-import WorkoutModal from '../modals/Workout/Workout'
-
-// Mock Workout Data
+import { WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
+import WorkoutModal from '../forms/workout/workout.modal'
 
 const workoutApiService = new WorkoutApiService()
 
 export default function WorkoutsTab() {
   const [search, setSearch] = useState('')
   const [modalOpened, setModalOpened] = useState(false)
-  // Filter workouts based on search input
-
-  const [workouts, setWorkouts] = useState<Workout[]>([])
+  const [modalMode, setModalMode] = useState<'create' | 'view' | 'edit'>('create')
+  const [workouts, setWorkouts] = useState<WorkoutWithExercises[]>([])
+  const [selectedWorkout, setSelectedWorkout] = useState<WorkoutWithExercises | undefined>(
+    undefined,
+  )
 
   useEffect(() => {
-    // Convert the Promise returned by getAllWorkouts() to an Observable using from()
     const sub = from(workoutApiService.getAllWorkouts()).subscribe({
-      next: (data: Workout[]) => setWorkouts(data),
+      next: (data: WorkoutWithExercises[]) => setWorkouts(data),
       error: (err) => console.error('Failed to load workouts:', err),
     })
 
-    // Cleanup subscription on unmount
     return () => sub.unsubscribe()
   }, [])
 
+  // Handler for creating a new workout
   const handleAddWorkout = (newWorkout: WorkoutFormData) => {
     const rollbackState = workouts
-
     from(workoutApiService.createWorkout(newWorkout)).subscribe({
-      next: (newWorkout: Workout) => {
-        console.log('Workout created:', newWorkout)
-        setWorkouts([...workouts, newWorkout])
+      next: (created: WorkoutWithExercises) => {
+        setWorkouts([...workouts, created])
       },
       error: (err) => {
         console.error('Failed to create workout:', err)
@@ -42,18 +40,64 @@ export default function WorkoutsTab() {
       },
     })
   }
+
+  // Handler for updating an existing workout
+  const handleUpdateWorkout = (updatedWorkout: WorkoutWithExercises) => {
+    console.log('handleUpdateWorkout', updatedWorkout)
+    const rollbackState = workouts
+    from(workoutApiService.updateWorkout(updatedWorkout)).subscribe({
+      next: (updated: WorkoutWithExercises) => {
+        setWorkouts((prevWorkouts) => prevWorkouts.map((w) => (w.id === updated.id ? updated : w)))
+      },
+      error: (err) => {
+        console.error('Failed to update workout:', err)
+        setWorkouts(rollbackState)
+      },
+    })
+  }
+
+  // Open the modal in create mode
+  function openCreateModal() {
+    setSelectedWorkout(undefined) // No workout selected
+    setModalMode('create')
+    setModalOpened(true)
+  }
+
+  // Open the modal in view mode for a specific workout
+  function openViewModal(workout: WorkoutWithExercises) {
+    setSelectedWorkout(workout)
+    setModalMode('view')
+    setModalOpened(true)
+  }
+
+  function openEditModal(workout: WorkoutWithExercises) {
+    console.log('openEditModal')
+    setSelectedWorkout(workout)
+    setModalMode('edit')
+    setModalOpened(true)
+  }
+
+  function closeModal() {
+    setModalOpened(false)
+  }
+
+  const filteredWorkouts = workouts.filter((w) =>
+    w.name.toLowerCase().includes(search.toLowerCase()),
+  )
+
   return (
     <Container fluid px={2}>
       {/* Add Workout Button and Search Bar */}
       <Group justify='flex-start' align='center' mb='xl' wrap='wrap' gap='sm'>
-        <Button variant='filled' color='blue' size='md' onClick={() => setModalOpened(true)}>
+        {/* Clicking this button opens the modal in create mode */}
+        <Button variant='filled' color='blue' size='md' onClick={openCreateModal}>
           + Add Workout
         </Button>
         <TextInput
           placeholder='Search workouts'
           size='md'
           leftSection={<IconSearch size={16} stroke={1.5} />}
-          w={300} // Limit width for cleaner UI
+          w={300}
           value={search}
           onChange={(event) => setSearch(event.currentTarget.value)}
         />
@@ -61,15 +105,27 @@ export default function WorkoutsTab() {
 
       <WorkoutModal
         opened={modalOpened}
-        onClose={() => setModalOpened(false)}
+        onClose={closeModal}
+        mode={modalMode}
         onSubmit={handleAddWorkout}
+        onUpdate={handleUpdateWorkout}
+        workoutData={modalMode === 'edit' || modalMode === 'view' ? selectedWorkout : undefined}
+        onEditMode={(workout: WorkoutWithExercises) => openEditModal(workout)}
       />
+
       {/* Workout Cards */}
       <Grid gutter='xl'>
-        {workouts.map((workout) => (
+        {filteredWorkouts.map((workout) => (
           <Grid.Col key={workout.id} span={4}>
-            <Card shadow='sm' padding='lg' radius='md' withBorder h='200px'>
-              {/* Header Section: Title + Badge */}
+            <Card
+              shadow='sm'
+              padding='lg'
+              radius='md'
+              withBorder
+              h='200px'
+              onClick={() => openViewModal(workout)} // Opening a card calls openViewModal
+              style={{ cursor: 'pointer' }}
+            >
               <Group justify='space-between' align='center' mb='sm'>
                 <Text fw={700} size='lg'>
                   {workout.name}
@@ -79,14 +135,12 @@ export default function WorkoutsTab() {
                 </Badge>
               </Group>
 
-              {/* Description */}
               {workout.description && (
                 <Text size='sm' c='dimmed' mb='sm'>
                   {workout.description}
                 </Text>
               )}
 
-              {/* Duration and Intensity */}
               <Text size='sm' c='dimmed'>
                 <strong>Duration:</strong> {workout.duration_minute} minutes
               </Text>

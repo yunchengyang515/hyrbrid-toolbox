@@ -1,8 +1,8 @@
-import { SetDetail } from './WorkoutExercise'
+import { WorkoutExercise } from './WorkoutExercise'
 
 // Represents the Workout structure as it is stored in the database
 export type Workout = {
-  id: string // UUID
+  id: string
   created_at: string // ISO timestamp
   name: string
   description?: string
@@ -13,12 +13,7 @@ export type Workout = {
 }
 
 export interface WorkoutWithExercises extends Workout {
-  exercises: {
-    id: string
-    name: string
-    sets: SetDetail[]
-    type: string
-  }[]
+  exercises: WorkoutExercise[]
 }
 
 // Represents the editable Workout data used in forms (no ID or timestamps needed)
