@@ -142,7 +142,7 @@ export default function WorkoutModal({
 
   // Step two buttons
   function renderExerciseDetailStepButtons() {
-    if (mode === 'view' || mode === 'edit') {
+    if (mode === 'view') {
       return (
         <>
           <Button variant='outline' onClick={() => setActiveStep(0)}>
@@ -153,6 +153,22 @@ export default function WorkoutModal({
           </Button>
           <Button variant='filled' onClick={() => onEditMode(workoutData as WorkoutWithExercises)}>
             Edit
+          </Button>
+        </>
+      )
+    }
+
+    if (mode === 'edit') {
+      return (
+        <>
+          <Button variant='outline' onClick={() => setActiveStep(0)}>
+            Back to Details
+          </Button>
+          <Button variant='outline' onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant='filled' type='submit'>
+            Save
           </Button>
         </>
       )
@@ -198,6 +214,7 @@ export default function WorkoutModal({
               value={getFieldValue('name') as string}
               onChange={(e) => handleChange('name', e.currentTarget.value)}
               error={getError('name')}
+              data-testid='workout-name-input'
             />
             <TextInput
               label='Description'
@@ -206,6 +223,7 @@ export default function WorkoutModal({
               value={getFieldValue('description') as string}
               onChange={(e) => handleChange('description', e.currentTarget.value)}
               error={getError('description')}
+              data-testid='workout-description-input'
             />
             <NumberInput
               label='Duration (minutes)'
@@ -214,6 +232,7 @@ export default function WorkoutModal({
               value={getFieldValue('duration_minute') as number | undefined}
               onChange={(val) => handleChange('duration_minute', val)}
               error={getError('duration_minute')}
+              data-testid='workout-duration-input'
             />
             <NumberInput
               label='Intensity'
@@ -222,16 +241,22 @@ export default function WorkoutModal({
               value={getFieldValue('intensity') as number | undefined}
               onChange={(val) => handleChange('intensity', val)}
               error={getError('intensity')}
+              data-testid='workout-intensity-input'
             />
             <Select
               label='Workout Type'
               placeholder='Select workout type'
-              data={['Strength', 'Cardio', 'Core']}
+              data={[
+                { label: 'Strength', value: 'strength' },
+                { label: 'Cardio', value: 'cardio' },
+                { label: 'Core', value: 'core' },
+              ]}
               withAsterisk={!isReadOnly}
               readOnly={isReadOnly}
               value={getFieldValue('type') as string}
               onChange={(val) => handleChange('type', val as string)}
               error={getError('type')}
+              data-testid='workout-type-select'
             />
 
             <Group mt='md' justify='flex-end'>

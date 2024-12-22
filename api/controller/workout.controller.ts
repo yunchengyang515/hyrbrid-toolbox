@@ -1,4 +1,3 @@
-import { randomUUID } from 'crypto'
 import { Workout, WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
 import { WorkoutExerciseSchema } from '@/types/WorkoutExercise'
 import { ExerciseRepository } from '../data/repository/exercise.repository'
