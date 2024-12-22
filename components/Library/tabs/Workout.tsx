@@ -43,6 +43,7 @@ export default function WorkoutsTab() {
 
   // Handler for updating an existing workout
   const handleUpdateWorkout = (updatedWorkout: WorkoutWithExercises) => {
+    console.log('handleUpdateWorkout', updatedWorkout)
     const rollbackState = workouts
     from(workoutApiService.updateWorkout(updatedWorkout)).subscribe({
       next: (updated: WorkoutWithExercises) => {
@@ -70,10 +71,10 @@ export default function WorkoutsTab() {
   }
 
   function openEditModal(workout: WorkoutWithExercises) {
-    if (selectedWorkout) {
-      setSelectedWorkout(workout)
-      setModalMode('edit')
-    }
+    console.log('openEditModal')
+    setSelectedWorkout(workout)
+    setModalMode('edit')
+    setModalOpened(true)
   }
 
   function closeModal() {

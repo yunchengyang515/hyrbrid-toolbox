@@ -27,6 +27,21 @@ const workoutData: WorkoutWithExercises = {
   exercises: [],
 }
 
+const workoutDataWithExercises: WorkoutWithExercises = {
+  ...workoutData,
+  exercises: [
+    {
+      id: '1',
+      exercise_name: 'Push Up',
+      exercise_type: 'Strength',
+      set_rep_detail: [{ id: 1, reps: 10, weight: 0, rest: 60 }],
+      workout_id: '1',
+      exercise_id: '1',
+      user_id: 'user1',
+    },
+  ],
+}
+
 const mockExercises = [
   { id: '1', name: 'Push Up', type: 'Strength' },
   { id: '2', name: 'Running Test', type: 'Cardio' },
@@ -165,6 +180,24 @@ describe('WorkoutModal', () => {
     })
 
     expect(mockOnEditMode).toHaveBeenCalledWith(workoutData)
+  })
+
+  test('renders exercises correctly in edit mode', async () => {
+    render(
+      <WorkoutModal
+        opened
+        onClose={mockOnClose}
+        mode='edit'
+        onSubmit={mockOnSubmit}
+        onUpdate={mockOnUpdate}
+        workoutData={workoutDataWithExercises}
+        onEditMode={mockOnEditMode}
+      />,
+    )
+
+    await userEvent.click(screen.getByTestId('edit-next-button'))
+    expect(screen.getByTestId('accordion-item-exercise-name-0')).toHaveTextContent('Push Up')
+    expect(screen.getByText(/10x0kg \(Rest: 60s\)/i)).toBeInTheDocument()
   })
 
   test('selects an exercise and updates the local workout exercise', async () => {

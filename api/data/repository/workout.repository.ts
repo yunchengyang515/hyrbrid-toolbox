@@ -68,6 +68,7 @@ const updateWorkout = async (id: string, workout: Workout, userId: string) => {
     .update({ ...workout, id })
     .eq('id', id)
     .eq('user_id', userId)
+    .select()
     .single()
   if (error) {
     throw new Error(error.message)

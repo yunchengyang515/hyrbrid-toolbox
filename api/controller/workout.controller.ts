@@ -50,9 +50,11 @@ export class WorkoutController {
     const updatedWorkout = await this.workoutRepository.updateWorkout(id, workoutData)
 
     // Map exercises to the correct format and update them in the workout
-    const mappedExercises = exercises.map((exercise) => ({
-      ...exercise,
-      workout_id: id,
+    const mappedExercises: WorkoutExerciseSchema[] = exercises.map((exercise) => ({
+      exercise_id: exercise.exercise_id,
+      workout_id: updatedWorkout.id,
+      user_id: updatedWorkout.user_id,
+      set_rep_detail: exercise.set_rep_detail,
     }))
     await this.updateWorkoutExercises(id, mappedExercises)
 

@@ -6,10 +6,11 @@ import { WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
 import { WorkoutExercise } from '@/types/WorkoutExercise'
 import { ExerciseAccordion } from './exercise.accordion'
 
+type WorkoutModalMode = 'create' | 'view' | 'edit'
 interface WorkoutModalProps {
   opened: boolean
   onClose: () => void
-  mode: 'create' | 'view' | 'edit'
+  mode: WorkoutModalMode
   onSubmit: (exerciseData: WorkoutFormData) => void // for create mode
   onUpdate: (updatedWorkout: WorkoutWithExercises) => void // for edit mode
   workoutData?: WorkoutWithExercises // required for view and edit modes
@@ -61,7 +62,6 @@ export default function WorkoutModal({
   // Reset form when mode or workoutData changes
   useEffect(() => {
     form.reset()
-    // If switching to view mode, reset any active steps or edit modes
     if (mode === 'view') {
       setActiveStep(0)
     }
@@ -106,6 +106,14 @@ export default function WorkoutModal({
     return form.errors[field] || null
   }
 
+  // Helper to get exercises data depending on mode
+  function getExercisesData() {
+    if (isReadOnly || isEditMode) {
+      return workoutData?.exercises || []
+    }
+    return form.values.exercises
+  }
+
   // Step one buttons
   function renderWorkoutBasicDataStepButtons() {
     if (mode === 'view') {
@@ -114,7 +122,11 @@ export default function WorkoutModal({
           <Button variant='outline' onClick={onClose}>
             Close
           </Button>
-          <Button variant='outline' onClick={() => setActiveStep(1)}>
+          <Button
+            variant='outline'
+            onClick={() => setActiveStep(1)}
+            data-testid='view-exercises-button'
+          >
             View Exercises
           </Button>
           <Button variant='filled' onClick={() => onEditMode(workoutData as WorkoutWithExercises)}>
@@ -130,7 +142,7 @@ export default function WorkoutModal({
           <Button variant='outline' onClick={onClose}>
             Cancel
           </Button>
-          <Button variant='filled' onClick={() => setActiveStep(1)}>
+          <Button variant='filled' onClick={() => setActiveStep(1)} data-testid='edit-next-button'>
             Next
           </Button>
         </>
@@ -151,7 +163,11 @@ export default function WorkoutModal({
           <Button variant='outline' onClick={onClose}>
             Close
           </Button>
-          <Button variant='filled' onClick={() => onEditMode(workoutData as WorkoutWithExercises)}>
+          <Button
+            variant='filled'
+            type='button'
+            onClick={() => onEditMode(workoutData as WorkoutWithExercises)}
+          >
             Edit
           </Button>
         </>
@@ -271,7 +287,7 @@ export default function WorkoutModal({
               Exercises
             </Text>
             <ExerciseAccordion
-              workoutExercises={isReadOnly ? workoutData?.exercises || [] : form.values.exercises}
+              workoutExercises={getExercisesData()}
               readOnly={isReadOnly}
               onUpdateExercises={handleUpdateExercises}
             />
