@@ -61,11 +61,16 @@ export default function WorkoutModal({
 
   // Reset form when mode or workoutData changes
   useEffect(() => {
-    form.reset()
+    if (mode === 'create') {
+      form.reset()
+    }
     if (mode === 'view') {
       setActiveStep(0)
     }
-  }, [mode, workoutData])
+    if (mode === 'edit') {
+      form.setValues(initialValues)
+    }
+  }, [mode])
 
   const handleCreateSubmit = form.onSubmit((values) => {
     onSubmit(values)
@@ -83,7 +88,7 @@ export default function WorkoutModal({
 
   // Helper to get field value depending on mode
   function getFieldValue(field: keyof WorkoutFormData) {
-    if (isReadOnly || isEditMode) {
+    if (isReadOnly) {
       // View mode (read-only), use workoutData directly
       return (workoutData as any)[field] ?? (typeof initialValues[field] === 'number' ? 0 : '')
     }
@@ -166,7 +171,10 @@ export default function WorkoutModal({
           <Button
             variant='filled'
             type='button'
-            onClick={() => onEditMode(workoutData as WorkoutWithExercises)}
+            onClick={(event) => {
+              onEditMode(workoutData as WorkoutWithExercises)
+              event.preventDefault()
+            }}
           >
             Edit
           </Button>
