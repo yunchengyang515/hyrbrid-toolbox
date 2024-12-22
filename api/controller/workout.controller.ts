@@ -1,5 +1,6 @@
+import { randomUUID } from 'crypto'
 import { Workout, WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
-import { WorkoutExercise } from '@/types/WorkoutExercise'
+import { WorkoutExerciseSchema } from '@/types/WorkoutExercise'
 import { ExerciseRepository } from '../data/repository/exercise.repository'
 import { WorkoutExerciseRepository } from '../data/repository/workout_exercise.respository'
 import { WorkoutRepository } from '../data/repository/workout.repository'
@@ -31,25 +32,40 @@ export class WorkoutController {
     // Create the workout without exercises
     const createdWorkout = await this.workoutRepository.createWorkout(workoutData)
 
-    // Add exercises to the workout
-    await this.updateWorkoutExercises(createdWorkout.id, exercises)
+    // Map exercises to the correct format and add them to the workout
+    const mappedExercises: WorkoutExerciseSchema[] = exercises.map((exercise) => ({
+      exercise_id: exercise.exercise_id,
+      workout_id: createdWorkout.id,
+      user_id: createdWorkout.user_id,
+      set_rep_detail: exercise.set_rep_detail,
+    }))
+    await this.updateWorkoutExercises(createdWorkout.id, mappedExercises)
 
     return this.mergeWorkoutWithExercises(createdWorkout)
   }
   async updateWorkout(id: string, workout: WorkoutWithExercises) {
-    const updatedWorkout = await this.workoutRepository.updateWorkout(id, workout)
-    await this.updateWorkoutExercises(id, workout.exercises)
+    // Extract exercises from the workout data
+    const { exercises, ...workoutData } = workout
+
+    // Update the workout without exercises
+    const updatedWorkout = await this.workoutRepository.updateWorkout(id, workoutData)
+
+    // Map exercises to the correct format and update them in the workout
+    const mappedExercises = exercises.map((exercise) => ({
+      ...exercise,
+      workout_id: id,
+    }))
+    await this.updateWorkoutExercises(id, mappedExercises)
+
     return this.mergeWorkoutWithExercises(updatedWorkout)
   }
   async deleteWorkout(id: string) {
     return this.workoutRepository.deleteWorkout(id)
   }
 
-  private async updateWorkoutExercises(workoutId: string, exercises: WorkoutExercise[]) {
-    // Delete existing workout exercises
+  private async updateWorkoutExercises(workoutId: string, exercises: WorkoutExerciseSchema[]) {
     await this.workoutExerciseRepository.deleteWorkoutExercisesByWorkoutId(workoutId)
 
-    // Add updated workout exercises
     for (const exercise of exercises) {
       await this.workoutExerciseRepository.createWorkoutExercise({
         ...exercise,
@@ -59,11 +75,11 @@ export class WorkoutController {
   }
 
   async mergeWorkoutWithExercises(workout: Workout): Promise<WorkoutWithExercises> {
-    const workoutExercise = await this.workoutExerciseRepository.getWorkoutExerciseByWorkoutId(
+    const workoutExercises = await this.workoutExerciseRepository.getWorkoutExerciseByWorkoutId(
       workout.id,
     )
-    const workoutExerciseWithExerciseData = await Promise.all(
-      workoutExercise.map(async (workoutExercise) => {
+    const workoutExercisesWithDetails = await Promise.all(
+      workoutExercises.map(async (workoutExercise) => {
         const exerciseData = await this.exerciseRepository.getExerciseById(
           workoutExercise.exercise_id,
         )
@@ -74,6 +90,6 @@ export class WorkoutController {
         }
       }),
     )
-    return { ...workout, exercises: workoutExerciseWithExerciseData }
+    return { ...workout, exercises: workoutExercisesWithDetails }
   }
 }

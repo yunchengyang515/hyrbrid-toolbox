@@ -2,12 +2,9 @@
 import { useEffect, useState } from 'react'
 import { Button, Group, Modal, NumberInput, Select, Stack, Text, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { WorkoutApiService } from '@/services/api/workout.api.service'
 import { WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
 import { WorkoutExercise } from '@/types/WorkoutExercise'
 import { ExerciseAccordion } from './exercise.accordion'
-
-const workoutApiService = new WorkoutApiService()
 
 interface WorkoutModalProps {
   opened: boolean
@@ -70,16 +67,14 @@ export default function WorkoutModal({
     }
   }, [mode, workoutData])
 
-  const handleCreateSubmit = form.onSubmit(async (values) => {
-    const response = await workoutApiService.createWorkout(values as WorkoutWithExercises)
-    onSubmit(response)
+  const handleCreateSubmit = form.onSubmit((values) => {
+    onSubmit(values)
     onClose()
   })
 
-  const handleEditSubmit = form.onSubmit(async (values) => {
+  const handleEditSubmit = form.onSubmit((values) => {
     const updatedWorkout = { ...workoutData!, ...values }
-    const response = await workoutApiService.updateWorkout(updatedWorkout)
-    onUpdate(response)
+    onUpdate(updatedWorkout)
     onClose()
   })
 

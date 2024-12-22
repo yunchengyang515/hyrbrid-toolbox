@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto'
 import { Workout, WorkoutFormData } from '@/types/Workout'
 import { getDbClient } from '../db.service'
 import { AbstractRepository } from './abstract.repository'
@@ -50,6 +51,7 @@ const createWorkout = async (workout: Partial<Workout>, userId: string) => {
     .insert({
       ...workout,
       user_id: userId,
+      id: randomUUID(),
     })
     .select()
     .single()

@@ -1,4 +1,4 @@
-import { WorkoutExercise } from '@/types/WorkoutExercise'
+import { WorkoutExercise, WorkoutExerciseSchema } from '@/types/WorkoutExercise'
 import { getDbClient } from '../db.service'
 import { AbstractRepository } from './abstract.repository'
 
@@ -9,7 +9,7 @@ export class WorkoutExerciseRepository extends AbstractRepository {
   async getWorkoutExerciseById(id: string) {
     return getWorkoutExerciseById(id, this.currentUserId)
   }
-  async createWorkoutExercise(workoutExercise: WorkoutExercise) {
+  async createWorkoutExercise(workoutExercise: WorkoutExerciseSchema) {
     return createWorkoutExercise(workoutExercise, this.currentUserId)
   }
   async updateWorkoutExercise(id: string, workoutExercise: WorkoutExercise) {

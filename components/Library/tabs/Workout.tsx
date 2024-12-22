@@ -43,9 +43,16 @@ export default function WorkoutsTab() {
 
   // Handler for updating an existing workout
   const handleUpdateWorkout = (updatedWorkout: WorkoutWithExercises) => {
-    setWorkouts((prevWorkouts) =>
-      prevWorkouts.map((w) => (w.id === updatedWorkout.id ? updatedWorkout : w)),
-    )
+    const rollbackState = workouts
+    from(workoutApiService.updateWorkout(updatedWorkout)).subscribe({
+      next: (updated: WorkoutWithExercises) => {
+        setWorkouts((prevWorkouts) => prevWorkouts.map((w) => (w.id === updated.id ? updated : w)))
+      },
+      error: (err) => {
+        console.error('Failed to update workout:', err)
+        setWorkouts(rollbackState)
+      },
+    })
   }
 
   // Open the modal in create mode
