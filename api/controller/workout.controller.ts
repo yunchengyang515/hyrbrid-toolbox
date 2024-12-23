@@ -1,5 +1,5 @@
-import { Workout, WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
-import { WorkoutExerciseSchema } from '@/types/WorkoutExercise'
+import { Workout, WorkoutFormData, WorkoutWithExercises } from '@/types/workout.types'
+import { WorkoutExerciseSchema } from '@/types/workoutExercise.types'
 import { ExerciseRepository } from '../data/repository/exercise.repository'
 import { WorkoutExerciseRepository } from '../data/repository/workout_exercise.respository'
 import { WorkoutRepository } from '../data/repository/workout.repository'

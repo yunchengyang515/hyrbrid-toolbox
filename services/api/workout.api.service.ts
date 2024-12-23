@@ -1,4 +1,4 @@
-import { WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
+import { WorkoutFormData, WorkoutWithExercises } from '@/types/workout.types'
 import { AbstractApiService } from './api.service'
 
 export class WorkoutApiService extends AbstractApiService {

@@ -3,7 +3,7 @@ import { IconBarbell, IconBook, IconLayoutDashboard, IconTemplate } from '@table
 import { Container, rem, Tabs, Text } from '@mantine/core'
 import { Layout } from '@/components/layout.component'
 import ExercisesTab from '@/components/Library/tabs/exercise.tab'
-import WorkoutsTab from '@/components/Library/tabs/Workout.tab'
+import WorkoutsTab from '@/components/Library/tabs/workout.tab'
 import type { NextPageWithLayout } from './_app'
 
 const LibraryPage: NextPageWithLayout = () => {

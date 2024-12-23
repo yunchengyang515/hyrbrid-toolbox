@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react'
 import { Button, Group, Modal, NumberInput, Select, Stack, Text, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
-import { WorkoutExercise } from '@/types/WorkoutExercise'
+import { WorkoutFormData, WorkoutWithExercises } from '@/types/workout.types'
+import { WorkoutExercise } from '@/types/workoutExercise.types'
 import { ExerciseAccordion } from './exercise.accordion'
 
 type WorkoutModalMode = 'create' | 'view' | 'edit'

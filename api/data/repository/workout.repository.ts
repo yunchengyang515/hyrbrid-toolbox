@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto'
-import { Workout, WorkoutFormData } from '@/types/Workout'
+import { Workout, WorkoutFormData } from '@/types/workout.types'
 import { getDbClient } from '../db.service'
 import { AbstractRepository } from './abstract.repository'
 

@@ -1,6 +1,6 @@
 import { Button, Group, Modal, MultiSelect, Select, Textarea, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { ExerciseFormData } from '@/types/Exercise'
+import { ExerciseFormData } from '@/types/exercise.types'
 
 type ExerciseModalProps = {
   opened: boolean

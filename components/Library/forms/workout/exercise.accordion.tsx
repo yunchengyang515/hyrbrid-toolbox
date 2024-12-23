@@ -16,8 +16,8 @@ import {
   TextInput,
 } from '@mantine/core'
 import { ExerciseApiService } from '@/services/api/exercise.api.service'
-import { Exercise } from '@/types/Exercise'
-import { SetDetail, WorkoutExercise } from '@/types/WorkoutExercise'
+import { Exercise } from '@/types/exercise.types'
+import { SetDetail, WorkoutExercise } from '@/types/workoutExercise.types'
 
 interface ExerciseAccordionProps {
   workoutExercises: WorkoutExercise[]
