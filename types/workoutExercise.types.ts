@@ -1,6 +1,6 @@
 export type SetDetail = {
   id: number
-  duration?: string
+  distance?: number
   pace?: string
   reps?: number
   weight?: number

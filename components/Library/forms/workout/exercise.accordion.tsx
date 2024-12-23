@@ -15,8 +15,10 @@ import {
   Text,
   TextInput,
 } from '@mantine/core'
+import { useValidatedState } from '@mantine/hooks'
 import { ExerciseApiService } from '@/services/api/exercise.api.service'
 import { Exercise } from '@/types/exercise.types'
+import { DISTANCE_UNIT, PACE_UNIT, WEIGHT_UNIT } from '@/types/units'
 import { SetDetail, WorkoutExercise } from '@/types/workoutExercise.types'
 
 interface ExerciseAccordionProps {
@@ -51,14 +53,14 @@ export function ExerciseAccordion({
     return workoutExercise.set_rep_detail
       .map((set) => {
         if (workoutExercise.exercise_type === 'Cardio') {
-          if (set.duration && set.pace) {
-            return `${set.duration}@${set.pace}`
+          if (set.distance && set.pace) {
+            return `${set.distance}${DISTANCE_UNIT}@${set.pace}${PACE_UNIT}`
           }
         }
         const reps = set.reps !== undefined ? set.reps : '?'
         const weight = set.weight !== undefined ? set.weight : '?'
         const rest = set.rest !== undefined ? ` (Rest: ${set.rest}s)` : ''
-        return `${reps}x${weight}kg${rest}`
+        return `${reps}x${weight}${WEIGHT_UNIT}${rest}`
       })
       .filter(Boolean)
       .join(', ')
@@ -105,44 +107,67 @@ export function ExerciseAccordion({
     }
   }
 
+  const validatePace = (pace: string) => {
+    const pacePattern = /^(\d{1,2}):([0-5]\d)$/
+    return pacePattern.test(pace)
+  }
+
   const renderSetDetails = (workoutExercise: WorkoutExercise, set: SetDetail, index: number) => {
+    const [{ value: pace, valid: isPaceValid }, setPace] = useValidatedState(
+      set.pace || '',
+      validatePace,
+      true,
+    )
+
     if (workoutExercise.exercise_type.toLowerCase() === 'cardio') {
       return (
         <Grid>
-          <Grid.Col span={6}>
-            <TextInput
-              label='Duration'
-              value={set.duration || ''}
+          <Grid.Col span={4}>
+            <NumberInput
+              label={`Distance (${DISTANCE_UNIT})`}
+              value={set.distance || ''}
               readOnly={readOnly}
-              onChange={(e) =>
+              onChange={(value) =>
                 handleExerciseChange(workoutExercise.id, {
                   set_rep_detail: workoutExercise.set_rep_detail.map((s, i) =>
-                    i === index ? { ...s, duration: e.currentTarget.value } : s,
+                    i === index ? { ...s, distance: Number(value) } : s,
                   ),
                 })
               }
             />
           </Grid.Col>
-          <Grid.Col span={6}>
+          <Grid.Col span={4}>
             <TextInput
-              label='Pace'
-              value={set.pace || ''}
+              label={`Pace (${PACE_UNIT})`}
+              value={pace}
               readOnly={readOnly}
-              onChange={(e) =>
-                handleExerciseChange(workoutExercise.id, {
-                  set_rep_detail: workoutExercise.set_rep_detail.map((s, i) =>
-                    i === index ? { ...s, pace: e.currentTarget.value } : s,
-                  ),
-                })
-              }
+              onChange={(e) => setPace(e.currentTarget.value)}
+              error={!isPaceValid && 'Invalid pace format. Please use mm:ss.'}
             />
+          </Grid.Col>
+          <Grid.Col span={4}>
+            {!readOnly && (
+              <ActionIcon
+                color='red'
+                variant='outline'
+                size='sm'
+                onClick={() =>
+                  handleExerciseChange(workoutExercise.id, {
+                    set_rep_detail: workoutExercise.set_rep_detail.filter((_, i) => i !== index),
+                  })
+                }
+                data-testid={`remove-set-button-${workoutExercise.id}-${index}`}
+              >
+                <IconTrash size={16} />
+              </ActionIcon>
+            )}
           </Grid.Col>
         </Grid>
       )
     }
     return (
       <Grid>
-        <Grid.Col span={4}>
+        <Grid.Col span={3}>
           <NumberInput
             label='Reps'
             value={set.reps !== undefined ? set.reps : 0}
@@ -156,9 +181,9 @@ export function ExerciseAccordion({
             }
           />
         </Grid.Col>
-        <Grid.Col span={4}>
+        <Grid.Col span={3}>
           <NumberInput
-            label='Weight (kg)'
+            label={`Weight (${WEIGHT_UNIT})`}
             value={set.weight !== undefined ? set.weight : 0}
             readOnly={readOnly}
             onChange={(val) =>
@@ -170,7 +195,7 @@ export function ExerciseAccordion({
             }
           />
         </Grid.Col>
-        <Grid.Col span={4}>
+        <Grid.Col span={3}>
           <NumberInput
             label='Rest (seconds)'
             value={set.rest !== undefined ? set.rest : 0}
@@ -183,6 +208,23 @@ export function ExerciseAccordion({
               })
             }
           />
+        </Grid.Col>
+        <Grid.Col span={3}>
+          {!readOnly && (
+            <ActionIcon
+              color='red'
+              variant='outline'
+              size='sm'
+              onClick={() =>
+                handleExerciseChange(workoutExercise.id, {
+                  set_rep_detail: workoutExercise.set_rep_detail.filter((_, i) => i !== index),
+                })
+              }
+              data-testid={`remove-set-button-${workoutExercise.id}-${index}`}
+            >
+              <IconTrash size={16} />
+            </ActionIcon>
+          )}
         </Grid.Col>
       </Grid>
     )
