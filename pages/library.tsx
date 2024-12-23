@@ -1,9 +1,9 @@
 import type { ReactElement } from 'react'
 import { IconBarbell, IconBook, IconLayoutDashboard, IconTemplate } from '@tabler/icons-react'
 import { Container, rem, Tabs, Text } from '@mantine/core'
-import { Layout } from '@/components/Layout'
-import ExercisesTab from '@/components/Library/tabs/Exercise'
-import WorkoutsTab from '@/components/Library/tabs/Workout'
+import { Layout } from '@/components/layout.component'
+import ExercisesTab from '@/components/Library/tabs/exercise.tab'
+import WorkoutsTab from '@/components/Library/tabs/Workout.tab'
 import type { NextPageWithLayout } from './_app'
 
 const LibraryPage: NextPageWithLayout = () => {
