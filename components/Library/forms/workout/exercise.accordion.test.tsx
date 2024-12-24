@@ -147,8 +147,8 @@ test('generates cardio set summary correctly', async () => {
       id: '1',
       exercise_name: 'Running Test',
       set_rep_detail: [
-        { id: 1, duration: '30min', pace: '5min/km' },
-        { id: 2, duration: '45min', pace: '6min/km' },
+        { id: 1, distance: 10, pace: '5:30' },
+        { id: 2, distance: 10, pace: '6' },
       ],
       exercise_type: 'Cardio',
       workout_id: '',
@@ -157,5 +157,5 @@ test('generates cardio set summary correctly', async () => {
     },
   ]
   renderComponent({ workoutExercises })
-  expect(screen.getByText('30min@5min/km, 45min@6min/km')).toBeInTheDocument()
+  expect(screen.getByText('10km@5:30min/km, 10km@6min/km')).toBeInTheDocument()
 })
