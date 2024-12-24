@@ -228,6 +228,7 @@ export default function WorkoutModal({
       centered
       closeOnClickOutside={false}
       closeOnEscape={false}
+      fullScreen
     >
       <form onSubmit={mode === 'create' ? handleCreateSubmit : handleEditSubmit}>
         {activeStep === 0 && (

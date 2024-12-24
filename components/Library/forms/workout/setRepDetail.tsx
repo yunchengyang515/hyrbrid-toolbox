@@ -1,5 +1,4 @@
-import { IconTrash } from '@tabler/icons-react'
-import { ActionIcon, Grid, NumberInput, TextInput } from '@mantine/core'
+import { Grid, NumberInput, TextInput } from '@mantine/core'
 import { useValidatedState } from '@mantine/hooks'
 import { DISTANCE_UNIT, PACE_UNIT, WEIGHT_UNIT } from '@/types/units'
 import { SetDetail, WorkoutExercise } from '@/types/workoutExercise.types'
@@ -67,23 +66,6 @@ export function SetRepDetail({
             error={!isPaceValid && 'Invalid pace format. Please use mm:ss.'}
           />
         </Grid.Col>
-        <Grid.Col span={4}>
-          {!readOnly && (
-            <ActionIcon
-              color='red'
-              variant='outline'
-              size='sm'
-              onClick={() =>
-                handleExerciseChange(workoutExercise.id, {
-                  set_rep_detail: workoutExercise.set_rep_detail.filter((_, i) => i !== index),
-                })
-              }
-              data-testid={`remove-set-button-${workoutExercise.id}-${index}`}
-            >
-              <IconTrash size={16} />
-            </ActionIcon>
-          )}
-        </Grid.Col>
       </Grid>
     )
   }
@@ -130,23 +112,6 @@ export function SetRepDetail({
             })
           }
         />
-      </Grid.Col>
-      <Grid.Col span={3}>
-        {!readOnly && (
-          <ActionIcon
-            color='red'
-            variant='outline'
-            size='sm'
-            onClick={() =>
-              handleExerciseChange(workoutExercise.id, {
-                set_rep_detail: workoutExercise.set_rep_detail.filter((_, i) => i !== index),
-              })
-            }
-            data-testid={`remove-set-button-${workoutExercise.id}-${index}`}
-          >
-            <IconTrash size={16} />
-          </ActionIcon>
-        )}
       </Grid.Col>
     </Grid>
   )
