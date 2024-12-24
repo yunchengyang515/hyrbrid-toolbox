@@ -44,7 +44,13 @@ export default function ExerciseModal({
   }
 
   return (
-    <Modal opened={opened} onClose={onClose} title='Create/Edit Exercise'>
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title='Create/Edit Exercise'
+      closeOnClickOutside={false}
+      closeOnEscape={false}
+    >
       <form onSubmit={form.onSubmit(handleFormSubmit)}>
         <TextInput
           withAsterisk
