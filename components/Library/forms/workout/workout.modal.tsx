@@ -220,7 +220,15 @@ export default function WorkoutModal({
   }
 
   return (
-    <Modal opened={opened} onClose={onClose} title='Workout Details' size='xl' centered>
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title='Workout Details'
+      size='xl'
+      centered
+      closeOnClickOutside={false}
+      closeOnEscape={false}
+    >
       <form onSubmit={mode === 'create' ? handleCreateSubmit : handleEditSubmit}>
         {activeStep === 0 && (
           <Stack gap='md'>
