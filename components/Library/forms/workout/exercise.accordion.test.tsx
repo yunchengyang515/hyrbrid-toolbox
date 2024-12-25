@@ -159,3 +159,29 @@ test('generates cardio set summary correctly', async () => {
   renderComponent({ workoutExercises })
   expect(screen.getByText('10km@5:30min/km, 10km@6min/km')).toBeInTheDocument()
 })
+
+test('displays the correct number label for each exercise', async () => {
+  const workoutExercises: WorkoutExercise[] = [
+    {
+      id: '1',
+      exercise_name: 'Push Up',
+      set_rep_detail: [],
+      exercise_type: 'Strength',
+      workout_id: '',
+      exercise_id: '1',
+      user_id: '',
+    },
+    {
+      id: '2',
+      exercise_name: 'Running Test',
+      set_rep_detail: [],
+      exercise_type: 'Cardio',
+      workout_id: '',
+      exercise_id: '2',
+      user_id: '',
+    },
+  ]
+  renderComponent({ workoutExercises })
+  expect(screen.getByText('Exercise 1')).toBeInTheDocument()
+  expect(screen.getByText('Exercise 2')).toBeInTheDocument()
+})
