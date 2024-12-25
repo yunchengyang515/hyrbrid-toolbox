@@ -147,6 +147,7 @@ export function ExerciseAccordion({
               <Accordion.Control>
                 <Group justify='space-between' align='center'>
                   <div>
+                    <Text size='xs'>Exercise {index + 1}</Text>
                     <Text data-testid={`accordion-item-exercise-name-${index}`}>
                       {localWorkoutExercise.exercise_name || 'New Exercise'}
                     </Text>
