@@ -72,6 +72,13 @@ export default function WorkoutModal({
     }
   }, [mode])
 
+  useEffect(() => {
+    if (!opened) {
+      form.reset() // Clear form state
+      setActiveStep(0) // Reset to the first step
+    }
+  }, [opened])
+
   const handleCreateSubmit = form.onSubmit((values) => {
     onSubmit(values)
     onClose()

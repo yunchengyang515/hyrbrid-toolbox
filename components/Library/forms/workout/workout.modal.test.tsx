@@ -231,4 +231,46 @@ describe('WorkoutModal', () => {
     await userEvent.click(screen.getByRole('option', { name: 'Running Test' }))
     expect(screen.getByDisplayValue('Running Test')).toBeInTheDocument()
   })
+
+  test('resets to step 1 and clears state when modal is reopened', async () => {
+    const { rerender } = render(
+      <WorkoutModal
+        opened
+        onClose={mockOnClose}
+        mode='create'
+        onSubmit={mockOnSubmit}
+        onUpdate={mockOnUpdate}
+        onEditMode={mockOnEditMode}
+      />,
+    )
+
+    // Go to step 2
+    await act(async () => {
+      fireEvent.click(screen.getByText(/Next/i))
+    })
+    expect(screen.getByText('Exercises')).toBeInTheDocument()
+
+    // Close the modal
+    await act(async () => {
+      fireEvent.click(screen.getByText(/Cancel/i))
+    })
+
+    // Reopen the modal with different workout
+    rerender(
+      <WorkoutModal
+        opened
+        onClose={mockOnClose}
+        mode='edit'
+        onSubmit={mockOnSubmit}
+        onUpdate={mockOnUpdate}
+        workoutData={workoutDataWithExercises}
+        onEditMode={mockOnEditMode}
+      />,
+    )
+
+    // Verify it resets to step 1 and clears state
+    expect(screen.getByLabelText(/Workout Name/i)).toBeInTheDocument()
+    expect(screen.queryByText('Exercises')).not.toBeInTheDocument()
+    expect(screen.getByTestId('workout-name-input')).toHaveValue(workoutDataWithExercises.name)
+  })
 })
