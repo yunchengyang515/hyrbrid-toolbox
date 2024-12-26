@@ -3,8 +3,9 @@ import { useEffect, useState } from 'react'
 import { IconSearch } from '@tabler/icons-react'
 import { from } from 'rxjs'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
+import { notifications } from '@mantine/notifications'
 import { WorkoutApiService } from '@/services/api/workout.api.service'
-import { WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
+import { WorkoutFormData, WorkoutWithExercises } from '@/types/workout.types'
 import WorkoutModal from '../forms/workout/workout.modal'
 
 const workoutApiService = new WorkoutApiService()
@@ -32,10 +33,20 @@ export default function WorkoutsTab() {
     const rollbackState = workouts
     from(workoutApiService.createWorkout(newWorkout)).subscribe({
       next: (created: WorkoutWithExercises) => {
+        notifications.show({
+          title: 'Workout created',
+          message: `Successfully created workout "${created.name}"`,
+          color: 'teal',
+        })
         setWorkouts([...workouts, created])
       },
       error: (err) => {
         console.error('Failed to create workout:', err)
+        notifications.show({
+          title: 'Failed to create workout',
+          message: err.message,
+          color: 'red',
+        })
         setWorkouts(rollbackState)
       },
     })
@@ -47,9 +58,19 @@ export default function WorkoutsTab() {
     const rollbackState = workouts
     from(workoutApiService.updateWorkout(updatedWorkout)).subscribe({
       next: (updated: WorkoutWithExercises) => {
+        notifications.show({
+          title: 'Workout updated',
+          message: `Successfully updated workout "${updated.name}"`,
+          color: 'teal',
+        })
         setWorkouts((prevWorkouts) => prevWorkouts.map((w) => (w.id === updated.id ? updated : w)))
       },
       error: (err) => {
+        notifications.show({
+          title: 'Failed to update workout',
+          message: err.message,
+          color: 'red',
+        })
         console.error('Failed to update workout:', err)
         setWorkouts(rollbackState)
       },

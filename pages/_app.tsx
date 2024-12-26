@@ -1,11 +1,13 @@
 import '@mantine/core/styles.css'
+import '@mantine/notifications/styles.css'
 
 import { ReactElement, ReactNode } from 'react'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { MantineProvider } from '@mantine/core'
-import { Layout } from '@/components/Layout'
+import { Notifications } from '@mantine/notifications'
+import { Layout } from '@/components/layout.component'
 import { theme } from '../theme'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
@@ -15,6 +17,7 @@ export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <MantineProvider theme={theme}>
+      <Notifications />
       <Head>
         <title> The Hybrid Toolbox </title>
         <meta

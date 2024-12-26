@@ -1,7 +1,7 @@
 import { act, fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { render } from '@/test-utils'
-import { WorkoutWithExercises } from '@/types/Workout'
+import { WorkoutWithExercises } from '@/types/workout.types'
 import { ExerciseApiService } from '../../../../services/api/exercise.api.service'
 import { WorkoutApiService } from '../../../../services/api/workout.api.service'
 import WorkoutModal from './workout.modal'
@@ -70,7 +70,7 @@ describe('WorkoutModal', () => {
 
     expect(screen.getByLabelText(/Workout Name/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/Workout Name/i)).not.toHaveAttribute('readonly')
-    expect(screen.getByText(/Next/i)).toBeInTheDocument()
+    expect(screen.getByTestId('create-next-button')).toBeInTheDocument()
   })
 
   test('renders correctly in view mode', () => {
@@ -87,8 +87,8 @@ describe('WorkoutModal', () => {
     )
 
     expect(screen.getByLabelText(/Workout Name/i)).toHaveAttribute('readonly')
-    expect(screen.getByText(/View Exercises/i)).toBeInTheDocument()
-    expect(screen.getByText(/Edit/i)).toBeInTheDocument()
+    expect(screen.getByTestId('view-exercises-button')).toBeInTheDocument()
+    expect(screen.getByTestId('edit-button')).toBeInTheDocument()
   })
 
   test('renders correctly in edit mode', () => {
@@ -105,7 +105,7 @@ describe('WorkoutModal', () => {
     )
 
     expect(screen.getByLabelText(/Workout Name/i)).not.toHaveAttribute('readonly')
-    expect(screen.getByText(/Next/i)).toBeInTheDocument()
+    expect(screen.getByTestId('edit-next-button')).toBeInTheDocument()
   })
 
   test('calls onSubmit handler when form is submitted in create mode', async () => {
@@ -129,8 +129,8 @@ describe('WorkoutModal', () => {
     const typeSelect = screen.getByTestId('workout-type-select')
     await userEvent.click(typeSelect)
     await userEvent.click(screen.getByRole('option', { name: 'Cardio' }))
-    await userEvent.click(screen.getByText(/Next/i))
-    await userEvent.click(screen.getByText(/Create/i))
+    await userEvent.click(screen.getByTestId('create-next-button'))
+    await userEvent.click(screen.getByTestId('create-button'))
 
     expect(mockOnSubmit).toHaveBeenCalledWith(
       expect.objectContaining({ name: 'New Workout', type: 'cardio' }),
@@ -156,8 +156,8 @@ describe('WorkoutModal', () => {
       })
     })
 
-    await userEvent.click(screen.getByText(/Next/i))
-    await userEvent.click(screen.getByText(/Save/i))
+    await userEvent.click(screen.getByTestId('edit-next-button'))
+    await userEvent.click(screen.getByTestId('edit-save-button'))
 
     expect(mockOnUpdate).toHaveBeenCalledWith(expect.objectContaining({ name: 'Updated Workout' }))
   })
@@ -176,7 +176,7 @@ describe('WorkoutModal', () => {
     )
 
     await act(async () => {
-      fireEvent.click(screen.getByText(/Edit/i))
+      fireEvent.click(screen.getByTestId('edit-button'))
     })
 
     expect(mockOnEditMode).toHaveBeenCalledWith(workoutData)
@@ -213,7 +213,7 @@ describe('WorkoutModal', () => {
     )
 
     await act(async () => {
-      fireEvent.click(screen.getByText(/Next/i))
+      fireEvent.click(screen.getByTestId('create-next-button'))
     })
 
     await act(async () => {
@@ -230,5 +230,76 @@ describe('WorkoutModal', () => {
 
     await userEvent.click(screen.getByRole('option', { name: 'Running Test' }))
     expect(screen.getByDisplayValue('Running Test')).toBeInTheDocument()
+  })
+
+  test('resets to step 1 and clears state when modal is reopened', async () => {
+    const { rerender } = render(
+      <WorkoutModal
+        opened
+        onClose={mockOnClose}
+        mode='create'
+        onSubmit={mockOnSubmit}
+        onUpdate={mockOnUpdate}
+        onEditMode={mockOnEditMode}
+      />,
+    )
+
+    // Go to step 2
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('create-next-button'))
+    })
+    expect(screen.getByText('Exercises')).toBeInTheDocument()
+
+    // Close the modal
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('create-cancel-button'))
+    })
+
+    // Reopen the modal with different workout
+    rerender(
+      <WorkoutModal
+        opened
+        onClose={mockOnClose}
+        mode='edit'
+        onSubmit={mockOnSubmit}
+        onUpdate={mockOnUpdate}
+        workoutData={workoutDataWithExercises}
+        onEditMode={mockOnEditMode}
+      />,
+    )
+
+    // Verify it resets to step 1 and clears state
+    expect(screen.getByLabelText(/Workout Name/i)).toBeInTheDocument()
+    expect(screen.queryByText('Exercises')).not.toBeInTheDocument()
+    expect(screen.getByTestId('workout-name-input')).toHaveValue(workoutDataWithExercises.name)
+  })
+
+  test('disables Save button when form is invalid', async () => {
+    render(
+      <WorkoutModal
+        opened
+        onClose={mockOnClose}
+        mode='create'
+        onSubmit={mockOnSubmit}
+        onUpdate={mockOnUpdate}
+        workoutData={workoutData}
+        onEditMode={mockOnEditMode}
+      />,
+    )
+
+    // Make the form invalid by clearing the workout name
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('workout-name-input'), {
+        target: { value: '' },
+      })
+    })
+
+    // Go to step 2
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('create-next-button'))
+    })
+
+    // Ensure the Create button is disabled
+    expect(screen.getByTestId('create-button')).toBeDisabled()
   })
 })

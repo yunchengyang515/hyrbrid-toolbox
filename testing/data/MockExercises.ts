@@ -1,4 +1,4 @@
-import { Exercise } from '@/types/Exercise'
+import { Exercise } from '@/types/exercise.types'
 
 export const mockExercises: Exercise[] = [
   {

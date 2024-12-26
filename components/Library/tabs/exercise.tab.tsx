@@ -3,7 +3,7 @@ import { IconSearch } from '@tabler/icons-react'
 import { from } from 'rxjs'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
 import { ExerciseApiService } from '@/services/api/exercise.api.service'
-import { Exercise, ExerciseFormData } from '@/types/Exercise'
+import { Exercise, ExerciseFormData } from '@/types/exercise.types'
 import ExerciseModal from '../forms/exercise.modal'
 
 export default function ExercisesTab() {

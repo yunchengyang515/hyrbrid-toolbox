@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react'
 import { Container, Notification, Stack } from '@mantine/core'
-import Calendar from '@/components/Calendar'
-import { Layout } from '@/components/Layout'
+import Calendar from '@/components/calendar.component'
+import { Layout } from '@/components/layout.component'
 import type { NextPageWithLayout } from './_app'
 
 const CalendarPage: NextPageWithLayout = () => {

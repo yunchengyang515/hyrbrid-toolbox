@@ -1,4 +1,4 @@
-import { WorkoutExercise, WorkoutExerciseSchema } from '@/types/WorkoutExercise'
+import { WorkoutExercise, WorkoutExerciseSchema } from '@/types/workoutExercise.types'
 import { getDbClient } from '../db.service'
 import { AbstractRepository } from './abstract.repository'
 

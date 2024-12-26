@@ -1,4 +1,4 @@
-import { WorkoutExercise } from './WorkoutExercise'
+import { WorkoutExercise } from './workoutExercise.types'
 
 // Represents the Workout structure as it is stored in the database
 export type Workout = {

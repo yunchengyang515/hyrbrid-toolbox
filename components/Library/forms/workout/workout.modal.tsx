@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react'
 import { Button, Group, Modal, NumberInput, Select, Stack, Text, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { WorkoutFormData, WorkoutWithExercises } from '@/types/Workout'
-import { WorkoutExercise } from '@/types/WorkoutExercise'
+import { WorkoutFormData, WorkoutWithExercises } from '@/types/workout.types'
+import { WorkoutExercise } from '@/types/workoutExercise.types'
 import { ExerciseAccordion } from './exercise.accordion'
 
 type WorkoutModalMode = 'create' | 'view' | 'edit'
@@ -72,6 +72,13 @@ export default function WorkoutModal({
     }
   }, [mode])
 
+  useEffect(() => {
+    if (!opened) {
+      form.reset() // Clear form state
+      setActiveStep(0) // Reset to the first step
+    }
+  }, [opened])
+
   const handleCreateSubmit = form.onSubmit((values) => {
     onSubmit(values)
     onClose()
@@ -131,7 +138,11 @@ export default function WorkoutModal({
           >
             View Exercises
           </Button>
-          <Button variant='filled' onClick={() => onEditMode(workoutData as WorkoutWithExercises)}>
+          <Button
+            variant='filled'
+            onClick={() => onEditMode(workoutData as WorkoutWithExercises)}
+            data-testid='edit-button'
+          >
             Edit
           </Button>
         </>
@@ -141,10 +152,14 @@ export default function WorkoutModal({
     if (mode === 'create' || mode === 'edit') {
       return (
         <>
-          <Button variant='outline' onClick={onClose}>
+          <Button variant='outline' onClick={onClose} data-testid={`${mode}-cancel-button`}>
             Cancel
           </Button>
-          <Button variant='filled' onClick={() => setActiveStep(1)} data-testid='edit-next-button'>
+          <Button
+            variant='filled'
+            onClick={() => setActiveStep(1)}
+            data-testid={`${mode}-next-button`}
+          >
             Next
           </Button>
         </>
@@ -159,7 +174,7 @@ export default function WorkoutModal({
     if (mode === 'view') {
       return (
         <>
-          <Button variant='outline' onClick={() => setActiveStep(0)}>
+          <Button variant='outline' onClick={() => setActiveStep(0)} data-testid='back-button'>
             Back to Details
           </Button>
           <Button
@@ -169,6 +184,7 @@ export default function WorkoutModal({
               onEditMode(workoutData as WorkoutWithExercises)
               event.preventDefault()
             }}
+            data-testid='edit-button'
           >
             Edit
           </Button>
@@ -179,13 +195,18 @@ export default function WorkoutModal({
     if (mode === 'edit') {
       return (
         <>
-          <Button variant='outline' onClick={() => setActiveStep(0)}>
+          <Button variant='outline' onClick={() => setActiveStep(0)} data-testid='back-button'>
             Back to Details
           </Button>
-          <Button variant='outline' onClick={onClose}>
+          <Button variant='outline' onClick={onClose} data-testid='edit-cancel-button'>
             Cancel
           </Button>
-          <Button variant='filled' type='submit'>
+          <Button
+            variant='filled'
+            type='submit'
+            disabled={!form.isValid()}
+            data-testid='edit-save-button'
+          >
             Save
           </Button>
         </>
@@ -195,13 +216,18 @@ export default function WorkoutModal({
     if (mode === 'create') {
       return (
         <>
-          <Button variant='outline' onClick={() => setActiveStep(0)}>
+          <Button variant='outline' onClick={() => setActiveStep(0)} data-testid='back-button'>
             Back
           </Button>
-          <Button variant='outline' onClick={onClose}>
+          <Button variant='outline' onClick={onClose} data-testid='create-cancel-button'>
             Cancel
           </Button>
-          <Button variant='filled' type='submit'>
+          <Button
+            variant='filled'
+            type='submit'
+            disabled={!form.isValid()}
+            data-testid='create-button'
+          >
             Create
           </Button>
         </>
@@ -220,7 +246,17 @@ export default function WorkoutModal({
   }
 
   return (
-    <Modal opened={opened} onClose={onClose} title='Workout Details' size='xl' centered>
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title='Workout Details'
+      size='xl'
+      centered
+      closeOnClickOutside={false}
+      closeOnEscape={false}
+      fullScreen
+      withCloseButton={isReadOnly}
+    >
       <form onSubmit={mode === 'create' ? handleCreateSubmit : handleEditSubmit}>
         {activeStep === 0 && (
           <Stack gap='md'>

@@ -2,7 +2,7 @@ import type { ReactElement } from 'react'
 import { IconChartBar, IconListDetails } from '@tabler/icons-react'
 import { Container, rem, Tabs, Text } from '@mantine/core'
 import Overview from '@/components/Home/Overview'
-import { Layout } from '@/components/Layout'
+import { Layout } from '@/components/layout.component'
 import type { NextPageWithLayout } from './_app'
 
 const HomePage: NextPageWithLayout = () => {

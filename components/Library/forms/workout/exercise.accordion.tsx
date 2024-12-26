@@ -13,11 +13,12 @@ import {
   NumberInput,
   Select,
   Text,
-  TextInput,
 } from '@mantine/core'
 import { ExerciseApiService } from '@/services/api/exercise.api.service'
-import { Exercise } from '@/types/Exercise'
-import { SetDetail, WorkoutExercise } from '@/types/WorkoutExercise'
+import { Exercise } from '@/types/exercise.types'
+import { DISTANCE_UNIT, PACE_UNIT, WEIGHT_UNIT } from '@/types/units'
+import { SetDetail, WorkoutExercise } from '@/types/workoutExercise.types'
+import { SetRepDetail } from './setRepDetail'
 
 interface ExerciseAccordionProps {
   workoutExercises: WorkoutExercise[]
@@ -51,14 +52,14 @@ export function ExerciseAccordion({
     return workoutExercise.set_rep_detail
       .map((set) => {
         if (workoutExercise.exercise_type === 'Cardio') {
-          if (set.duration && set.pace) {
-            return `${set.duration}@${set.pace}`
+          if (set.distance && set.pace) {
+            return `${set.distance}${DISTANCE_UNIT}@${set.pace}${PACE_UNIT}`
           }
         }
         const reps = set.reps !== undefined ? set.reps : '?'
         const weight = set.weight !== undefined ? set.weight : '?'
         const rest = set.rest !== undefined ? ` (Rest: ${set.rest}s)` : ''
-        return `${reps}x${weight}kg${rest}`
+        return `${reps}x${weight}${WEIGHT_UNIT}${rest}`
       })
       .filter(Boolean)
       .join(', ')
@@ -106,85 +107,14 @@ export function ExerciseAccordion({
   }
 
   const renderSetDetails = (workoutExercise: WorkoutExercise, set: SetDetail, index: number) => {
-    if (workoutExercise.exercise_type.toLowerCase() === 'cardio') {
-      return (
-        <Grid>
-          <Grid.Col span={6}>
-            <TextInput
-              label='Duration'
-              value={set.duration || ''}
-              readOnly={readOnly}
-              onChange={(e) =>
-                handleExerciseChange(workoutExercise.id, {
-                  set_rep_detail: workoutExercise.set_rep_detail.map((s, i) =>
-                    i === index ? { ...s, duration: e.currentTarget.value } : s,
-                  ),
-                })
-              }
-            />
-          </Grid.Col>
-          <Grid.Col span={6}>
-            <TextInput
-              label='Pace'
-              value={set.pace || ''}
-              readOnly={readOnly}
-              onChange={(e) =>
-                handleExerciseChange(workoutExercise.id, {
-                  set_rep_detail: workoutExercise.set_rep_detail.map((s, i) =>
-                    i === index ? { ...s, pace: e.currentTarget.value } : s,
-                  ),
-                })
-              }
-            />
-          </Grid.Col>
-        </Grid>
-      )
-    }
     return (
-      <Grid>
-        <Grid.Col span={4}>
-          <NumberInput
-            label='Reps'
-            value={set.reps !== undefined ? set.reps : 0}
-            readOnly={readOnly}
-            onChange={(val) =>
-              handleExerciseChange(workoutExercise.id, {
-                set_rep_detail: workoutExercise.set_rep_detail.map((s, i) =>
-                  i === index ? { ...s, reps: Number(val) } : s,
-                ),
-              })
-            }
-          />
-        </Grid.Col>
-        <Grid.Col span={4}>
-          <NumberInput
-            label='Weight (kg)'
-            value={set.weight !== undefined ? set.weight : 0}
-            readOnly={readOnly}
-            onChange={(val) =>
-              handleExerciseChange(workoutExercise.id, {
-                set_rep_detail: workoutExercise.set_rep_detail.map((s, i) =>
-                  i === index ? { ...s, weight: Number(val) } : s,
-                ),
-              })
-            }
-          />
-        </Grid.Col>
-        <Grid.Col span={4}>
-          <NumberInput
-            label='Rest (seconds)'
-            value={set.rest !== undefined ? set.rest : 0}
-            readOnly={readOnly}
-            onChange={(value) =>
-              handleExerciseChange(workoutExercise.id, {
-                set_rep_detail: workoutExercise.set_rep_detail.map((setDetail, setIndex) =>
-                  setIndex === index ? { ...setDetail, rest: Number(value) } : setDetail,
-                ),
-              })
-            }
-          />
-        </Grid.Col>
-      </Grid>
+      <SetRepDetail
+        workoutExercise={workoutExercise}
+        set={set}
+        index={index}
+        readOnly={readOnly}
+        handleExerciseChange={handleExerciseChange}
+      />
     )
   }
 
@@ -217,6 +147,7 @@ export function ExerciseAccordion({
               <Accordion.Control>
                 <Group justify='space-between' align='center'>
                   <div>
+                    <Text size='xs'>Exercise {index + 1}</Text>
                     <Text data-testid={`accordion-item-exercise-name-${index}`}>
                       {localWorkoutExercise.exercise_name || 'New Exercise'}
                     </Text>
