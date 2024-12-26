@@ -138,7 +138,11 @@ export default function WorkoutModal({
           >
             View Exercises
           </Button>
-          <Button variant='filled' onClick={() => onEditMode(workoutData as WorkoutWithExercises)}>
+          <Button
+            variant='filled'
+            onClick={() => onEditMode(workoutData as WorkoutWithExercises)}
+            data-testid='edit-button'
+          >
             Edit
           </Button>
         </>
@@ -148,10 +152,14 @@ export default function WorkoutModal({
     if (mode === 'create' || mode === 'edit') {
       return (
         <>
-          <Button variant='outline' onClick={onClose}>
+          <Button variant='outline' onClick={onClose} data-testid={`${mode}-cancel-button`}>
             Cancel
           </Button>
-          <Button variant='filled' onClick={() => setActiveStep(1)} data-testid='edit-next-button'>
+          <Button
+            variant='filled'
+            onClick={() => setActiveStep(1)}
+            data-testid={`${mode}-next-button`}
+          >
             Next
           </Button>
         </>
@@ -166,7 +174,7 @@ export default function WorkoutModal({
     if (mode === 'view') {
       return (
         <>
-          <Button variant='outline' onClick={() => setActiveStep(0)}>
+          <Button variant='outline' onClick={() => setActiveStep(0)} data-testid='back-button'>
             Back to Details
           </Button>
           <Button
@@ -176,6 +184,7 @@ export default function WorkoutModal({
               onEditMode(workoutData as WorkoutWithExercises)
               event.preventDefault()
             }}
+            data-testid='edit-button'
           >
             Edit
           </Button>
@@ -186,13 +195,18 @@ export default function WorkoutModal({
     if (mode === 'edit') {
       return (
         <>
-          <Button variant='outline' onClick={() => setActiveStep(0)}>
+          <Button variant='outline' onClick={() => setActiveStep(0)} data-testid='back-button'>
             Back to Details
           </Button>
-          <Button variant='outline' onClick={onClose}>
+          <Button variant='outline' onClick={onClose} data-testid='edit-cancel-button'>
             Cancel
           </Button>
-          <Button variant='filled' type='submit'>
+          <Button
+            variant='filled'
+            type='submit'
+            disabled={!form.isValid()}
+            data-testid='edit-save-button'
+          >
             Save
           </Button>
         </>
@@ -202,13 +216,18 @@ export default function WorkoutModal({
     if (mode === 'create') {
       return (
         <>
-          <Button variant='outline' onClick={() => setActiveStep(0)}>
+          <Button variant='outline' onClick={() => setActiveStep(0)} data-testid='back-button'>
             Back
           </Button>
-          <Button variant='outline' onClick={onClose}>
+          <Button variant='outline' onClick={onClose} data-testid='create-cancel-button'>
             Cancel
           </Button>
-          <Button variant='filled' type='submit'>
+          <Button
+            variant='filled'
+            type='submit'
+            disabled={!form.isValid()}
+            data-testid='create-button'
+          >
             Create
           </Button>
         </>
