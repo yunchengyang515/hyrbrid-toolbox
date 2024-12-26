@@ -8,8 +8,11 @@ import ExerciseModal from '../forms/exercise.modal'
 
 export default function ExercisesTab() {
   const exerciseApiService = new ExerciseApiService()
-  const [modalOpened, setModalOpened] = useState(false) // Modal state
+  const [modalOpened, setModalOpened] = useState(false)
+  const [modalMode, setModalMode] = useState<'create' | 'view' | 'edit'>('create')
   const [exercises, setExercises] = useState<Exercise[]>([])
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | undefined>(undefined)
+
   const handleAddExercise = (newExercise: ExerciseFormData) => {
     const rollbackState = exercises
 
@@ -25,6 +28,23 @@ export default function ExercisesTab() {
     })
   }
 
+  const handleUpdateExercise = (updatedExercise: Exercise) => {
+    const rollbackState = exercises
+
+    from(exerciseApiService.updateExercise(updatedExercise)).subscribe({
+      next: (updated: Exercise) => {
+        console.log('Exercise updated', updated)
+        setExercises((prevExercises) =>
+          prevExercises.map((exercise) => (exercise.id === updated.id ? updated : exercise)),
+        )
+      },
+      error: (err) => {
+        console.error('Failed to update exercise', err)
+        setExercises(rollbackState)
+      },
+    })
+  }
+
   useEffect(() => {
     const sub = from(exerciseApiService.getAllExercises()).subscribe({
       next: (data) => setExercises(data),
@@ -33,37 +53,66 @@ export default function ExercisesTab() {
     return () => sub.unsubscribe()
   }, [])
 
+  function openCreateModal() {
+    setSelectedExercise(undefined)
+    setModalMode('create')
+    setModalOpened(true)
+  }
+
+  function openViewModal(exercise: Exercise) {
+    setSelectedExercise(exercise)
+    setModalMode('view')
+    setModalOpened(true)
+  }
+
+  function openEditModal(exercise: Exercise) {
+    setSelectedExercise(exercise)
+    setModalMode('edit')
+    setModalOpened(true)
+  }
+
+  function closeModal() {
+    setModalOpened(false)
+  }
+
   return (
     <Container fluid px={2}>
       {/* Add Exercise Button and Search Bar */}
       <Group justify='flex-start' align='center' mb='xl' wrap='wrap' gap='sm'>
-        <Button
-          variant='filled'
-          color='blue'
-          size='md'
-          onClick={() => setModalOpened(true)} // Open modal on click
-        >
+        <Button variant='filled' color='blue' size='md' onClick={openCreateModal}>
           + Add Exercise
         </Button>
         <TextInput
           placeholder='Search exercises'
           size='md'
           leftSection={<IconSearch size={16} stroke={1.5} />}
-          w={300} // Limit width for cleaner UI
+          w={300}
         />
       </Group>
 
       <ExerciseModal
         opened={modalOpened}
-        onClose={() => setModalOpened(false)}
+        onClose={closeModal}
+        mode={modalMode}
         onSubmit={handleAddExercise}
+        onUpdate={handleUpdateExercise}
+        exerciseData={modalMode === 'edit' || modalMode === 'view' ? selectedExercise : undefined}
+        onEditMode={(exercise: ExerciseFormData) => openEditModal(exercise as Exercise)}
       />
 
       {/* Exercise Cards */}
       <Grid gutter='xl'>
         {exercises.map((exercise: Exercise) => (
           <Grid.Col key={exercise.id} span={4}>
-            <Card shadow='sm' padding='lg' radius='md' withBorder h='160px'>
+            <Card
+              shadow='sm'
+              padding='lg'
+              radius='md'
+              withBorder
+              h='160px'
+              onClick={() => openViewModal(exercise)}
+              style={{ cursor: 'pointer' }}
+            >
               {/* Header Section: Title + Badge */}
               <Group justify='space-between' align='center' mb='sm'>
                 <Text fw={700} size='lg'>

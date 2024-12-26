@@ -20,4 +20,9 @@ export class ExerciseApiService extends AbstractApiService {
     })
     return this.transformResponse<Exercise>(await response)
   }
+
+  async updateExercise(exercise: Exercise) {
+    console.log('exercise', exercise)
+    return exercise
+  }
 }
