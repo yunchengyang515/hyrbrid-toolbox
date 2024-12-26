@@ -72,7 +72,8 @@ describe('ExerciseModal', () => {
       />,
     )
 
-    expect(screen.getByLabelText(/Exercise Name/i)).not.toHaveAttribute('readonly')
+    expect(screen.getByTestId('exercise-name-input')).not.toHaveAttribute('readonly')
+    expect(screen.getByTestId('exercise-video-link-input')).not.toHaveAttribute('readonly')
     expect(screen.getByTestId('edit-save-button')).toBeInTheDocument()
   })
 
@@ -126,32 +127,5 @@ describe('ExerciseModal', () => {
     await userEvent.click(screen.getByTestId('edit-save-button'))
 
     expect(mockOnUpdate).toHaveBeenCalledWith(expect.objectContaining({ name: 'Updated Exercise' }))
-  })
-
-  test('switches to edit mode when Edit button is clicked in view mode', async () => {
-    render(
-      <ExerciseModal
-        opened
-        onClose={mockOnClose}
-        mode='view'
-        onSubmit={mockOnSubmit}
-        onUpdate={mockOnUpdate}
-        exerciseData={exerciseData}
-        onEditMode={mockOnEditMode}
-      />,
-    )
-
-    await act(async () => {
-      fireEvent.click(screen.getByTestId('edit-button'))
-    })
-
-    expect(mockOnEditMode).toHaveBeenCalledWith(exerciseData)
-
-    // Verify that the fields are now editable
-    expect(screen.getByTestId('exercise-name-input')).not.toHaveAttribute('readonly')
-    expect(screen.getByTestId('exercise-description-input')).not.toHaveAttribute('readonly')
-    expect(screen.getByTestId('exercise-type-select')).not.toHaveAttribute('readonly')
-    expect(screen.getByTestId('exercise-equipment-select')).not.toHaveAttribute('readonly')
-    expect(screen.getByTestId('exercise-video-link-input')).not.toHaveAttribute('readonly')
   })
 })

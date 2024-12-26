@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Button, Group, Modal, MultiSelect, Select, Textarea, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { Exercise, ExerciseFormData } from '@/types/exercise.types'
@@ -38,6 +39,15 @@ export default function ExerciseModal({
       type: (value) => (value.trim() !== '' ? null : 'Type is required'),
     },
   })
+
+  useEffect(() => {
+    if (mode === 'create') {
+      form.reset()
+    }
+    if (mode === 'edit') {
+      form.setValues(initialValues)
+    }
+  }, [mode])
 
   const handleCreateSubmit = form.onSubmit((values) => {
     onSubmit(values)
@@ -84,7 +94,10 @@ export default function ExerciseModal({
           </Button>
           <Button
             variant='filled'
-            onClick={() => onEditMode(exerciseData as ExerciseFormData)}
+            onClick={(event) => {
+              onEditMode(exerciseData as ExerciseFormData)
+              event.preventDefault()
+            }}
             data-testid='edit-button'
           >
             Edit
