@@ -2,7 +2,7 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react'
 import { render, userEvent } from '@/test-utils'
 import { WorkoutWithExercises } from '@/types/workout.types'
 import { WorkoutApiService } from '../../../services/api/workout.api.service'
-import WorkoutsTab from './workout.tab'
+import WorkoutsTab from './Workout.tab'
 
 // Mock WorkoutApiService
 jest.mock('../../../services/api/workout.api.service')
