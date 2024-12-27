@@ -1,7 +1,7 @@
 import { WorkoutExercise } from './workoutExercise.types'
 
 // Represents the Workout structure as it is stored in the database
-export type Workout = {
+export type WorkoutSchema = {
   id: string
   created_at: string // ISO timestamp
   name: string
@@ -12,7 +12,9 @@ export type Workout = {
   user_id: string
 }
 
-export interface WorkoutWithExercises extends Workout {
+export type Workout = WorkoutSchema
+
+export interface WorkoutWithExercises extends WorkoutSchema {
   exercises: WorkoutExercise[]
 }
 
