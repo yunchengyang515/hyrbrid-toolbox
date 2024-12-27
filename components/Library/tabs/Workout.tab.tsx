@@ -111,7 +111,13 @@ export default function WorkoutsTab() {
       {/* Add Workout Button and Search Bar */}
       <Group justify='flex-start' align='center' mb='xl' wrap='wrap' gap='sm'>
         {/* Clicking this button opens the modal in create mode */}
-        <Button variant='filled' color='blue' size='md' onClick={openCreateModal}>
+        <Button
+          variant='filled'
+          color='blue'
+          size='md'
+          onClick={openCreateModal}
+          data-testid='add-workout-button'
+        >
           + Add Workout
         </Button>
         <TextInput
@@ -136,7 +142,7 @@ export default function WorkoutsTab() {
 
       {/* Workout Cards */}
       <Grid gutter='xl'>
-        {filteredWorkouts.map((workout) => (
+        {filteredWorkouts.map((workout, index) => (
           <Grid.Col key={workout.id} span={4}>
             <Card
               shadow='sm'
@@ -146,6 +152,7 @@ export default function WorkoutsTab() {
               h='200px'
               onClick={() => openViewModal(workout)} // Opening a card calls openViewModal
               style={{ cursor: 'pointer' }}
+              data-testid={`workout-card-${String(index + 1)}`}
             >
               <Group justify='space-between' align='center' mb='sm'>
                 <Text fw={700} size='lg'>

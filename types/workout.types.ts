@@ -14,7 +14,7 @@ export type WorkoutSchema = {
 
 export type Workout = WorkoutSchema
 
-export interface WorkoutWithExercises extends WorkoutSchema {
+export interface WorkoutWithExercises extends Workout {
   exercises: WorkoutExercise[]
 }
 
