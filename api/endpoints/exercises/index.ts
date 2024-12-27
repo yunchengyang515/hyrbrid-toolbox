@@ -17,9 +17,17 @@ export async function POST(request: Request) {
   return new Response(JSON.stringify(exercise))
 }
 
+async function PUT(request: Request) {
+  const body = await request.json()
+  const { id, ...exerciseData } = body
+  const exercise = await exerciseController.updateExercise(id, exerciseData)
+  return new Response(JSON.stringify(exercise))
+}
+
 const handler: Endpoint = {
   GET,
   POST,
+  PUT,
 }
 
 export default initializeHandler(handler)

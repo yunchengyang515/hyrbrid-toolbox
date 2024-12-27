@@ -20,4 +20,15 @@ export class ExerciseApiService extends AbstractApiService {
     })
     return this.transformResponse<Exercise>(await response)
   }
+
+  async updateExercise(exercise: Exercise) {
+    const response = fetch(this.buildUrl(), {
+      method: 'PUT',
+      body: JSON.stringify(exercise),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    return this.transformResponse<Exercise>(await response)
+  }
 }

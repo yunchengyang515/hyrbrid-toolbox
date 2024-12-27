@@ -1,4 +1,4 @@
-export type Exercise = {
+export type ExerciseSchema = {
   id: string
   name: string
   description?: string
@@ -8,4 +8,6 @@ export type Exercise = {
   user_id: string
 }
 
-export type ExerciseFormData = Omit<Exercise, 'id' | 'user_id'>
+export type Exercise = ExerciseSchema
+
+export type ExerciseFormData = Omit<ExerciseSchema, 'id' | 'user_id'>

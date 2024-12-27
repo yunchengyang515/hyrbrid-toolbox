@@ -88,7 +88,7 @@ describe('WorkoutModal', () => {
 
     expect(screen.getByLabelText(/Workout Name/i)).toHaveAttribute('readonly')
     expect(screen.getByTestId('view-exercises-button')).toBeInTheDocument()
-    expect(screen.getByTestId('edit-button')).toBeInTheDocument()
+    expect(screen.getByTestId('workout-modal-edit-button')).toBeInTheDocument()
   })
 
   test('renders correctly in edit mode', () => {
@@ -176,7 +176,7 @@ describe('WorkoutModal', () => {
     )
 
     await act(async () => {
-      fireEvent.click(screen.getByTestId('edit-button'))
+      fireEvent.click(screen.getByTestId('workout-modal-edit-button'))
     })
 
     expect(mockOnEditMode).toHaveBeenCalledWith(workoutData)

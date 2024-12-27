@@ -2,24 +2,63 @@ import { useEffect, useState } from 'react'
 import { IconSearch } from '@tabler/icons-react'
 import { from } from 'rxjs'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
+import { notifications } from '@mantine/notifications'
 import { ExerciseApiService } from '@/services/api/exercise.api.service'
 import { Exercise, ExerciseFormData } from '@/types/exercise.types'
 import ExerciseModal from '../forms/exercise.modal'
 
 export default function ExercisesTab() {
   const exerciseApiService = new ExerciseApiService()
-  const [modalOpened, setModalOpened] = useState(false) // Modal state
+  const [modalOpened, setModalOpened] = useState(false)
+  const [modalMode, setModalMode] = useState<'create' | 'view' | 'edit'>('create')
   const [exercises, setExercises] = useState<Exercise[]>([])
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | undefined>(undefined)
+
   const handleAddExercise = (newExercise: ExerciseFormData) => {
     const rollbackState = exercises
 
     from(exerciseApiService.createExercise(newExercise)).subscribe({
       next: (newExercise: Exercise) => {
-        console.log('Exercise created', newExercise)
+        notifications.show({
+          title: 'Exercise created',
+          message: `Successfully created exercise "${newExercise.name}"`,
+          color: 'teal',
+        })
         setExercises([...exercises, newExercise])
       },
       error: (err) => {
         console.error('Failed to create exercise', err)
+        notifications.show({
+          title: 'Failed to create exercise',
+          message: err.message,
+          color: 'red',
+        })
+        setExercises(rollbackState)
+      },
+    })
+  }
+
+  const handleUpdateExercise = (updatedExercise: Exercise) => {
+    const rollbackState = exercises
+
+    from(exerciseApiService.updateExercise(updatedExercise)).subscribe({
+      next: (updated: Exercise) => {
+        notifications.show({
+          title: 'Exercise updated',
+          message: `Successfully updated exercise "${updated.name}"`,
+          color: 'teal',
+        })
+        setExercises((prevExercises) =>
+          prevExercises.map((exercise) => (exercise.id === updated.id ? updated : exercise)),
+        )
+      },
+      error: (err) => {
+        console.error('Failed to update exercise', err)
+        notifications.show({
+          title: 'Failed to update exercise',
+          message: err.message,
+          color: 'red',
+        })
         setExercises(rollbackState)
       },
     })
@@ -33,6 +72,28 @@ export default function ExercisesTab() {
     return () => sub.unsubscribe()
   }, [])
 
+  function openCreateModal() {
+    setSelectedExercise(undefined)
+    setModalMode('create')
+    setModalOpened(true)
+  }
+
+  function openViewModal(exercise: Exercise) {
+    setSelectedExercise(exercise)
+    setModalMode('view')
+    setModalOpened(true)
+  }
+
+  function openEditModal(exercise: Exercise) {
+    setSelectedExercise(exercise)
+    setModalMode('edit')
+    setModalOpened(true)
+  }
+
+  function closeModal() {
+    setModalOpened(false)
+  }
+
   return (
     <Container fluid px={2}>
       {/* Add Exercise Button and Search Bar */}
@@ -41,7 +102,8 @@ export default function ExercisesTab() {
           variant='filled'
           color='blue'
           size='md'
-          onClick={() => setModalOpened(true)} // Open modal on click
+          onClick={openCreateModal}
+          data-testid='add-exercise-button'
         >
           + Add Exercise
         </Button>
@@ -49,21 +111,35 @@ export default function ExercisesTab() {
           placeholder='Search exercises'
           size='md'
           leftSection={<IconSearch size={16} stroke={1.5} />}
-          w={300} // Limit width for cleaner UI
+          w={300}
         />
       </Group>
 
       <ExerciseModal
         opened={modalOpened}
-        onClose={() => setModalOpened(false)}
+        onClose={closeModal}
+        mode={modalMode}
         onSubmit={handleAddExercise}
+        onUpdate={handleUpdateExercise}
+        exerciseData={modalMode === 'edit' || modalMode === 'view' ? selectedExercise : undefined}
+        onEditMode={(exercise: ExerciseFormData) => openEditModal(exercise as Exercise)}
       />
 
       {/* Exercise Cards */}
       <Grid gutter='xl'>
-        {exercises.map((exercise: Exercise) => (
+        {exercises.map((exercise: Exercise, index) => (
           <Grid.Col key={exercise.id} span={4}>
-            <Card shadow='sm' padding='lg' radius='md' withBorder h='160px'>
+            <Card
+              shadow='sm'
+              padding='lg'
+              radius='md'
+              withBorder
+              h='160px'
+              onClick={() => openViewModal(exercise)}
+              style={{ cursor: 'pointer' }}
+              data-testid={`exercise-card-${String(index + 1)}`}
+              key={exercise.id}
+            >
               {/* Header Section: Title + Badge */}
               <Group justify='space-between' align='center' mb='sm'>
                 <Text fw={700} size='lg'>

@@ -141,7 +141,7 @@ export default function WorkoutModal({
           <Button
             variant='filled'
             onClick={() => onEditMode(workoutData as WorkoutWithExercises)}
-            data-testid='edit-button'
+            data-testid='workout-modal-edit-button'
           >
             Edit
           </Button>
@@ -184,7 +184,7 @@ export default function WorkoutModal({
               onEditMode(workoutData as WorkoutWithExercises)
               event.preventDefault()
             }}
-            data-testid='edit-button'
+            data-testid='workout-modal-edit-button'
           >
             Edit
           </Button>
@@ -256,6 +256,7 @@ export default function WorkoutModal({
       closeOnEscape={false}
       fullScreen
       withCloseButton={isReadOnly}
+      data-testid='workout-modal'
     >
       <form onSubmit={mode === 'create' ? handleCreateSubmit : handleEditSubmit}>
         {activeStep === 0 && (
