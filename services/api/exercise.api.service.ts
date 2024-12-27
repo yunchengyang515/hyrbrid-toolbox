@@ -22,7 +22,13 @@ export class ExerciseApiService extends AbstractApiService {
   }
 
   async updateExercise(exercise: Exercise) {
-    console.log('exercise', exercise)
-    return exercise
+    const response = fetch(this.buildUrl(), {
+      method: 'PUT',
+      body: JSON.stringify(exercise),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    return this.transformResponse<Exercise>(await response)
   }
 }
