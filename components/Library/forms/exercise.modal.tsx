@@ -130,6 +130,7 @@ export default function ExerciseModal({
       closeOnClickOutside={false}
       closeOnEscape={false}
       keepMounted={false}
+      withCloseButton={isReadOnly()}
       data-testid='exercise-modal'
     >
       <form onSubmit={mode === 'create' ? handleCreateSubmit : handleEditSubmit}>

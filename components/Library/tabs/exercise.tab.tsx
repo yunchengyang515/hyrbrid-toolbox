@@ -118,6 +118,7 @@ export default function ExercisesTab() {
               onClick={() => openViewModal(exercise)}
               style={{ cursor: 'pointer' }}
               data-testid={`exercise-card-${String(index + 1)}`}
+              key={exercise.id}
             >
               {/* Header Section: Title + Badge */}
               <Group justify='space-between' align='center' mb='sm'>
