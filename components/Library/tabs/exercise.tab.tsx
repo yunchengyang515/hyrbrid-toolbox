@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { IconSearch } from '@tabler/icons-react'
 import { from } from 'rxjs'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
+import { notifications } from '@mantine/notifications'
 import { ExerciseApiService } from '@/services/api/exercise.api.service'
 import { Exercise, ExerciseFormData } from '@/types/exercise.types'
 import ExerciseModal from '../forms/exercise.modal'
@@ -18,11 +19,20 @@ export default function ExercisesTab() {
 
     from(exerciseApiService.createExercise(newExercise)).subscribe({
       next: (newExercise: Exercise) => {
-        console.log('Exercise created', newExercise)
+        notifications.show({
+          title: 'Exercise created',
+          message: `Successfully created exercise "${newExercise.name}"`,
+          color: 'teal',
+        })
         setExercises([...exercises, newExercise])
       },
       error: (err) => {
         console.error('Failed to create exercise', err)
+        notifications.show({
+          title: 'Failed to create exercise',
+          message: err.message,
+          color: 'red',
+        })
         setExercises(rollbackState)
       },
     })
@@ -33,12 +43,22 @@ export default function ExercisesTab() {
 
     from(exerciseApiService.updateExercise(updatedExercise)).subscribe({
       next: (updated: Exercise) => {
+        notifications.show({
+          title: 'Exercise updated',
+          message: `Successfully updated exercise "${updated.name}"`,
+          color: 'teal',
+        })
         setExercises((prevExercises) =>
           prevExercises.map((exercise) => (exercise.id === updated.id ? updated : exercise)),
         )
       },
       error: (err) => {
         console.error('Failed to update exercise', err)
+        notifications.show({
+          title: 'Failed to update exercise',
+          message: err.message,
+          color: 'red',
+        })
         setExercises(rollbackState)
       },
     })

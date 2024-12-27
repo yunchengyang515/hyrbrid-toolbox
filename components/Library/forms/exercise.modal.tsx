@@ -49,6 +49,12 @@ export default function ExerciseModal({
     }
   }, [mode])
 
+  useEffect(() => {
+    if (!opened) {
+      form.reset() // Clear form state
+    }
+  }, [opened])
+
   const handleCreateSubmit = form.onSubmit((values) => {
     onSubmit(values)
     onClose()
