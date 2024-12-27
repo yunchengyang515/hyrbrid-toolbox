@@ -89,7 +89,7 @@ export default function ExerciseModal({
     if (mode === 'view') {
       return (
         <>
-          <Button variant='outline' onClick={onClose} data-testid='close-button'>
+          <Button variant='outline' onClick={onClose} data-testid='exercise-modal-close-button'>
             Close
           </Button>
           <Button
@@ -98,7 +98,7 @@ export default function ExerciseModal({
               onEditMode(exerciseData as ExerciseFormData)
               event.preventDefault()
             }}
-            data-testid='edit-button'
+            data-testid='exercise-modal-edit-button'
           >
             Edit
           </Button>
@@ -112,7 +112,7 @@ export default function ExerciseModal({
           <Button variant='outline' onClick={onClose} data-testid={`${mode}-cancel-button`}>
             Cancel
           </Button>
-          <Button variant='filled' type='submit' data-testid={`${mode}-save-button`}>
+          <Button variant='filled' type='submit' data-testid={`exercise-modal-${mode}-save-button`}>
             {mode === 'create' ? 'Create' : 'Save'}
           </Button>
         </>
@@ -129,6 +129,8 @@ export default function ExerciseModal({
       title='Exercise Details'
       closeOnClickOutside={false}
       closeOnEscape={false}
+      keepMounted={false}
+      data-testid='exercise-modal'
     >
       <form onSubmit={mode === 'create' ? handleCreateSubmit : handleEditSubmit}>
         <TextInput

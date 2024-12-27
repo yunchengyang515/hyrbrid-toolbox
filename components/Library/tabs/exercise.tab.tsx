@@ -79,7 +79,13 @@ export default function ExercisesTab() {
     <Container fluid px={2}>
       {/* Add Exercise Button and Search Bar */}
       <Group justify='flex-start' align='center' mb='xl' wrap='wrap' gap='sm'>
-        <Button variant='filled' color='blue' size='md' onClick={openCreateModal}>
+        <Button
+          variant='filled'
+          color='blue'
+          size='md'
+          onClick={openCreateModal}
+          data-testid='add-exercise-button'
+        >
           + Add Exercise
         </Button>
         <TextInput
@@ -102,7 +108,7 @@ export default function ExercisesTab() {
 
       {/* Exercise Cards */}
       <Grid gutter='xl'>
-        {exercises.map((exercise: Exercise) => (
+        {exercises.map((exercise: Exercise, index) => (
           <Grid.Col key={exercise.id} span={4}>
             <Card
               shadow='sm'
@@ -112,6 +118,7 @@ export default function ExercisesTab() {
               h='160px'
               onClick={() => openViewModal(exercise)}
               style={{ cursor: 'pointer' }}
+              data-testid={`exercise-card-${String(index + 1)}`}
             >
               {/* Header Section: Title + Badge */}
               <Group justify='space-between' align='center' mb='sm'>
