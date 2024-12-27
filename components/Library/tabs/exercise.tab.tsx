@@ -33,7 +33,6 @@ export default function ExercisesTab() {
 
     from(exerciseApiService.updateExercise(updatedExercise)).subscribe({
       next: (updated: Exercise) => {
-        console.log('Exercise updated', updated)
         setExercises((prevExercises) =>
           prevExercises.map((exercise) => (exercise.id === updated.id ? updated : exercise)),
         )
