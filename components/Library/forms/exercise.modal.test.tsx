@@ -38,7 +38,7 @@ describe('ExerciseModal', () => {
 
     expect(screen.getByLabelText(/Exercise Name/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/Exercise Name/i)).not.toHaveAttribute('readonly')
-    expect(screen.getByTestId('create-save-button')).toBeInTheDocument()
+    expect(screen.getByTestId('exercise-modal-create-save-button')).toBeInTheDocument()
   })
 
   test('renders correctly in view mode', () => {
@@ -55,8 +55,8 @@ describe('ExerciseModal', () => {
     )
 
     expect(screen.getByLabelText(/Exercise Name/i)).toHaveAttribute('readonly')
-    expect(screen.getByTestId('close-button')).toBeInTheDocument()
-    expect(screen.getByTestId('edit-button')).toBeInTheDocument()
+    expect(screen.getByTestId('exercise-modal-close-button')).toBeInTheDocument()
+    expect(screen.getByTestId('exercise-modal-edit-button')).toBeInTheDocument()
   })
 
   test('renders correctly in edit mode', () => {
@@ -74,7 +74,7 @@ describe('ExerciseModal', () => {
 
     expect(screen.getByTestId('exercise-name-input')).not.toHaveAttribute('readonly')
     expect(screen.getByTestId('exercise-video-link-input')).not.toHaveAttribute('readonly')
-    expect(screen.getByTestId('edit-save-button')).toBeInTheDocument()
+    expect(screen.getByTestId('exercise-modal-edit-save-button')).toBeInTheDocument()
   })
 
   test('calls onSubmit handler when form is submitted in create mode', async () => {
@@ -98,7 +98,7 @@ describe('ExerciseModal', () => {
     const typeSelect = screen.getByTestId('exercise-type-select')
     await userEvent.click(typeSelect)
     await userEvent.click(screen.getByRole('option', { name: 'Cardio' }))
-    await userEvent.click(screen.getByTestId('create-save-button'))
+    await userEvent.click(screen.getByTestId('exercise-modal-create-save-button'))
 
     expect(mockOnSubmit).toHaveBeenCalledWith(
       expect.objectContaining({ name: 'New Exercise', type: 'Cardio' }),
@@ -124,7 +124,7 @@ describe('ExerciseModal', () => {
       })
     })
 
-    await userEvent.click(screen.getByTestId('edit-save-button'))
+    await userEvent.click(screen.getByTestId('exercise-modal-edit-save-button'))
 
     expect(mockOnUpdate).toHaveBeenCalledWith(expect.objectContaining({ name: 'Updated Exercise' }))
   })
