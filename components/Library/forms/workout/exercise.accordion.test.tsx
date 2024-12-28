@@ -75,7 +75,7 @@ test('generates sets for a workout exercise', async () => {
       user_id: '',
     },
   ]
-  renderComponent({ workoutExercises })
+  renderComponent({ workoutExercises, generateSetsByNumberInput: true })
   await act(async () => {
     fireEvent.change(screen.getByTestId('number-of-sets-input-1'), { target: { value: '3' } })
   })
