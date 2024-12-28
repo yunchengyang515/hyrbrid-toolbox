@@ -11,6 +11,7 @@ import {
   Grid,
   Group,
   NumberInput,
+  ScrollArea,
   Select,
   Text,
 } from '@mantine/core'
@@ -24,12 +25,14 @@ interface ExerciseAccordionProps {
   workoutExercises: WorkoutExercise[]
   readOnly?: boolean
   onUpdateExercises: (updatedExercises: WorkoutExercise[]) => void
+  generateSetsByNumberInput?: boolean
 }
 
 export function ExerciseAccordion({
   workoutExercises,
   readOnly = false,
   onUpdateExercises,
+  generateSetsByNumberInput = false,
 }: ExerciseAccordionProps) {
   const [localExercises, setLocalExercises] = useState(workoutExercises)
   const [allExercises, setAllExercises] = useState<Exercise[]>([])
@@ -154,124 +157,134 @@ export function ExerciseAccordion({
   return (
     <>
       {localExercises.length > 0 ? (
-        <Accordion>
-          {localExercises.map((localWorkoutExercise, index) => (
-            <Accordion.Item key={localWorkoutExercise.id} value={localWorkoutExercise.id}>
-              <Accordion.Control>
-                <Group justify='space-between' align='center'>
-                  <div>
-                    <Text size='xs'>Exercise {index + 1}</Text>
-                    <Text data-testid={`accordion-item-exercise-name-${index}`}>
-                      {localWorkoutExercise.exercise_name || 'New Exercise'}
-                    </Text>
-                    <Text size='sm' c='dimmed'>
-                      {generateSetSummary(localWorkoutExercise)}
-                    </Text>
-                  </div>
-                  {renderRemoveButton(localWorkoutExercise)}
-                </Group>
-              </Accordion.Control>
-              <Accordion.Panel>
-                {/* Exercise Name */}
-                <Select
-                  label='Exercise Name'
-                  placeholder='Pick an exercise'
-                  data={allExercises.map((ex) => ({ value: ex.id, label: ex.name }))}
-                  value={localWorkoutExercise.exercise_id}
-                  readOnly={readOnly}
-                  searchable
-                  onChange={(_value, option) => {
-                    handleExerciseSelect(localWorkoutExercise.id, option)
-                  }}
-                  data-testid={`exercise-name-select-${index}`}
-                />
+        <ScrollArea.Autosize mah='80vh'>
+          <Accordion>
+            {localExercises.map((localWorkoutExercise, index) => (
+              <Accordion.Item key={localWorkoutExercise.id} value={localWorkoutExercise.id}>
+                <Accordion.Control>
+                  <Group justify='space-between' align='center'>
+                    <div>
+                      <Text size='xs'>Exercise {index + 1}</Text>
+                      <Text data-testid={`accordion-item-exercise-name-${index}`}>
+                        {localWorkoutExercise.exercise_name || 'New Exercise'}
+                      </Text>
+                      <Text size='sm' c='dimmed'>
+                        {generateSetSummary(localWorkoutExercise)}
+                      </Text>
+                    </div>
+                    {renderRemoveButton(localWorkoutExercise)}
+                  </Group>
+                </Accordion.Control>
+                <Accordion.Panel>
+                  {/* Exercise Name */}
+                  <Select
+                    label='Exercise Name'
+                    placeholder='Pick an exercise'
+                    data={allExercises.map((ex) => ({ value: ex.id, label: ex.name }))}
+                    value={localWorkoutExercise.exercise_id}
+                    readOnly={readOnly}
+                    searchable
+                    onChange={(_value, option) => {
+                      handleExerciseSelect(localWorkoutExercise.id, option)
+                    }}
+                    data-testid={`exercise-name-select-${index}`}
+                  />
 
-                {/* Number of Sets */}
-                <NumberInput
-                  label='Number of Sets'
-                  placeholder='Enter sets'
-                  value={localWorkoutExercise.set_rep_detail.length}
-                  min={1}
-                  max={10}
-                  readOnly={readOnly}
-                  onChange={(val) =>
-                    handleExerciseChange(localWorkoutExercise.id, {
-                      set_rep_detail: Array.from({ length: Number(val) }, (_, index) => ({
-                        id: index + 1,
-                      })),
-                    })
-                  }
-                  data-testid={`number-of-sets-input-${localWorkoutExercise.id}`}
-                />
+                  {/* Number of Sets */}
+                  <NumberInput
+                    label='Number of Sets'
+                    placeholder='Enter sets'
+                    value={localWorkoutExercise.set_rep_detail.length}
+                    min={1}
+                    max={10}
+                    readOnly={readOnly || !generateSetsByNumberInput}
+                    onChange={(val) => {
+                      if (Number(val) < 0) {
+                        return
+                      }
+                      if (!generateSetsByNumberInput) {
+                        return
+                      }
 
-                {/* Set Details */}
-                {localWorkoutExercise.set_rep_detail.length > 0 && (
-                  <>
-                    <Divider my='sm' label='Set Details' labelPosition='center' />
-                    {localWorkoutExercise.set_rep_detail.map((set: SetDetail, index: number) => (
-                      <Box key={set.id} mb='1rem'>
-                        <Fieldset
-                          style={{
-                            border: '1px solid #ccc',
-                            borderRadius: '8px',
-                            padding: '1rem',
-                          }}
-                        >
-                          <Grid align='center'>
-                            <Grid.Col span={11}>
-                              <Grid align='center'>
-                                <Grid.Col span={1}>
-                                  <Text fw={500} size='sm'>
-                                    Set {index + 1}
-                                  </Text>
-                                </Grid.Col>
-                                <Grid.Col span={11}>
-                                  {renderSetDetails(localWorkoutExercise, set, index)}
-                                </Grid.Col>
-                              </Grid>
-                            </Grid.Col>
-                            <Grid.Col span={1}>
-                              {!readOnly && (
-                                <Group gap='xs'>
-                                  <ActionIcon
-                                    color='red'
-                                    variant='outline'
-                                    size='sm'
-                                    onClick={() =>
-                                      handleExerciseChange(localWorkoutExercise.id, {
-                                        set_rep_detail: localWorkoutExercise.set_rep_detail.filter(
-                                          (_, i) => i !== index,
-                                        ),
-                                      })
-                                    }
-                                    data-testid={`remove-set-button-${localWorkoutExercise.id}-${index}`}
-                                    title='Remove Set'
-                                  >
-                                    <IconTrash size={16} />
-                                  </ActionIcon>
-                                  <ActionIcon
-                                    color='blue'
-                                    variant='outline'
-                                    size='sm'
-                                    onClick={() => handleCloneSet(localWorkoutExercise.id, index)}
-                                    data-testid={`clone-set-button-${localWorkoutExercise.id}-${index}`}
-                                    title='Clone Set'
-                                  >
-                                    <IconCopy size={16} />
-                                  </ActionIcon>
-                                </Group>
-                              )}
-                            </Grid.Col>
-                          </Grid>
-                        </Fieldset>
-                      </Box>
-                    ))}
-                  </>
-                )}
-              </Accordion.Panel>
-            </Accordion.Item>
-          ))}
-        </Accordion>
+                      handleExerciseChange(localWorkoutExercise.id, {
+                        set_rep_detail: Array.from({ length: Number(val) }, (_, index) => ({
+                          id: index + 1,
+                        })),
+                      })
+                    }}
+                    data-testid={`number-of-sets-input-${localWorkoutExercise.id}`}
+                  />
+
+                  {/* Set Details */}
+                  {localWorkoutExercise.set_rep_detail.length > 0 && (
+                    <>
+                      <Divider my='sm' label='Set Details' labelPosition='center' />
+                      {localWorkoutExercise.set_rep_detail.map((set: SetDetail, index: number) => (
+                        <Box key={set.id} mb='1rem'>
+                          <Fieldset
+                            style={{
+                              border: '1px solid #ccc',
+                              borderRadius: '8px',
+                              padding: '1rem',
+                            }}
+                          >
+                            <Grid align='center'>
+                              <Grid.Col span={11}>
+                                <Grid align='center'>
+                                  <Grid.Col span={1}>
+                                    <Text fw={500} size='sm'>
+                                      Set {index + 1}
+                                    </Text>
+                                  </Grid.Col>
+                                  <Grid.Col span={11}>
+                                    {renderSetDetails(localWorkoutExercise, set, index)}
+                                  </Grid.Col>
+                                </Grid>
+                              </Grid.Col>
+                              <Grid.Col span={1}>
+                                {!readOnly && (
+                                  <Group gap='xs'>
+                                    <ActionIcon
+                                      color='red'
+                                      variant='outline'
+                                      size='sm'
+                                      onClick={() =>
+                                        handleExerciseChange(localWorkoutExercise.id, {
+                                          set_rep_detail:
+                                            localWorkoutExercise.set_rep_detail.filter(
+                                              (_, i) => i !== index,
+                                            ),
+                                        })
+                                      }
+                                      data-testid={`remove-set-button-${localWorkoutExercise.id}-${index}`}
+                                      title='Remove Set'
+                                    >
+                                      <IconTrash size={16} />
+                                    </ActionIcon>
+                                    <ActionIcon
+                                      color='blue'
+                                      variant='outline'
+                                      size='sm'
+                                      onClick={() => handleCloneSet(localWorkoutExercise.id, index)}
+                                      data-testid={`clone-set-button-${localWorkoutExercise.id}-${index}`}
+                                      title='Clone Set'
+                                    >
+                                      <IconCopy size={16} />
+                                    </ActionIcon>
+                                  </Group>
+                                )}
+                              </Grid.Col>
+                            </Grid>
+                          </Fieldset>
+                        </Box>
+                      ))}
+                    </>
+                  )}
+                </Accordion.Panel>
+              </Accordion.Item>
+            ))}
+          </Accordion>
+        </ScrollArea.Autosize>
       ) : (
         <Text size='sm' c='dimmed'>
           No exercises available
