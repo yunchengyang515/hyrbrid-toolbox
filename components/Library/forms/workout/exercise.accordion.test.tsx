@@ -103,6 +103,26 @@ test('removes a set from a workout exercise', async () => {
   expect(screen.queryByText('Set 1')).not.toBeInTheDocument()
 })
 
+test('clones a set from a workout exercise', async () => {
+  const workoutExercises: WorkoutExercise[] = [
+    {
+      id: '1',
+      exercise_name: 'Push Up',
+      set_rep_detail: [{ id: 1, reps: 10, weight: 20, rest: 30 }],
+      exercise_type: 'Strength',
+      workout_id: '',
+      exercise_id: '1',
+      user_id: '',
+    },
+  ]
+  renderComponent({ workoutExercises })
+  expect(screen.getAllByText('Reps')).toHaveLength(1)
+  await act(async () => {
+    fireEvent.click(screen.getByTestId('clone-set-button-1-0'))
+  })
+  expect(screen.getAllByText('Reps')).toHaveLength(2)
+})
+
 test('renders in read-only mode', async () => {
   const workoutExercises: WorkoutExercise[] = [
     {
