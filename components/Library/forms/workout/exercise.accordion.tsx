@@ -210,15 +210,15 @@ export function ExerciseAccordion({
                     <Divider my='sm' label='Set Details' labelPosition='center' />
                     {localWorkoutExercise.set_rep_detail.map((set: SetDetail, index: number) => (
                       <Box key={set.id} mb='1rem'>
-                        <Grid align='center'>
-                          <Grid.Col span={11}>
-                            <Fieldset
-                              style={{
-                                border: '1px solid #ccc',
-                                borderRadius: '8px',
-                                padding: '1rem',
-                              }}
-                            >
+                        <Fieldset
+                          style={{
+                            border: '1px solid #ccc',
+                            borderRadius: '8px',
+                            padding: '1rem',
+                          }}
+                        >
+                          <Grid align='center'>
+                            <Grid.Col span={11}>
                               <Grid align='center'>
                                 <Grid.Col span={1}>
                                   <Text fw={500} size='sm'>
@@ -229,41 +229,41 @@ export function ExerciseAccordion({
                                   {renderSetDetails(localWorkoutExercise, set, index)}
                                 </Grid.Col>
                               </Grid>
-                            </Fieldset>
-                          </Grid.Col>
-                          <Grid.Col span={1}>
-                            {!readOnly && (
-                              <Group gap='xs'>
-                                <ActionIcon
-                                  color='red'
-                                  variant='outline'
-                                  size='sm'
-                                  onClick={() =>
-                                    handleExerciseChange(localWorkoutExercise.id, {
-                                      set_rep_detail: localWorkoutExercise.set_rep_detail.filter(
-                                        (_, i) => i !== index,
-                                      ),
-                                    })
-                                  }
-                                  data-testid={`remove-set-button-${localWorkoutExercise.id}-${index}`}
-                                  title='Remove Set'
-                                >
-                                  <IconTrash size={16} />
-                                </ActionIcon>
-                                <ActionIcon
-                                  color='blue'
-                                  variant='outline'
-                                  size='sm'
-                                  onClick={() => handleCloneSet(localWorkoutExercise.id, index)}
-                                  data-testid={`clone-set-button-${localWorkoutExercise.id}-${index}`}
-                                  title='Clone Set'
-                                >
-                                  <IconCopy size={16} />
-                                </ActionIcon>
-                              </Group>
-                            )}
-                          </Grid.Col>
-                        </Grid>
+                            </Grid.Col>
+                            <Grid.Col span={1}>
+                              {!readOnly && (
+                                <Group gap='xs'>
+                                  <ActionIcon
+                                    color='red'
+                                    variant='outline'
+                                    size='sm'
+                                    onClick={() =>
+                                      handleExerciseChange(localWorkoutExercise.id, {
+                                        set_rep_detail: localWorkoutExercise.set_rep_detail.filter(
+                                          (_, i) => i !== index,
+                                        ),
+                                      })
+                                    }
+                                    data-testid={`remove-set-button-${localWorkoutExercise.id}-${index}`}
+                                    title='Remove Set'
+                                  >
+                                    <IconTrash size={16} />
+                                  </ActionIcon>
+                                  <ActionIcon
+                                    color='blue'
+                                    variant='outline'
+                                    size='sm'
+                                    onClick={() => handleCloneSet(localWorkoutExercise.id, index)}
+                                    data-testid={`clone-set-button-${localWorkoutExercise.id}-${index}`}
+                                    title='Clone Set'
+                                  >
+                                    <IconCopy size={16} />
+                                  </ActionIcon>
+                                </Group>
+                              )}
+                            </Grid.Col>
+                          </Grid>
+                        </Fieldset>
                       </Box>
                     ))}
                   </>
