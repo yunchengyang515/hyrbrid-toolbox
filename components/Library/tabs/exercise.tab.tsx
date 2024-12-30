@@ -3,9 +3,9 @@ import { IconSearch } from '@tabler/icons-react'
 import { from } from 'rxjs'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
+import ExerciseModal from '@/components/forms/exercise.modal'
 import { ExerciseApiService } from '@/services/api/exercise.api.service'
 import { Exercise, ExerciseFormData } from '@/types/exercise.types'
-import ExerciseModal from '../forms/exercise.modal'
 
 export default function ExercisesTab() {
   const exerciseApiService = new ExerciseApiService()

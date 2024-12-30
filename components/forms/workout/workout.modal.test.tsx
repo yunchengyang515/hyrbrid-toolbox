@@ -2,13 +2,13 @@ import { act, fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { render } from '@/test-utils'
 import { WorkoutWithExercises } from '@/types/workout.types'
-import { ExerciseApiService } from '../../../../services/api/exercise.api.service'
-import { WorkoutApiService } from '../../../../services/api/workout.api.service'
+import { ExerciseApiService } from '../../../services/api/exercise.api.service'
+import { WorkoutApiService } from '../../../services/api/workout.api.service'
 import WorkoutModal from './workout.modal'
 
 // Mock WorkoutApiService and ExerciseApiService
-jest.mock('../../../../services/api/workout.api.service')
-jest.mock('../../../../services/api/exercise.api.service')
+jest.mock('../../../services/api/workout.api.service')
+jest.mock('../../../services/api/exercise.api.service')
 
 const mockOnSubmit = jest.fn()
 const mockOnUpdate = jest.fn()

@@ -4,9 +4,9 @@ import { IconSearch } from '@tabler/icons-react'
 import { from } from 'rxjs'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
+import WorkoutModal from '@/components/forms/workout/workout.modal'
 import { WorkoutApiService } from '@/services/api/workout.api.service'
 import { WorkoutFormData, WorkoutWithExercises } from '@/types/workout.types'
-import WorkoutModal from '../forms/workout/workout.modal'
 
 const workoutApiService = new WorkoutApiService()
 

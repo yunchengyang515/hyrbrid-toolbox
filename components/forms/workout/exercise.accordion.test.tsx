@@ -2,11 +2,11 @@ import { act, cleanup, fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { render } from '@/test-utils'
 import { WorkoutExercise } from '@/types/workoutExercise.types'
-import { ExerciseApiService } from '../../../../services/api/exercise.api.service'
+import { ExerciseApiService } from '../../../services/api/exercise.api.service'
 import { ExerciseAccordion } from './exercise.accordion'
 
 // Mock ExerciseApiService
-jest.mock('../../../../services/api/exercise.api.service')
+jest.mock('../../../services/api/exercise.api.service')
 
 const mockExercises = [
   { id: '1', name: 'Push Up', type: 'Strength' },
