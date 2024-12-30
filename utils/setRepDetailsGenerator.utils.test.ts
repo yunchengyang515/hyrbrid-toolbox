@@ -77,7 +77,7 @@ describe('generateSetRepDetails', () => {
     it('should throw an error for input with non-numeric values', () => {
       const input = '3xa'
       expect(() => generateSetRepDetails(input, WorkoutType.Strength)).toThrow(
-        'Invalid input format',
+        'Invalid reps format',
       )
     })
 
@@ -131,7 +131,7 @@ describe('generateSetRepDetails', () => {
       ])
     })
 
-    it.only('should generate correct set rep details for input with single paces', () => {
+    it('should generate correct set rep details for input with single paces', () => {
       const input = '3x10@5:00'
       const result = generateSetRepDetails(input, WorkoutType.Running)
       expect(result).toEqual([
@@ -177,7 +177,7 @@ describe('generateSetRepDetails', () => {
     it('should throw an error for input with non-numeric values', () => {
       const input = '3xa'
       expect(() => generateSetRepDetails(input, WorkoutType.Running)).toThrow(
-        'Invalid input format',
+        'Invalid distance format',
       )
     })
 
