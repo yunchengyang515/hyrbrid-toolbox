@@ -4,9 +4,9 @@ import { IconSearch } from '@tabler/icons-react'
 import { from } from 'rxjs'
 import { Badge, Button, Card, Container, Grid, Group, Text, TextInput } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
+import WorkoutModal from '@/components/forms/workout/workout.modal'
 import { WorkoutApiService } from '@/services/api/workout.api.service'
 import { WorkoutFormData, WorkoutWithExercises } from '@/types/workout.types'
-import WorkoutModal from '../forms/workout/workout.modal'
 
 const workoutApiService = new WorkoutApiService()
 
@@ -163,17 +163,22 @@ export default function WorkoutsTab() {
                 </Badge>
               </Group>
 
-              {workout.description && (
+              {workout.description ? (
                 <Text size='sm' c='dimmed' mb='sm'>
                   {workout.description}
+                </Text>
+              ) : (
+                <Text size='sm' c='dimmed' mb='sm'>
+                  No description available
                 </Text>
               )}
 
               <Text size='sm' c='dimmed'>
-                <strong>Duration:</strong> {workout.duration_minute} minutes
+                <strong>Duration:</strong>{' '}
+                {workout.duration_minute ? workout.duration_minute : 'N/A'} minutes
               </Text>
               <Text size='sm' c='dimmed'>
-                <strong>Intensity:</strong> {workout.intensity}/10
+                <strong>Intensity:</strong> {workout.intensity ? workout.intensity : 'N/A'}/10
               </Text>
             </Card>
           </Grid.Col>

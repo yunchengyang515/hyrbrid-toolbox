@@ -18,5 +18,9 @@ export interface WorkoutWithExercises extends Workout {
   exercises: WorkoutExercise[]
 }
 
+export enum WorkoutType {
+  Strength = 'strength',
+  Running = 'running',
+}
 // Represents the editable Workout data used in forms (no ID or timestamps needed)
 export type WorkoutFormData = Omit<WorkoutWithExercises, 'id' | 'created_at' | 'user_id'>

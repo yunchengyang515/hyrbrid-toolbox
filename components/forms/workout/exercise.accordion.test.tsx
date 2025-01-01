@@ -2,11 +2,11 @@ import { act, cleanup, fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { render } from '@/test-utils'
 import { WorkoutExercise } from '@/types/workoutExercise.types'
-import { ExerciseApiService } from '../../../../services/api/exercise.api.service'
+import { ExerciseApiService } from '../../../services/api/exercise.api.service'
 import { ExerciseAccordion } from './exercise.accordion'
 
 // Mock ExerciseApiService
-jest.mock('../../../../services/api/exercise.api.service')
+jest.mock('../../../services/api/exercise.api.service')
 
 const mockExercises = [
   { id: '1', name: 'Push Up', type: 'Strength' },
@@ -75,7 +75,7 @@ test('generates sets for a workout exercise', async () => {
       user_id: '',
     },
   ]
-  renderComponent({ workoutExercises })
+  renderComponent({ workoutExercises, generateSetsByNumberInput: true })
   await act(async () => {
     fireEvent.change(screen.getByTestId('number-of-sets-input-1'), { target: { value: '3' } })
   })
@@ -101,6 +101,26 @@ test('removes a set from a workout exercise', async () => {
     fireEvent.click(screen.getByTestId('remove-set-button-1-0'))
   })
   expect(screen.queryByText('Set 1')).not.toBeInTheDocument()
+})
+
+test('clones a set from a workout exercise', async () => {
+  const workoutExercises: WorkoutExercise[] = [
+    {
+      id: '1',
+      exercise_name: 'Push Up',
+      set_rep_detail: [{ id: 1, reps: 10, weight: 20, rest: 30 }],
+      exercise_type: 'Strength',
+      workout_id: '',
+      exercise_id: '1',
+      user_id: '',
+    },
+  ]
+  renderComponent({ workoutExercises })
+  expect(screen.getAllByText('Reps')).toHaveLength(1)
+  await act(async () => {
+    fireEvent.click(screen.getByTestId('clone-set-button-1-0'))
+  })
+  expect(screen.getAllByText('Reps')).toHaveLength(2)
 })
 
 test('renders in read-only mode', async () => {

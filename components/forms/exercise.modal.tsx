@@ -133,8 +133,8 @@ export default function ExerciseModal({
       opened={opened}
       onClose={onClose}
       title='Exercise Details'
-      closeOnClickOutside={false}
-      closeOnEscape={false}
+      closeOnClickOutside={isReadOnly()}
+      closeOnEscape={isReadOnly()}
       keepMounted={false}
       withCloseButton={isReadOnly()}
       data-testid='exercise-modal'

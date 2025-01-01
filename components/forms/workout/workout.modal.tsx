@@ -252,8 +252,8 @@ export default function WorkoutModal({
       title='Workout Details'
       size='xl'
       centered
-      closeOnClickOutside={false}
-      closeOnEscape={false}
+      closeOnClickOutside={isReadOnly}
+      closeOnEscape={isReadOnly}
       fullScreen
       withCloseButton={isReadOnly}
       data-testid='workout-modal'
@@ -329,6 +329,7 @@ export default function WorkoutModal({
               workoutExercises={getExercisesData()}
               readOnly={isReadOnly}
               onUpdateExercises={handleUpdateExercises}
+              generateSetsByNumberInput={mode === 'create'}
             />
 
             <Group mt='md' justify='flex-end'>
