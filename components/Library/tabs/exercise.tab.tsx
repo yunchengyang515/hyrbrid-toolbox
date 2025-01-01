@@ -151,21 +151,29 @@ export default function ExercisesTab() {
               </Group>
 
               {/* Description */}
-              {exercise.description && (
+              {exercise.description ? (
                 <Text size='sm' c='dimmed' mb='sm'>
                   {exercise.description}
+                </Text>
+              ) : (
+                <Text size='sm' c='dimmed' mb='sm'>
+                  No description available
                 </Text>
               )}
 
               {/* Equipment */}
-              {exercise.equipment && exercise.equipment.length > 0 && (
+              {exercise.equipment && exercise.equipment.length > 0 ? (
                 <Text size='sm' c='dimmed' mb='sm'>
                   <strong>Equipment:</strong> {exercise.equipment.join(', ')}
+                </Text>
+              ) : (
+                <Text size='sm' c='dimmed' mb='sm'>
+                  No equipment needed
                 </Text>
               )}
 
               {/* Video Link */}
-              {exercise.video_link && (
+              {exercise.video_link ? (
                 <Text
                   size='sm'
                   c='blue'
@@ -176,6 +184,10 @@ export default function ExercisesTab() {
                   rel='noopener noreferrer'
                 >
                   Watch Video
+                </Text>
+              ) : (
+                <Text size='sm' c='dimmed'>
+                  No video available
                 </Text>
               )}
             </Card>
