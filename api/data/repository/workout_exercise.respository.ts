@@ -2,6 +2,7 @@ import { WorkoutExercise, WorkoutExerciseSchema } from '@/types/workoutExercise.
 import { getDbClient } from '../db.service'
 import { AbstractRepository } from './abstract.repository'
 
+const tableName = 'set'
 export class WorkoutExerciseRepository extends AbstractRepository {
   async getAllWorkoutExercises() {
     return getAllWorkoutExercises(this.currentUserId)
@@ -29,7 +30,7 @@ export class WorkoutExerciseRepository extends AbstractRepository {
 export const getAllWorkoutExercises = async (userId: string) => {
   const client = getDbClient()
   const { data: workoutExercise, error } = await client
-    .from('workout_exercise')
+    .from(tableName)
     .select('*')
     .eq('user_id', userId)
   if (error) {
@@ -41,7 +42,7 @@ export const getAllWorkoutExercises = async (userId: string) => {
 export const getWorkoutExerciseById = async (id: string, userId: string) => {
   const client = getDbClient()
   const { data: workoutExercise, error } = await client
-    .from('workout_exercise')
+    .from(tableName)
     .select('*')
     .eq('id', id)
     .eq('user_id', userId)
@@ -55,7 +56,7 @@ export const getWorkoutExerciseById = async (id: string, userId: string) => {
 export const getWorkoutExerciseByWorkoutId = async (workoutId: string, userId: string) => {
   const client = getDbClient()
   const { data: workoutExercise, error } = await client
-    .from('workout_exercise')
+    .from(tableName)
     .select('*')
     .eq('workout_id', workoutId)
     .eq('user_id', userId)
@@ -71,7 +72,7 @@ export const createWorkoutExercise = async (
 ) => {
   const client = getDbClient()
   const { data, error } = await client
-    .from('workout_exercise')
+    .from(tableName)
     .insert({
       ...workoutExercise,
       user_id: userId,
@@ -90,7 +91,7 @@ export const updateWorkoutExercise = async (
 ) => {
   const client = getDbClient()
   const { data, error } = await client
-    .from('workout_exercise')
+    .from('set')
     .update({ ...workoutExercise, id })
     .eq('id', id)
     .eq('user_id', userId)
@@ -104,7 +105,7 @@ export const updateWorkoutExercise = async (
 export const deleteWorkoutExercise = async (id: string, userId: string) => {
   const client = getDbClient()
   const { data, error } = await client
-    .from('workout_exercise')
+    .from(tableName)
     .delete()
     .eq('id', id)
     .eq('user_id', userId)
@@ -118,7 +119,7 @@ export const deleteWorkoutExercise = async (id: string, userId: string) => {
 export const deleteWorkoutExercisesByWorkoutId = async (workoutId: string, userId: string) => {
   const client = getDbClient()
   const { data, error } = await client
-    .from('workout_exercise')
+    .from(tableName)
     .delete()
     .eq('workout_id', workoutId)
     .eq('user_id', userId)

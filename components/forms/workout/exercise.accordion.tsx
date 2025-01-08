@@ -90,7 +90,6 @@ export function ExerciseAccordion({
       set_rep_detail: [],
       exercise_type: '',
       workout_id: '',
-      exercise_id: '',
       user_id: '',
     }
     const updatedExercises = [...localExercises, newExercise as WorkoutExercise]
@@ -102,7 +101,6 @@ export function ExerciseAccordion({
     const selectedExercise = allExercises.find((ex) => ex.id === option.value)
     if (selectedExercise) {
       handleExerciseChange(workoutExerciseId, {
-        exercise_id: selectedExercise.id,
         exercise_name: selectedExercise.name,
         exercise_type: selectedExercise.type,
       })
@@ -209,6 +207,7 @@ export function ExerciseAccordion({
                       handleExerciseChange(localWorkoutExercise.id, {
                         set_rep_detail: Array.from({ length: Number(val) }, (_, index) => ({
                           id: index + 1,
+                          exercise_id: localWorkoutExercise.id,
                         })),
                       })
                     }}
