@@ -1,4 +1,4 @@
-import { WorkoutExercise } from './workoutExercise.types'
+import { Set } from './set.types'
 
 // Represents the Workout structure as it is stored in the database
 export type WorkoutSchema = {
@@ -15,7 +15,7 @@ export type WorkoutSchema = {
 export type Workout = WorkoutSchema
 
 export interface WorkoutWithExercises extends Workout {
-  exercises: WorkoutExercise[]
+  exercises: Set[]
 }
 
 export enum WorkoutType {

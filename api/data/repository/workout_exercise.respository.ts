@@ -1,4 +1,4 @@
-import { WorkoutExercise, WorkoutExerciseSchema } from '@/types/workoutExercise.types'
+import { Set, SetSchema } from '@/types/set.types'
 import { getDbClient } from '../db.service'
 import { AbstractRepository } from './abstract.repository'
 
@@ -10,10 +10,10 @@ export class WorkoutExerciseRepository extends AbstractRepository {
   async getWorkoutExerciseById(id: string) {
     return getWorkoutExerciseById(id, this.currentUserId)
   }
-  async createWorkoutExercise(workoutExercise: WorkoutExerciseSchema) {
+  async createWorkoutExercise(workoutExercise: SetSchema) {
     return createWorkoutExercise(workoutExercise, this.currentUserId)
   }
-  async updateWorkoutExercise(id: string, workoutExercise: WorkoutExercise) {
+  async updateWorkoutExercise(id: string, workoutExercise: Set) {
     return updateWorkoutExercise(id, workoutExercise, this.currentUserId)
   }
   async deleteWorkoutExercise(id: string) {
@@ -66,10 +66,7 @@ export const getWorkoutExerciseByWorkoutId = async (workoutId: string, userId: s
   return workoutExercise
 }
 
-export const createWorkoutExercise = async (
-  workoutExercise: Partial<WorkoutExercise>,
-  userId: string,
-) => {
+export const createWorkoutExercise = async (workoutExercise: Partial<Set>, userId: string) => {
   const client = getDbClient()
   const { data, error } = await client
     .from(tableName)
@@ -84,11 +81,7 @@ export const createWorkoutExercise = async (
   return data
 }
 
-export const updateWorkoutExercise = async (
-  id: string,
-  workoutExercise: WorkoutExercise,
-  userId: string,
-) => {
+export const updateWorkoutExercise = async (id: string, workoutExercise: Set, userId: string) => {
   const client = getDbClient()
   const { data, error } = await client
     .from('set')

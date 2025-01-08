@@ -17,14 +17,14 @@ import {
 } from '@mantine/core'
 import { ExerciseApiService } from '@/services/api/exercise.api.service'
 import { Exercise } from '@/types/exercise.types'
+import { Set, SetDetail } from '@/types/set.types'
 import { DISTANCE_UNIT, PACE_UNIT, WEIGHT_UNIT } from '@/types/units'
-import { SetDetail, WorkoutExercise } from '@/types/workoutExercise.types'
 import { SetRepDetail } from './setRepDetail'
 
 interface ExerciseAccordionProps {
-  workoutExercises: WorkoutExercise[]
+  workoutExercises: Set[]
   readOnly?: boolean
-  onUpdateExercises: (updatedExercises: WorkoutExercise[]) => void
+  onUpdateExercises: (updatedExercises: Set[]) => void
   generateSetsByNumberInput?: boolean
 }
 
@@ -47,7 +47,7 @@ export function ExerciseAccordion({
   }, [])
 
   // Function to generate a summary of sets
-  const generateSetSummary = (workoutExercise: WorkoutExercise) => {
+  const generateSetSummary = (workoutExercise: Set) => {
     if (!workoutExercise.set_rep_detail.length) {
       return 'No sets defined'
     }
@@ -76,7 +76,7 @@ export function ExerciseAccordion({
   }
 
   // Handler for changing workout exercise details
-  const handleExerciseChange = (id: string, changes: Partial<WorkoutExercise>) => {
+  const handleExerciseChange = (id: string, changes: Partial<Set>) => {
     const updatedExercises = localExercises.map((ex) => (ex.id === id ? { ...ex, ...changes } : ex))
     setLocalExercises(updatedExercises)
     onUpdateExercises(updatedExercises)
@@ -84,7 +84,7 @@ export function ExerciseAccordion({
 
   // Handler for adding a new workout exercise
   const handleAddExercise = () => {
-    const newExercise: Partial<WorkoutExercise> = {
+    const newExercise: Partial<Set> = {
       id: String(Date.now()),
       exercise_name: 'New Exercise',
       set_rep_detail: [],
@@ -92,7 +92,7 @@ export function ExerciseAccordion({
       workout_id: '',
       user_id: '',
     }
-    const updatedExercises = [...localExercises, newExercise as WorkoutExercise]
+    const updatedExercises = [...localExercises, newExercise as Set]
     setLocalExercises(updatedExercises)
     onUpdateExercises(updatedExercises)
   }
@@ -120,7 +120,7 @@ export function ExerciseAccordion({
     onUpdateExercises(updatedExercises)
   }
 
-  const renderSetDetails = (workoutExercise: WorkoutExercise, set: SetDetail, index: number) => {
+  const renderSetDetails = (workoutExercise: Set, set: SetDetail, index: number) => {
     return (
       <SetRepDetail
         workoutExercise={workoutExercise}
@@ -132,7 +132,7 @@ export function ExerciseAccordion({
     )
   }
 
-  const renderRemoveButton = (workoutExercise: WorkoutExercise) => {
+  const renderRemoveButton = (workoutExercise: Set) => {
     if (!readOnly) {
       return (
         <Button

@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react'
 import { Button, Group, Modal, NumberInput, Select, Stack, Text, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
+import { Set } from '@/types/set.types'
 import { WorkoutFormData, WorkoutWithExercises } from '@/types/workout.types'
-import { WorkoutExercise } from '@/types/workoutExercise.types'
 import { ExerciseAccordion } from './exercise.accordion'
 
 type WorkoutModalMode = 'create' | 'view' | 'edit'
@@ -241,7 +241,7 @@ export default function WorkoutModal({
   const [activeStep, setActiveStep] = useState(0)
 
   // Handler for updating exercises
-  function handleUpdateExercises(updatedExercises: WorkoutExercise[]) {
+  function handleUpdateExercises(updatedExercises: Set[]) {
     form.setFieldValue('exercises', updatedExercises)
   }
 
