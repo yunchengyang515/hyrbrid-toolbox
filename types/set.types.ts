@@ -8,7 +8,7 @@ export type SetDetail = {
   exercise_id: string
 }
 
-export type Set = {
+export type Activity = {
   id: string
   set_rep_detail: SetDetail[]
   workout_id: string
@@ -19,7 +19,7 @@ export type Set = {
   exercise_type: string
 }
 
-export type SetSchema = {
+export type ActivitySchema = {
   set_rep_detail: SetDetail[]
   workout_id?: string
   session_id?: string

@@ -1,14 +1,14 @@
 import { Grid, NumberInput, TextInput } from '@mantine/core'
 import { useValidatedState } from '@mantine/hooks'
-import { Set, SetDetail } from '@/types/set.types'
+import { Activity, SetDetail } from '@/types/set.types'
 import { DISTANCE_UNIT, PACE_UNIT, WEIGHT_UNIT } from '@/types/units'
 
 interface SetRepDetailProps {
-  workoutExercise: Set
+  workoutExercise: Activity
   set: SetDetail
   index: number
   readOnly: boolean
-  handleExerciseChange: (id: string, changes: Partial<Set>) => void
+  handleExerciseChange: (id: string, changes: Partial<Activity>) => void
 }
 
 const validatePace = (pace: string) => {

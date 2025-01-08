@@ -1,8 +1,8 @@
-import { Set, SetSchema } from '@/types/set.types'
+import { Activity, ActivitySchema } from '@/types/set.types'
 import { getDbClient } from '../db.service'
 import { AbstractRepository } from './abstract.repository'
 
-const tableName = 'set'
+const tableName = 'activity'
 export class WorkoutExerciseRepository extends AbstractRepository {
   async getAllWorkoutExercises() {
     return getAllWorkoutExercises(this.currentUserId)
@@ -10,10 +10,10 @@ export class WorkoutExerciseRepository extends AbstractRepository {
   async getWorkoutExerciseById(id: string) {
     return getWorkoutExerciseById(id, this.currentUserId)
   }
-  async createWorkoutExercise(workoutExercise: SetSchema) {
+  async createWorkoutExercise(workoutExercise: ActivitySchema) {
     return createWorkoutExercise(workoutExercise, this.currentUserId)
   }
-  async updateWorkoutExercise(id: string, workoutExercise: Set) {
+  async updateWorkoutExercise(id: string, workoutExercise: Activity) {
     return updateWorkoutExercise(id, workoutExercise, this.currentUserId)
   }
   async deleteWorkoutExercise(id: string) {
@@ -66,7 +66,7 @@ export const getWorkoutExerciseByWorkoutId = async (workoutId: string, userId: s
   return workoutExercise
 }
 
-export const createWorkoutExercise = async (workoutExercise: Partial<Set>, userId: string) => {
+export const createWorkoutExercise = async (workoutExercise: Partial<Activity>, userId: string) => {
   const client = getDbClient()
   const { data, error } = await client
     .from(tableName)
@@ -81,7 +81,11 @@ export const createWorkoutExercise = async (workoutExercise: Partial<Set>, userI
   return data
 }
 
-export const updateWorkoutExercise = async (id: string, workoutExercise: Set, userId: string) => {
+export const updateWorkoutExercise = async (
+  id: string,
+  workoutExercise: Activity,
+  userId: string,
+) => {
   const client = getDbClient()
   const { data, error } = await client
     .from('set')

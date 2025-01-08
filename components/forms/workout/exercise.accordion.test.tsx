@@ -1,7 +1,7 @@
 import { act, cleanup, fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { render } from '@/test-utils'
-import { Set } from '@/types/set.types'
+import { Activity } from '@/types/set.types'
 import { ExerciseApiService } from '../../../services/api/exercise.api.service'
 import { ExerciseAccordion } from './exercise.accordion'
 
@@ -64,7 +64,7 @@ test('selects an exercise and updates the local workout exercise', async () => {
 })
 
 test('generates sets for a workout exercise', async () => {
-  const workoutExercises: Set[] = [
+  const workoutExercises: Activity[] = [
     {
       id: '1',
       exercise_name: 'Push Up',
@@ -85,7 +85,7 @@ test('generates sets for a workout exercise', async () => {
 })
 
 test('removes a set from a workout exercise', async () => {
-  const workoutExercises: Set[] = [
+  const workoutExercises: Activity[] = [
     {
       id: '1',
       exercise_name: 'Push Up',
@@ -104,7 +104,7 @@ test('removes a set from a workout exercise', async () => {
 })
 
 test('clones a set from a workout exercise', async () => {
-  const workoutExercises: Set[] = [
+  const workoutExercises: Activity[] = [
     {
       id: '1',
       exercise_name: 'Push Up',
@@ -124,7 +124,7 @@ test('clones a set from a workout exercise', async () => {
 })
 
 test('renders in read-only mode', async () => {
-  const workoutExercises: Set[] = [
+  const workoutExercises: Activity[] = [
     {
       id: '1',
       exercise_name: 'Push Up',
@@ -143,7 +143,7 @@ test('renders in read-only mode', async () => {
 })
 
 test('generates set summary correctly', async () => {
-  const workoutExercises: Set[] = [
+  const workoutExercises: Activity[] = [
     {
       id: '1',
       exercise_name: 'Push Up',
@@ -162,7 +162,7 @@ test('generates set summary correctly', async () => {
 })
 
 test('generates cardio set summary correctly', async () => {
-  const workoutExercises: Set[] = [
+  const workoutExercises: Activity[] = [
     {
       id: '1',
       exercise_name: 'Running Test',
@@ -181,7 +181,7 @@ test('generates cardio set summary correctly', async () => {
 })
 
 test('displays the correct number label for each exercise', async () => {
-  const workoutExercises: Set[] = [
+  const workoutExercises: Activity[] = [
     {
       id: '1',
       exercise_name: 'Push Up',
