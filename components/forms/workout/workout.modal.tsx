@@ -4,7 +4,7 @@ import { Button, Group, Modal, NumberInput, Select, Stack, Text, TextInput } fro
 import { useForm } from '@mantine/form'
 import { Activity } from '@/types/set.types'
 import { WorkoutFormData, WorkoutWithExercises } from '@/types/workout.types'
-import { ExerciseAccordion } from './exercise.accordion'
+import { ExerciseAccordion } from '../activity/activity.accordion'
 
 type WorkoutModalMode = 'create' | 'view' | 'edit'
 interface WorkoutModalProps {
