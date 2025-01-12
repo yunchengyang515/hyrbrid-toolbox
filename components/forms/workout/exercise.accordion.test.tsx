@@ -14,17 +14,23 @@ const mockExercises = [
   { id: '3', name: 'Squat', type: 'Strength' },
 ]
 
+const onUpdateExercisesMock = jest.fn()
+
 beforeEach(() => {
   ;(ExerciseApiService.prototype.getAllExercises as jest.Mock).mockResolvedValue(mockExercises)
 })
 
 afterEach(cleanup)
 
+afterEach(() => {
+  jest.clearAllMocks()
+})
+
 const renderComponent = (props?: Partial<typeof ExerciseAccordion>) => {
   const defaultProps = {
     workoutExercises: [],
     readOnly: false,
-    onUpdateExercises: jest.fn(),
+    onUpdateExercises: onUpdateExercisesMock,
   }
   return render(<ExerciseAccordion {...defaultProps} {...props} />)
 }
@@ -63,6 +69,22 @@ test('selects an exercise and updates the local workout exercise', async () => {
   expect(screen.getByDisplayValue('Running Test')).toBeInTheDocument()
 })
 
+test('selects an exercise send correct data to onUpdateExercises', async () => {
+  renderComponent()
+  await act(async () => {
+    fireEvent.click(screen.getByTestId('add-exercise-button'))
+  })
+  const select = screen.getByTestId('exercise-name-select-0')
+  await userEvent.click(select)
+  await userEvent.click(screen.getByRole('option', { name: 'Running Test' }))
+  expect(onUpdateExercisesMock).toHaveBeenCalledWith([
+    expect.objectContaining({
+      exercise_id: '2',
+      exercise_name: 'Running Test',
+    }),
+  ])
+})
+
 test('generates sets for a workout exercise', async () => {
   const workoutExercises: Activity[] = [
     {
@@ -89,7 +111,7 @@ test('removes a set from a workout exercise', async () => {
     {
       id: '1',
       exercise_name: 'Push Up',
-      set_rep_detail: [{ id: 1, reps: 10, weight: 20, rest: 30 }],
+      set_rep_detail: [{ id: 1, reps: 10, weight: 20, rest: 30, exercise_id: '1' }],
       exercise_type: 'Strength',
       workout_id: '',
       exercise_id: '1',
@@ -108,7 +130,7 @@ test('clones a set from a workout exercise', async () => {
     {
       id: '1',
       exercise_name: 'Push Up',
-      set_rep_detail: [{ id: 1, reps: 10, weight: 20, rest: 30 }],
+      set_rep_detail: [{ id: 1, reps: 10, weight: 20, rest: 30, exercise_id: '1' }],
       exercise_type: 'Strength',
       workout_id: '',
       exercise_id: '1',
@@ -128,7 +150,7 @@ test('renders in read-only mode', async () => {
     {
       id: '1',
       exercise_name: 'Push Up',
-      set_rep_detail: [{ id: 1, reps: 10, weight: 20, rest: 30 }],
+      set_rep_detail: [{ id: 1, reps: 10, weight: 20, rest: 30, exercise_id: '1' }],
       exercise_type: 'Strength',
       workout_id: '',
       exercise_id: '1',
@@ -148,8 +170,8 @@ test('generates set summary correctly', async () => {
       id: '1',
       exercise_name: 'Push Up',
       set_rep_detail: [
-        { id: 1, reps: 10, weight: 20, rest: 30 },
-        { id: 2, reps: 12, weight: 25, rest: 40 },
+        { id: 1, reps: 10, weight: 20, rest: 30, exercise_id: '1' },
+        { id: 2, reps: 12, weight: 25, rest: 40, exercise_id: '1' },
       ],
       exercise_type: 'Strength',
       workout_id: '',
@@ -167,8 +189,8 @@ test('generates cardio set summary correctly', async () => {
       id: '1',
       exercise_name: 'Running Test',
       set_rep_detail: [
-        { id: 1, distance: 10, pace: '5:30' },
-        { id: 2, distance: 10, pace: '6' },
+        { id: 1, distance: 10, pace: '5:30', exercise_id: '2' },
+        { id: 2, distance: 10, pace: '6', exercise_id: '2' },
       ],
       exercise_type: 'Cardio',
       workout_id: '',
