@@ -101,6 +101,7 @@ export function ExerciseAccordion({
     const selectedExercise = allExercises.find((ex) => ex.id === option.value)
     if (selectedExercise) {
       handleExerciseChange(workoutExerciseId, {
+        exercise_id: selectedExercise.id,
         exercise_name: selectedExercise.name,
         exercise_type: selectedExercise.type,
       })
