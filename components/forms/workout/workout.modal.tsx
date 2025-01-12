@@ -329,7 +329,7 @@ export default function WorkoutModal({
               workoutExercises={getExercisesData()}
               readOnly={isReadOnly}
               onUpdateExercises={handleUpdateExercises}
-              generateSetsByNumberInput={mode === 'create'}
+              generateSetsByNumberInput={mode === 'create' || mode === 'edit'}
             />
 
             <Group mt='md' justify='flex-end'>
