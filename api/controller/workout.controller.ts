@@ -1,5 +1,5 @@
+import { ActivitySchema } from '@/types/set.types'
 import { Workout, WorkoutFormData, WorkoutWithExercises } from '@/types/workout.types'
-import { WorkoutExerciseSchema } from '@/types/workoutExercise.types'
 import { ExerciseRepository } from '../data/repository/exercise.repository'
 import { WorkoutExerciseRepository } from '../data/repository/workout_exercise.respository'
 import { WorkoutRepository } from '../data/repository/workout.repository'
@@ -32,7 +32,7 @@ export class WorkoutController {
     const createdWorkout = await this.workoutRepository.createWorkout(workoutData)
 
     // Map exercises to the correct format and add them to the workout
-    const mappedExercises: WorkoutExerciseSchema[] = exercises.map((exercise) => ({
+    const mappedExercises: ActivitySchema[] = exercises.map((exercise) => ({
       exercise_id: exercise.exercise_id,
       workout_id: createdWorkout.id,
       user_id: createdWorkout.user_id,
@@ -50,7 +50,7 @@ export class WorkoutController {
     const updatedWorkout = await this.workoutRepository.updateWorkout(id, workoutData)
 
     // Map exercises to the correct format and update them in the workout
-    const mappedExercises: WorkoutExerciseSchema[] = exercises.map((exercise) => ({
+    const mappedExercises: ActivitySchema[] = exercises.map((exercise) => ({
       exercise_id: exercise.exercise_id,
       workout_id: updatedWorkout.id,
       user_id: updatedWorkout.user_id,
@@ -64,7 +64,7 @@ export class WorkoutController {
     return this.workoutRepository.deleteWorkout(id)
   }
 
-  private async updateWorkoutExercises(workoutId: string, exercises: WorkoutExerciseSchema[]) {
+  private async updateWorkoutExercises(workoutId: string, exercises: ActivitySchema[]) {
     await this.workoutExerciseRepository.deleteWorkoutExercisesByWorkoutId(workoutId)
 
     for (const exercise of exercises) {

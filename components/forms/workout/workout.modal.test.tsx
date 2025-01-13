@@ -34,7 +34,7 @@ const workoutDataWithExercises: WorkoutWithExercises = {
       id: '1',
       exercise_name: 'Push Up',
       exercise_type: 'Strength',
-      set_rep_detail: [{ id: 1, reps: 10, weight: 0, rest: 60 }],
+      set_rep_detail: [{ id: 1, reps: 10, weight: 0, rest: 60, exercise_id: '1' }],
       workout_id: '1',
       exercise_id: '1',
       user_id: 'user1',
