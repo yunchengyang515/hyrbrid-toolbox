@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { render } from '@/test-utils'
 import { Activity } from '@/types/set.types'
 import { ExerciseApiService } from '../../../services/api/exercise.api.service'
-import { ExerciseAccordion } from './exercise.accordion'
+import { ExerciseAccordion } from './activity.accordion'
 
 // Mock ExerciseApiService
 jest.mock('../../../services/api/exercise.api.service')
