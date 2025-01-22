@@ -1,5 +1,14 @@
 import { useEffect } from 'react'
-import { Button, Group, Modal, NumberInput, Select, Textarea, TextInput } from '@mantine/core'
+import {
+  Button,
+  Checkbox,
+  Group,
+  Modal,
+  NumberInput,
+  Select,
+  Textarea,
+  TextInput,
+} from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { Session, SessionFormData } from '@/types/session.types'
 
@@ -36,6 +45,7 @@ export default function SessionModal({
           intensity: 0,
           type: '',
           is_template: false,
+          key_session: false,
         }
       : { ...sessionData! }
 
@@ -203,6 +213,15 @@ export default function SessionModal({
           error={getError('type')}
           mb='sm'
           data-testid='session-type-select'
+        />
+
+        <Checkbox
+          label='Key Session'
+          readOnly={isReadOnly()}
+          checked={getFieldValue('key_session') as boolean}
+          onChange={(e) => handleChange('key_session', e.currentTarget.checked)}
+          mb='sm'
+          data-testid='session-key-session-checkbox'
         />
 
         <Group justify='flex-end' mt='lg'>

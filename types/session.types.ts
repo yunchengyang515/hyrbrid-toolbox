@@ -8,6 +8,7 @@ export type SessionSchema = {
   type?: string
   user_id: string
   is_template?: boolean
+  key_session?: boolean
 }
 
 export type SessionFormData = Omit<SessionSchema, 'id' | 'created_at' | 'user_id'>
