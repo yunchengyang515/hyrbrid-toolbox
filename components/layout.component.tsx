@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { IconBook, IconCalendar, IconDashboard } from '@tabler/icons-react'
+import { IconBook, IconCalendar, IconDashboard, IconMessageCircle } from '@tabler/icons-react'
 import { AppShell, Group, NavLink, Tooltip } from '@mantine/core'
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -25,6 +25,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
       icon: <IconBook size='1rem' stroke={1.5} />,
       path: '/library',
       description: 'Explore and create workouts, exercises, and training programs',
+    },
+    {
+      label: 'Dylan AI 🤖',
+      icon: <IconMessageCircle size='1rem' stroke={1.5} />,
+      path: '/chat',
+      description: 'Chat with Dylan AI, your smart online coach',
     },
   ]
 
