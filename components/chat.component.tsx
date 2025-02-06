@@ -5,6 +5,7 @@ import {
   Avatar,
   Button,
   Group,
+  Loader,
   Paper,
   ScrollArea,
   Stack,
@@ -22,13 +23,12 @@ interface Message {
 interface ChatMessageProps {
   message: Message
   isUser: boolean
-  isStreaming?: boolean
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser, isStreaming }) => (
+const ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser }) => (
   <Group align='flex-start' gap='sm' style={{ justifyContent: isUser ? 'flex-end' : 'flex-start' }}>
     {!isUser && (
-      <Avatar size='md' radius='xl' src={null} color='blue'>
+      <Avatar size='md' radius='xl' color='blue'>
         AI
       </Avatar>
     )}
@@ -41,13 +41,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser, isStreaming 
         marginLeft: isUser ? 'auto' : '0',
       }}
     >
-      <Text color={isUser ? 'white' : 'dark'}>
-        {message.content}
-        {isStreaming && <span className='cursor'>|</span>}
-      </Text>
+      <Text color={isUser ? 'white' : 'dark'}>{message.content}</Text>
     </Paper>
     {isUser && (
-      <Avatar size='md' radius='xl' src={null} color='gray'>
+      <Avatar size='md' radius='xl' color='gray'>
         You
       </Avatar>
     )}
@@ -64,7 +61,8 @@ const Chat: React.FC = () => {
     },
   ])
   const [inputValue, setInputValue] = useState('')
-  const [isStreaming, setIsStreaming] = useState(false)
+  // We'll use isGenerating to track when the AI response is pending.
+  const [isGenerating, setIsGenerating] = useState(false)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -78,61 +76,39 @@ const Chat: React.FC = () => {
       return
     }
 
+    // Add the user message to the conversation.
     const userMessage: Message = {
       id: messages.length + 1,
       content: inputValue.trim(),
       isUser: true,
       timestamp: new Date(),
     }
-
     setMessages((prev) => [...prev, userMessage])
     setInputValue('')
-    setIsStreaming(true)
+
+    // Set the loader flag while waiting for the AI response.
+    setIsGenerating(true)
 
     try {
       const response = await fetch('/.netlify/functions/chat', {
         method: 'POST',
-        body: JSON.stringify({ message: inputValue }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        // Notice we pass stream: false to use the regular response.
+        body: JSON.stringify({ message: userMessage.content, stream: false }),
       })
 
-      if (!response.body) {
-        throw new Error('No response body')
+      // Since we're not streaming, we expect a JSON response.
+      const { response: aiText } = await response.json()
+      const aiResponse: Message = {
+        id: messages.length + 2,
+        content: aiText,
+        isUser: false,
+        timestamp: new Date(),
       }
-
-      const reader = response.body.getReader()
-      const decoder = new TextDecoder()
-      let aiMessageContent = ''
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) {
-          break
-        }
-
-        const chunk = decoder.decode(value)
-        aiMessageContent += chunk
-
-        // Update the message in real-time as chunks arrive
-        setMessages((prev) => {
-          const newMessages = [...prev]
-          const lastMessage = newMessages[newMessages.length - 1]
-
-          if (!lastMessage.isUser) {
-            lastMessage.content = aiMessageContent
-          } else {
-            newMessages.push({
-              id: prev.length + 1,
-              content: aiMessageContent,
-              isUser: false,
-              timestamp: new Date(),
-            })
-          }
-
-          return newMessages
-        })
-      }
+      setMessages((prev) => [...prev, aiResponse])
     } catch (error) {
-      console.error('Error:', error)
       setMessages((prev) => [
         ...prev,
         {
@@ -143,7 +119,7 @@ const Chat: React.FC = () => {
         },
       ])
     } finally {
-      setIsStreaming(false)
+      setIsGenerating(false)
     }
   }
 
@@ -173,14 +149,18 @@ const Chat: React.FC = () => {
 
         <ScrollArea style={{ flex: 1 }} viewportRef={scrollAreaRef}>
           <Stack gap='lg'>
-            {messages.map((message, index) => (
-              <ChatMessage
-                key={message.id}
-                message={message}
-                isUser={message.isUser}
-                isStreaming={isStreaming && index === messages.length - 1 && !message.isUser}
-              />
+            {messages.map((message) => (
+              <ChatMessage key={message.id} message={message} isUser={message.isUser} />
             ))}
+            {isGenerating && (
+              <Group align='center' style={{ justifyContent: 'flex-start' }} gap='sm'>
+                <Avatar size='md' radius='xl' color='blue'>
+                  AI
+                </Avatar>
+                <Loader size='sm' />
+                <Text>Generating response...</Text>
+              </Group>
+            )}
           </Stack>
         </ScrollArea>
 
@@ -191,11 +171,11 @@ const Chat: React.FC = () => {
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
             style={{ flex: 1 }}
-            disabled={isStreaming}
+            disabled={isGenerating}
           />
           <Button
             onClick={handleSendMessage}
-            disabled={!inputValue.trim() || isStreaming}
+            disabled={!inputValue.trim() || isGenerating}
             variant='filled'
           >
             <IconSend size={16} />
