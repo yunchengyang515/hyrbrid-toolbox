@@ -3,6 +3,7 @@ import { IconBarbell, IconBook, IconLayoutDashboard, IconTemplate } from '@table
 import { Container, rem, Tabs, Text } from '@mantine/core'
 import { Layout } from '@/components/layout.component'
 import ExercisesTab from '@/components/Library/tabs/exercise.tab'
+import SessionTemplateTab from '@/components/Library/tabs/sessionTemplate.tab'
 import WorkoutsTab from '@/components/Library/tabs/Workout.tab'
 import type { NextPageWithLayout } from './_app'
 
@@ -47,7 +48,7 @@ const LibraryPage: NextPageWithLayout = () => {
         </Tabs.Panel>
 
         <Tabs.Panel value='templates' pt='md'>
-          <p>Templates tab content goes here...</p>
+          <SessionTemplateTab />
         </Tabs.Panel>
 
         <Tabs.Panel value='programs' pt='md'>
