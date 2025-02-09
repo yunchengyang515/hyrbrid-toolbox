@@ -3,7 +3,6 @@ import { IconSend, IconTrash } from '@tabler/icons-react'
 import {
   ActionIcon,
   Avatar,
-  Badge,
   Button,
   Group,
   Loader,
