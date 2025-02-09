@@ -3,6 +3,7 @@ import { IconSend, IconTrash } from '@tabler/icons-react'
 import {
   ActionIcon,
   Avatar,
+  Badge,
   Button,
   Group,
   Loader,
@@ -52,6 +53,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser }) => (
   </Group>
 )
 
+const predefinedPrompts = [
+  "What's a good workout for beginners?",
+  'How can I improve my diet?',
+  'Tell me about HIIT workouts.',
+  'What are the benefits of yoga?',
+  'How do I stay motivated?',
+]
+
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -62,8 +71,8 @@ const Chat: React.FC = () => {
     },
   ])
   const [inputValue, setInputValue] = useState('')
-  // We'll use isGenerating to track when the AI response is pending.
   const [isGenerating, setIsGenerating] = useState(false)
+  const [isFirstMessageSent, setIsFirstMessageSent] = useState(false)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const chatApiService = new ChatApiService()
 
@@ -78,7 +87,6 @@ const Chat: React.FC = () => {
       return
     }
 
-    // Add the user message to the conversation.
     const userMessage: Message = {
       id: messages.length + 1,
       content: inputValue.trim(),
@@ -87,9 +95,8 @@ const Chat: React.FC = () => {
     }
     setMessages((prev) => [...prev, userMessage])
     setInputValue('')
-
-    // Set the loader flag while waiting for the AI response.
     setIsGenerating(true)
+    setIsFirstMessageSent(true)
 
     try {
       const aiText = await chatApiService.sendMessage(userMessage.content)
@@ -120,6 +127,11 @@ const Chat: React.FC = () => {
       e.preventDefault()
       handleSendMessage()
     }
+  }
+
+  const handlePromptClick = (prompt: string) => {
+    setInputValue(prompt)
+    handleSendMessage()
   }
 
   return (
@@ -156,23 +168,35 @@ const Chat: React.FC = () => {
           </Stack>
         </ScrollArea>
 
-        <Group gap='xs'>
-          <TextInput
-            placeholder='Type your message...'
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyPress={handleKeyPress}
-            style={{ flex: 1 }}
-            disabled={isGenerating}
-          />
-          <Button
-            onClick={handleSendMessage}
-            disabled={!inputValue.trim() || isGenerating}
-            variant='filled'
-          >
-            <IconSend size={16} />
-          </Button>
-        </Group>
+        {!isFirstMessageSent && (
+          <Group gap='xs' mb='xs'>
+            {predefinedPrompts.map((prompt, index) => (
+              <Button key={index} onClick={() => handlePromptClick(prompt)}>
+                {prompt}
+              </Button>
+            ))}
+          </Group>
+        )}
+
+        {isFirstMessageSent && (
+          <Group gap='xs'>
+            <TextInput
+              placeholder='Type your message...'
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={handleKeyPress}
+              style={{ flex: 1 }}
+              disabled={isGenerating}
+            />
+            <Button
+              onClick={handleSendMessage}
+              disabled={!inputValue.trim() || isGenerating}
+              variant='filled'
+            >
+              <IconSend size={16} />
+            </Button>
+          </Group>
+        )}
       </Stack>
     </Paper>
   )
