@@ -12,6 +12,7 @@ import {
   Text,
   TextInput,
 } from '@mantine/core'
+import { ChatApiService } from '@/services/api/chat.api.service'
 
 interface Message {
   id: number
@@ -64,6 +65,7 @@ const Chat: React.FC = () => {
   // We'll use isGenerating to track when the AI response is pending.
   const [isGenerating, setIsGenerating] = useState(false)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const chatApiService = new ChatApiService()
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -90,17 +92,7 @@ const Chat: React.FC = () => {
     setIsGenerating(true)
 
     try {
-      const response = await fetch('/.netlify/functions/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        // Notice we pass stream: false to use the regular response.
-        body: JSON.stringify({ message: userMessage.content, stream: false }),
-      })
-
-      // Since we're not streaming, we expect a JSON response.
-      const { response: aiText } = await response.json()
+      const aiText = await chatApiService.sendMessage(userMessage.content)
       const aiResponse: Message = {
         id: messages.length + 2,
         content: aiText,
