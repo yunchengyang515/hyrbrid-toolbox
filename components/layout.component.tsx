@@ -1,38 +1,52 @@
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { IconBook, IconCalendar, IconDashboard, IconMessageCircle } from '@tabler/icons-react'
 import { AppShell, Group, NavLink, Tooltip } from '@mantine/core'
+import { AuthService } from '../services/auth.service'
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    const authService = new AuthService()
+    setUser(authService.getCurrentUser())
+  }, [])
 
   // Navigation links for the sidebar
   const links = [
     {
+      id: 'dashboard',
       label: 'Dashboard',
       icon: <IconDashboard size='1rem' stroke={1.5} />,
       path: '/',
       description: 'Overview and analytics',
     },
     {
+      id: 'calendar',
       label: 'Calendar',
       icon: <IconCalendar size='1rem' stroke={1.5} />,
       path: '/calendar',
       description: 'View and manage your training schedule',
     },
     {
+      id: 'library',
       label: 'Library',
       icon: <IconBook size='1rem' stroke={1.5} />,
       path: '/library',
       description: 'Explore and create workouts, exercises, and training programs',
     },
     {
+      id: 'dylan-ai',
       label: 'Dylan AI 🤖',
       icon: <IconMessageCircle size='1rem' stroke={1.5} />,
       path: '/chat',
       description: 'Chat with Dylan AI, your smart online coach',
     },
   ]
+
+  const filteredLinks = user ? links : links.filter((link) => link.id === 'dylan-ai')
 
   return (
     <AppShell
@@ -49,10 +63,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Sidebar Section */}
       <AppShell.Navbar p='md'>
-        {links.map((link) => (
-          <Tooltip label={link.description} key={link.path}>
+        {filteredLinks.map((link) => (
+          <Tooltip label={link.description} key={link.id}>
             <NavLink
-              key={link.path}
+              key={link.id}
               label={link.label}
               href={link.path}
               leftSection={link.icon}

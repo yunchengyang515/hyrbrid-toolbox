@@ -7,6 +7,13 @@ export abstract class AbstractApiService {
   protected buildUrl(path: string[] = []) {
     return [this.baseUrl, this.resource, ...path].join('/')
   }
+
+  protected getAuthHeaders() {
+    return {
+      Authorization: `Bearer ${localStorage.getItem('token') || process.env.API_KEY}`,
+    }
+  }
+
   protected transformResponse<T>(response: Response) {
     if (!response.ok) {
       throw new Error(response.statusText)
