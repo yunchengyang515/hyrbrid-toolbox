@@ -1,15 +1,15 @@
-import { SessionRepository } from '../data/repository/session.repository'
+import { ChatSessionType } from '@/types/chat_session.types'
+import { ChatSessionRepository } from '../data/repository/chat_session.repository'
 
 export class SessionService {
-  private sessionRepository: SessionRepository
+  private sessionRepository: ChatSessionRepository
 
   constructor() {
-    this.sessionRepository = new SessionRepository()
+    this.sessionRepository = new ChatSessionRepository()
   }
 
   async createFreeSession(): Promise<{ sessionId: string; sessionType: string }> {
-    const sessionId = crypto.randomUUID()
-    return this.sessionRepository.createSession(sessionId, 'free')
+    return this.sessionRepository.createSession(ChatSessionType.FREE)
   }
 
   async getSession(sessionId: string) {
@@ -21,13 +21,13 @@ export class SessionService {
     return session.session_type === 'free'
   }
 
-  async updateTokenUsage(sessionId: string, tokensUsed: number) {
+  async enforceMessageLimit(sessionId: string) {
     const session = await this.getSession(sessionId)
 
-    if (session.token_usage + tokensUsed > session.max_tokens) {
-      throw new Error('Free session limit reached. Upgrade to continue.')
+    if (session.message_count >= session.max_messages) {
+      throw new Error('Free session message limit reached. Upgrade to continue.')
     }
 
-    await this.sessionRepository.updateTokenUsage(sessionId, session.token_usage + tokensUsed)
+    await this.sessionRepository.incrementMessageCount(sessionId)
   }
 }
