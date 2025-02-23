@@ -1,4 +1,4 @@
-import { ChatSessionType } from '@/types/chat_session.types'
+import { ChatSession, ChatSessionType } from '@/types/chat_session.types'
 import { ChatSessionRepository } from '../data/repository/chat_session.repository'
 
 export class ChatSessionService {
@@ -12,7 +12,7 @@ export class ChatSessionService {
     return this.sessionRepository.createSession(ChatSessionType.FREE)
   }
 
-  async getSession(sessionId: string) {
+  async getSession(sessionId: string): Promise<ChatSession> {
     return this.sessionRepository.getSessionById(sessionId)
   }
 

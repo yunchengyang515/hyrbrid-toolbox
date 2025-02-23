@@ -13,12 +13,12 @@ export async function POST(request: Request) {
   auth.checkRequest(request) // Validate API key
 
   const { message, sessionId, stream = false } = await request.json()
-  console.log('message', message)
-  console.log('sessionId', sessionId)
 
   try {
-    await validateSessionService.validateSession(sessionId)
-
+    const session = await validateSessionService.validateSession(sessionId)
+    if (session.message_count === 0) {
+      await validateSessionService.validateFirstMessage(sessionId, message)
+    }
     const response = stream
       ? (await chatController.streamChat(message)).toReadableStream()
       : await chatController.regularChat(message)

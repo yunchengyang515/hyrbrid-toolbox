@@ -1,16 +1,19 @@
 import GroqClient from 'groq-sdk'
+import { ValidateSessionService } from '@/api/services/validate-session.service'
 import { ChatSessionService } from '../services/chat-session.service'
 
 export class ChatController {
   private client: GroqClient
   private systemPrompt: string
   private chatSessionService: ChatSessionService
+  private validateSessionService: ValidateSessionService
 
   constructor() {
     this.client = new GroqClient({
       apiKey: process.env.GROQ_API_KEY,
     })
     this.chatSessionService = new ChatSessionService()
+    this.validateSessionService = new ValidateSessionService()
 
     this.systemPrompt = `You are Dylan, an elite hybrid training coach specializing in optimizing concurrent strength and endurance training. Your expertise is grounded in exercise science and practical programming experience.
 - Injury prevention considerations

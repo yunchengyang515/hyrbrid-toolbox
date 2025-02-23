@@ -9,5 +9,5 @@ export type ChatSession = {
   expires_at: string
   session_type: ChatSessionType
   message_count: number
-  max_messages: number | null // Null for unlimited messages
+  max_messages: number
 }

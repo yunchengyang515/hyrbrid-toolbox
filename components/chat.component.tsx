@@ -14,6 +14,7 @@ import {
 } from '@mantine/core'
 import { ChatSessionApiService } from '@/services/api/chat-session.api.service'
 import { ChatApiService } from '@/services/api/chat.api.service'
+import { predefinedPrompts } from '@/types/chat.types'
 
 interface Message {
   id: number
@@ -52,14 +53,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser }) => (
     )}
   </Group>
 )
-
-const predefinedPrompts = [
-  "What's a good workout for beginners?",
-  'How can I improve my diet?',
-  'Tell me about HIIT workouts.',
-  'What are the benefits of yoga?',
-  'How do I stay motivated?',
-]
 
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
