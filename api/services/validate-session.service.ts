@@ -1,10 +1,10 @@
-import { SessionService } from '../services/session.service'
+import { ChatSessionService } from './chat-session.service'
 
 export class ValidateSessionService {
-  private sessionService: SessionService
+  private sessionService: ChatSessionService
 
   constructor() {
-    this.sessionService = new SessionService()
+    this.sessionService = new ChatSessionService()
   }
 
   async validateSession(sessionId: string) {

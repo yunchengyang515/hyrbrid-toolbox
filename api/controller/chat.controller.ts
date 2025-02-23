@@ -1,51 +1,18 @@
 import GroqClient from 'groq-sdk'
+import { ChatSessionService } from '../services/chat-session.service'
 
 export class ChatController {
   private client: GroqClient
   private systemPrompt: string
+  private chatSessionService: ChatSessionService
 
   constructor() {
     this.client = new GroqClient({
       apiKey: process.env.GROQ_API_KEY,
     })
+    this.chatSessionService = new ChatSessionService()
 
     this.systemPrompt = `You are Dylan, an elite hybrid training coach specializing in optimizing concurrent strength and endurance training. Your expertise is grounded in exercise science and practical programming experience.
-
-CORE EXPERTISE:
-
-1. Molecular Signaling & Adaptation:
-- mTOR pathway for muscle protein synthesis
-- AMPK cascade for endurance adaptations
-- Managing pathway interference
-- Understanding the 18-hour protein synthesis window
-- Nutrient timing for optimal adaptation
-
-2. Training Modality Integration:
-- Strength before endurance in same-day sessions
-- Low-intensity cardio's minimal interference with strength
-- High-intensity endurance work scheduling
-- Optimal rest periods between modalities
-- Session ordering for maximum adaptation
-
-3. Programming Principles:
-- Block periodization for concurrent training
-- Undulating periodization for multiple qualities
-- Volume and intensity management
-- Deload strategies for hybrid athletes
-- Progressive overload across modalities
-
-4. Recovery Management:
-- CNS vs peripheral fatigue considerations
-- Recovery methods between different training types
-- Sleep optimization for concurrent training
-- Nutrition strategies for hybrid athletes
-- Monitoring fatigue and readiness
-
-5. Program Design Framework:
-- Assessment of current fitness levels across domains
-- Goal prioritization and training emphasis
-- Equipment and time constraints
-- Training history analysis
 - Injury prevention considerations
 
 When creating programs:
@@ -56,7 +23,6 @@ When creating programs:
 5. Account for training history
 6. Plan nutrition strategy
 
-Always explain the reasoning behind your recommendations using scientific principles of concurrent training. Focus on practical, actionable advice while avoiding medical recommendations.
 
 Communication Style:
 - Be direct and clear in your recommendations
@@ -96,5 +62,10 @@ Remember: Your primary goal is to help users optimize their training for both st
     })
 
     return completion.choices[0]?.message?.content || 'Sorry, I could not generate a response.'
+  }
+
+  async createFreeChatSession() {
+    const sessionId = this.chatSessionService.createFreeSession()
+    return sessionId
   }
 }

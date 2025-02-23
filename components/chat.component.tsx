@@ -12,6 +12,7 @@ import {
   Text,
   TextInput,
 } from '@mantine/core'
+import { ChatSessionApiService } from '@/services/api/chat-session.api.service'
 import { ChatApiService } from '@/services/api/chat.api.service'
 
 interface Message {
@@ -72,8 +73,10 @@ const Chat: React.FC = () => {
   const [inputValue, setInputValue] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [isFirstMessageSent, setIsFirstMessageSent] = useState(false)
+  const [sessionId, setSessionId] = useState<string | null>(null)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const chatApiService = new ChatApiService()
+  const chatSessionApiService = new ChatSessionApiService()
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -81,8 +84,29 @@ const Chat: React.FC = () => {
     }
   }, [messages])
 
+  useEffect(() => {
+    const initializeSession = async () => {
+      try {
+        const newSessionId = await chatSessionApiService.getSessionId()
+        setSessionId(newSessionId)
+      } catch (error) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: prev.length + 1,
+            content:
+              'Sorry, I encountered an error while starting a new session. Please try again.',
+            isUser: false,
+            timestamp: new Date(),
+          },
+        ])
+      }
+    }
+    initializeSession()
+  }, [])
+
   const handleSendMessage = async () => {
-    if (!inputValue.trim()) {
+    if (!inputValue.trim() || !sessionId) {
       return
     }
 
@@ -98,7 +122,7 @@ const Chat: React.FC = () => {
     setIsFirstMessageSent(true)
 
     try {
-      const aiText = await chatApiService.sendMessage(userMessage.content)
+      const aiText = await chatApiService.sendMessage(userMessage.content, sessionId)
       const aiResponse: Message = {
         id: messages.length + 2,
         content: aiText,

@@ -1,7 +1,7 @@
 import { ChatSessionType } from '@/types/chat_session.types'
 import { ChatSessionRepository } from '../data/repository/chat_session.repository'
 
-export class SessionService {
+export class ChatSessionService {
   private sessionRepository: ChatSessionRepository
 
   constructor() {

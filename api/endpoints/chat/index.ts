@@ -2,8 +2,8 @@
 import { ChatController } from '@/api/controller/chat.controller'
 import { initializeHandler } from '@/api/endpoints/_request-handling/handler-initialize.service'
 import { Endpoint } from '@/api/types'
-import { AuthService } from '../auth/auth'
-import { ValidateSessionService } from '../services/validate-session.service'
+import { AuthService } from '../../auth/auth'
+import { ValidateSessionService } from '../../services/validate-session.service'
 
 const chatController = new ChatController()
 const auth = new AuthService()
@@ -13,6 +13,8 @@ export async function POST(request: Request) {
   auth.checkRequest(request) // Validate API key
 
   const { message, sessionId, stream = false } = await request.json()
+  console.log('message', message)
+  console.log('sessionId', sessionId)
 
   try {
     await validateSessionService.validateSession(sessionId)

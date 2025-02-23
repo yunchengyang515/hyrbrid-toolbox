@@ -6,10 +6,10 @@ export class ChatApiService extends AbstractApiService {
     this.resource = 'chat'
   }
 
-  async sendMessage(message: string): Promise<string> {
+  async sendMessage(message: string, sessionId: string): Promise<string> {
     const response = await fetch(this.buildUrl(), {
       method: 'POST',
-      body: JSON.stringify({ message, stream: false }),
+      body: JSON.stringify({ message, stream: false, sessionId }),
       headers: {
         'Content-Type': 'application/json',
         ...this.getAuthHeaders(),

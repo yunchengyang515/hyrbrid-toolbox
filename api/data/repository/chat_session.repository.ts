@@ -3,7 +3,7 @@ import { ChatSession, ChatSessionType } from '@/types/chat_session.types'
 import { getDbClient } from '../db.service'
 import { AbstractRepository } from './abstract.repository'
 
-const tableName = 'sessions'
+const tableName = 'chat_session'
 
 export class ChatSessionRepository extends AbstractRepository {
   async createSession(sessionType: ChatSessionType) {
@@ -32,6 +32,7 @@ export class ChatSessionRepository extends AbstractRepository {
       .from(tableName)
       .select('id, session_type, token_usage, message_count, max_messages')
       .eq('id', sessionId)
+      .select()
       .single()
 
     if (error || !data) {

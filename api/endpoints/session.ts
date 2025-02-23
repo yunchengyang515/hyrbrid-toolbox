@@ -1,6 +1,6 @@
-import { SessionService } from '../services/session.service'
+import { ChatSessionService } from '../services/chat-session.service'
 
-const sessionService = new SessionService()
+const sessionService = new ChatSessionService()
 
 export async function POST(_request: Request) {
   const { sessionId, sessionType } = await sessionService.createFreeSession()
