@@ -7,7 +7,7 @@ export class ChatController {
   private systemPrompt: string
   private chatSessionService: ChatSessionService
   private chatPromptsService: ChatPromptService
-  private model = 'qwen-2.5-32b'
+  private model = 'llama3-70b-8192'
 
   constructor() {
     this.client = new GroqClient({
