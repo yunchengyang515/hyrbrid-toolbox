@@ -6,9 +6,7 @@ export interface ChatMessage {
 }
 
 export const predefinedPrompts = [
-  "What's a good workout for beginners?",
-  'How can I improve my diet?',
-  'Tell me about HIIT workouts.',
-  'What are the benefits of yoga?',
-  'How do I stay motivated?',
+  'How to effectively combine strength and endurance training',
+  'What are the best strategies to structure (and periodize) a hybrid training plan',
+  'Recovery and injury prevention for hybrid athletes',
 ]

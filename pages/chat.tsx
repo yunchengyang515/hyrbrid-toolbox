@@ -4,7 +4,7 @@ import Chat from '../components/chat.component'
 
 const ChatPage: React.FC = () => {
   return (
-    <Container size='md' py='xl'>
+    <Container size='xl' py='sm'>
       <Chat />
     </Container>
   )
