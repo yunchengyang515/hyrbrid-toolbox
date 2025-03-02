@@ -15,6 +15,7 @@ import {
 import { ChatSessionApiService } from '@/services/api/chat-session.api.service'
 import { ChatApiService } from '@/services/api/chat.api.service'
 import { predefinedPrompts } from '@/types/chat.types'
+import MarkdownMessage from './markdown-message.component' // Import the new component
 
 interface Message {
   id: number
@@ -44,7 +45,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser }) => (
         marginLeft: isUser ? 'auto' : '0',
       }}
     >
-      <Text color={isUser ? 'white' : 'dark'}>{message.content}</Text>
+      <MarkdownMessage content={message.content} isUser={isUser} />
     </Paper>
     {isUser && (
       <Avatar size='md' radius='xl' color='gray'>
