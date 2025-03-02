@@ -151,9 +151,9 @@ const Chat: React.FC = () => {
   }
 
   return (
-    <Paper radius='md' p='md' withBorder style={{ height: '600px' }}>
-      <Stack gap='xs' style={{ height: '100%' }}>
-        <Group style={{ justifyContent: 'space-between' }} mb='md'>
+    <Paper radius='md' p='md' withBorder h='800'>
+      <Stack gap='xs' h='100%'>
+        <Group flex='justify-between' mb='md'>
           <Text size='xl' fw={700}>
             Talk to Dylan AI 🤖
           </Text>
