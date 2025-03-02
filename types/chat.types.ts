@@ -7,6 +7,6 @@ export interface ChatMessage {
 
 export const predefinedPrompts = [
   'How to effectively combine strength and endurance training',
-  'What is the best strategies to structure (and periodize) a hybrid training plan',
+  'What are the best strategies to structure (and periodize) a hybrid training plan',
   'Recovery and injury prevention for hybrid athletes',
 ]
